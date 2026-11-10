@@ -60,7 +60,8 @@ async function bundleCore() {
     `export { DEVICES, DEVICE_MAP } from "${posix(join(ROOT, "src/devices/index.ts"))}";\n` +
       `export { createProject, createDemoProject } from "${posix(join(ROOT, "src/app/project.ts"))}";\n` +
       `export { generate } from "${posix(join(ROOT, "src/backends/index.ts"))}";\n` +
-      `export { schemaFor } from "${posix(join(ROOT, "src/semantic/schemas.ts"))}";\n`,
+      `export { schemaFor } from "${posix(join(ROOT, "src/semantic/schemas.ts"))}";\n` +
+      `export { modeOptionSupported } from "${posix(join(ROOT, "src/semantic/pinmux.ts"))}";\n`,
   );
   const out = join(BUILD_DIR, "core.mjs");
   await build({
@@ -102,7 +103,7 @@ function removeTree(dir) {
  */
 function buildCases(core) {
   const cases = [];
-  const { DEVICES, createProject, createDemoProject, schemaFor } = core;
+  const { DEVICES, createProject, createDemoProject, schemaFor, modeOptionSupported } = core;
 
   /** 每个系列的第一颗器件做模式扫描 */
   const repByFamily = new Map();
@@ -140,6 +141,8 @@ function buildCases(core) {
       for (const opt of modeParam.options) {
         const mode = String(opt.value);
         if (mode === "disable" || mode === "off") continue;
+        // 与界面同一道闸：设备能力不支持的档位（如 FS-only 芯片的 USB 高速）不生成快照
+        if (!modeOptionSupported(dev, opt)) continue;
         cases.push({
           name: `mode/${per.id}-${mode}`,
           dev,

@@ -1,5 +1,5 @@
 {
-  "cases": 487,
+  "cases": 483,
   "devices": 27,
   "sha": {
     "CH32V407KEU6/demo": "8b950b6824dd431e",
@@ -271,7 +271,6 @@
     "CH32L103C8T6/mode/USBPD-source": "b4009d12fec2f765",
     "CH32L103C8T6/mode/USBPD-drp": "caaadcdcb9517c89",
     "CH32L103C8T6/mode/USB1-fs": "e28fe50fedbf139e",
-    "CH32L103C8T6/mode/USB1-hs": "e28fe50fedbf139e",
     "CH32L103C8T6/mode/LPTIM-internal": "7ddb4331496db816",
     "CH32L103C8T6/mode/LPTIM-ext1": "7ddb4331496db816",
     "CH32L103C8T6/mode/LPTIM-ext2": "7ddb4331496db816",
@@ -325,7 +324,6 @@
     "CH32X035R8T6/mode/USBPD-source": "adf1ff08f8542605",
     "CH32X035R8T6/mode/USBPD-drp": "cc8d0555c3ee6e5d",
     "CH32X035R8T6/mode/USB1-fs": "06df5f87dc25ea41",
-    "CH32X035R8T6/mode/USB1-hs": "06df5f87dc25ea41",
     "CH32X035R8T6/mode/TIM1-internal": "8d0892642a77b22f",
     "CH32X035R8T6/mode/TIM1-ext1": "8d0892642a77b22f",
     "CH32X035R8T6/mode/TIM1-ext2": "8d0892642a77b22f",
@@ -371,7 +369,6 @@
     "CH32X033F8P6/mode/USART4-Synchronous": "6a3b94c19844a83c",
     "CH32X033F8P6/mode/USART4-SingleWire": "c14d41ba53ef603b",
     "CH32X033F8P6/mode/USB1-fs": "34c23afe4c9d0f2c",
-    "CH32X033F8P6/mode/USB1-hs": "34c23afe4c9d0f2c",
     "CH32X033F8P6/mode/TIM1-internal": "bd10d63922081d24",
     "CH32X033F8P6/mode/TIM1-ext1": "bd10d63922081d24",
     "CH32X033F8P6/mode/TIM1-ext2": "bd10d63922081d24",
@@ -440,7 +437,6 @@
     "HC32F401BRET6YM/mode/USART3-Synchronous": "4f08e57ced8b77f7",
     "HC32F401BRET6YM/mode/USART3-SingleWire": "4f08e57ced8b77f7",
     "HC32F401BRET6YM/mode/USB1-fs": "4f08e57ced8b77f7",
-    "HC32F401BRET6YM/mode/USB1-hs": "4f08e57ced8b77f7",
     "HC32F401BRET6YM/mode/TIM1-internal": "4f08e57ced8b77f7",
     "HC32F401BRET6YM/mode/TIM1-ext1": "4f08e57ced8b77f7",
     "HC32F401BRET6YM/mode/TIM1-ext2": "4f08e57ced8b77f7",

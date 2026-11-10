@@ -38,6 +38,14 @@ export interface ParamOption {
   required?: string[];
   /** 该项不可选的条件（例如 SmartCard 模式下 8 位字长非法） */
   disabledIf?: Cond;
+  /**
+   * 该项需要的**设备能力**门槛（如 "usb.hs"：dev.usb.speeds 含 "hs" 才可选）。
+   *
+   * 用于「同一 schema 服务多个芯片，但某档只有部分芯片有硬件」的场景——
+   * FS-only 的 X035/X033/L103 不该在 USB 速度下拉里看到「高速 480 Mbps」。
+   * 没写 cap 的选项视为无门槛。
+   */
+  cap?: string;
   hint?: string;
 }
 

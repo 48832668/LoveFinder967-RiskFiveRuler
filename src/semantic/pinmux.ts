@@ -173,9 +173,24 @@ export function modeMissingSignals(
  */
 export function usableModes(dev: DeviceDef, periph: PeripheralDef): string[] {
   return (modeParamOf(periph)?.options ?? [])
+    .filter((o) => o.value !== "disable" && o.value !== "off")
+    .filter((o) => modeOptionSupported(dev, o))
     .map((o) => String(o.value))
-    .filter((v) => v !== "disable" && v !== "off")
     .filter((v) => modeMissingSignals(dev, periph, v).length === 0);
+}
+
+/**
+ * 模式选项是否被这颗芯片的**硬件能力**支持（`ParamOption.cap`）。
+ *
+ * 目前只有 "usb.hs"：高速 480 Mbps 需要 dev.usb.speeds 含 "hs" ——
+ * FS-only 的 X033 / X035 / L103 / HC32 没有高速 PHY，速度下拉里不该出现这一档。
+ * 没写 cap 的选项视为无门槛。
+ */
+export function modeOptionSupported(dev: DeviceDef, opt: { cap?: string }): boolean {
+  if (!opt.cap) return true;
+  if (opt.cap === "usb.hs") return dev.usb?.speeds?.includes("hs") ?? false;
+  if (opt.cap === "usb.fs") return dev.usb?.speeds?.includes("fs") ?? false;
+  return true;
 }
 
 /** 外设实例需要占用哪些信号（模式决定） */
@@ -640,14 +655,15 @@ export interface SmartPlan extends EnablePlan {
   relocations: Relocation[];
 }
 
-/** 所有模式选项（排除 Disable / off），当前模式排在最前面 */
-function modeOrder(periph: PeripheralDef, cfg: PeripheralConfig): string[] | null {
+/** 所有模式选项（排除 Disable / off 与设备能力不支持项），当前模式排在最前面 */
+function modeOrder(dev: DeviceDef, periph: PeripheralDef, cfg: PeripheralConfig): string[] | null {
   const schema = schemaFor(periph.schema);
   const modeParam = schema?.modeKey ? schema.params.find((p) => p.key === schema.modeKey) : undefined;
   if (!modeParam) return null;
   const cur = String(cfg.mode ?? "");
   const usable = (modeParam.options ?? [])
     .filter((o) => o.value !== "disable" && o.value !== "off")
+    .filter((o) => modeOptionSupported(dev, o))
     .map((o) => String(o.value));
   // 已经选过有效模式的，先按原样试；还停在 Disable / off / 空，就从第一项开始
   return usable.includes(cur) ? [cur, ...usable.filter((v) => v !== cur)] : usable;
@@ -668,7 +684,7 @@ export function planEnable(
   cfg: PeripheralConfig,
   usage: PinUsage[],
 ): EnablePlan | null {
-  const order = modeOrder(periph, cfg);
+  const order = modeOrder(dev, periph, cfg);
   const cur = String(cfg.mode ?? "");
   if (!order) {
     const pins = planPins(dev, project, periph.id, requiredInMode(periph, cur, cfg.params), usage);
@@ -709,7 +725,7 @@ export function planEnableSmart(
   cfg: PeripheralConfig,
   usage: PinUsage[],
 ): SmartPlan | null {
-  const order = modeOrder(periph, cfg);
+  const order = modeOrder(dev, periph, cfg);
   const cur = String(cfg.mode ?? "");
   const modes = order ?? [cur];
 
@@ -905,7 +921,7 @@ export function diagnoseEnable(
   cfg: PeripheralConfig,
   usage: PinUsage[],
 ): BlockerInfo[] {
-  const order = modeOrder(periph, cfg);
+  const order = modeOrder(dev, periph, cfg);
   const mode = order?.[0] ?? String(cfg.mode ?? "");
   const sigs = requiredInMode(periph, mode, cfg.params);
   // 一个脚上可能压着好几个外设，全部列出来 —— 只报一个的话关掉它还是启用不了

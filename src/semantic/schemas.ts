@@ -26,6 +26,8 @@ const sel = (
     signals?: string[];
     required?: string[];
     disabledIf?: ParamDef["visibleIf"];
+    /** 设备能力门槛（如 "usb.hs"）——由 pinmux.modeOptionSupported 消费 */
+    cap?: string;
     hint?: string;
   }[],
   extra: Partial<ParamDef> = {},
@@ -40,6 +42,7 @@ const sel = (
     signals: o.signals,
     required: o.required,
     disabledIf: o.disabledIf,
+    cap: o.cap,
     hint: o.hint,
   })),
   ...extra,
@@ -1095,7 +1098,8 @@ const usb: PeripheralSchema = {
       [
         { l: "Disable", v: "disable" },
         { l: "Full Speed 全速 12 Mbps", v: "fs", signals: ["DP", "DM"] },
-        { l: "High Speed 高速 480 Mbps", v: "hs", signals: ["DP", "DM"] },
+        // 高速 PHY 只有 V407 / V467 有；FS-only 芯片（X033 / X035 / L103 / HC32）靠 cap 隐藏
+        { l: "High Speed 高速 480 Mbps", v: "hs", signals: ["DP", "DM"], cap: "usb.hs" },
       ],
       { group: "base" },
     ),

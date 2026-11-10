@@ -3,7 +3,7 @@
  */
 import { useMemo } from "react";
 import type { ClockDerived, DeviceDef, PeripheralConfig, PeripheralDef, Project } from "../../model/types";
-import { modeMissingSignals, pinTableSignals } from "../../semantic/pinmux";
+import { modeMissingSignals, modeOptionSupported, pinTableSignals } from "../../semantic/pinmux";
 import { evalCond } from "../../engine/expr";
 import { schemaFor } from "../../semantic/schemas";
 import { i2cTiming, spiClock, timBase, usartBrr } from "../../engine/clock";
@@ -40,10 +40,12 @@ export function ParamsTab({
     for (const o of all) {
       const v = String(o.value);
       if (v === "disable" || v === "off") continue;
+      // 硬件能力门槛：FS-only 芯片不显示「高速 480 Mbps」这类本器件没有的档位
+      if (!modeOptionSupported(dev, o)) { map.set(v, "本器件无此硬件"); blocked.push(o.label.split("  ")[0]); continue; }
       const missing = modeMissingSignals(dev, periph, v);
       if (missing.length) { map.set(v, `缺 ${missing.join(" / ")}`); blocked.push(o.label.split("  ")[0]); }
     }
-    return { map: map.size ? map : undefined, note: blocked.length ? `本封装未引出对应引脚，已隐藏：${blocked.join("、")}` : undefined };
+    return { map: map.size ? map : undefined, note: blocked.length ? `本器件不支持，已隐藏：${blocked.join("、")}` : undefined };
   }, [schema, dev, periph]);
 
   const visible = paramsForDevice.filter((p) => evalCond(p.visibleIf, values, mode));
