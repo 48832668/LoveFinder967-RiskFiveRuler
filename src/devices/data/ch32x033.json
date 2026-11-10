@@ -99,7 +99,7 @@
     "note": "X035: RCC 无 PLL/SYSCLK/PCLK/ADCCLK；ADC 时钟用 ADC_CLKConfig；GPIO 只有 50MHz 且无开漏；NVIC 只有 Group_0/1；采样时间是整数周期"
   },
   "sdkHeader": "ch32x035",
-  "peripheralVersion": "1.5",
+  "peripheralVersion": "2.2",
   "clock": {
     "hsi": 48,
     "hseOptions": [],

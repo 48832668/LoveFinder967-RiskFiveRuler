@@ -1350,7 +1350,7 @@ function genMrsTemplate(project: Project, dev: DeviceDef, name: string): string 
   return [
     `Mcu Type=${dev.family}`,
     "Address=0x08000000",
-    `Target Path=obj\\${name}.hex`,
+    `Target Path=obj/${name}.hex`,
     "Erase All=true",
     "Program=true",
     "Verify=true",
