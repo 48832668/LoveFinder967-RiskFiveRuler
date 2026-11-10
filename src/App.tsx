@@ -951,6 +951,7 @@ export default function App() {
                 onChangeMany={updateConfigs}
                 onFree={freeBlockerAndEnable}
                 onJumpPeripheral={selectPeriph}
+                onNote={notify}
                 beginner={prefs.beginner}
               />
             ) : (

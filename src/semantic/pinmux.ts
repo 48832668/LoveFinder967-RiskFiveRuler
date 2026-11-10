@@ -3,7 +3,7 @@ import { schemaFor } from "./schemas";
 import { evalCond } from "../engine/expr";
 // 底层原语与重映射组板块拆在同目录；这里按门面方式再导出，外部导入路径不变
 import { pinsForSignal, remapsAt, signalAvailable, remapOf } from "./pinmuxBase";
-import { assignedGroupOf } from "./pinmuxGroups";
+import { assignedGroupOf, groupPinsFor } from "./pinmuxGroups";
 export { signalsOnPin, pinsForSignal, signalAvailable, remapsAt, remapOf } from "./pinmuxBase";
 export { remapGroupsOf, groupPinsFor, assignedGroupOf } from "./pinmuxGroups";
 export type { GroupSlot, RemapGroup } from "./pinmuxGroups";
@@ -415,6 +415,88 @@ export function applyModePins(
   return next;
 }
 
+/** schema 里所有 select 选项声明过的信号（模式 + 普通参数，如 SPI 的硬件 NSS、USART 的 RTS/CTS） */
+export function optionOwnedSignals(periph: PeripheralDef): Set<string> {
+  const out = modeOwnedSignals(periph);
+  const schema = schemaFor(periph.schema);
+  for (const p of schema?.params ?? []) {
+    if (p.type !== "select") continue;
+    for (const o of p.options ?? []) {
+      for (const s of o.signals ?? []) out.add(s);
+      for (const s of o.required ?? []) out.add(s);
+    }
+  }
+  return out;
+}
+
+/** 当前模式 + 参数组合需要占用、且由引脚表管的信号（必需信号 ∪ 参数声明的信号） */
+export function wantedSignals(
+  periph: PeripheralDef,
+  mode: string | undefined,
+  params: Record<string, string | number | boolean> | undefined,
+): string[] {
+  return [...new Set([...requiredInMode(periph, mode, params), ...paramSignals(periph, params)])];
+}
+
+/**
+ * 模式 / 参数变化后重新安排引脚（applyModePins 的推广版）。
+ *
+ * applyModePins 只看模式；这里把**普通参数声明的信号**也算进来 ——
+ * SPI 选「硬件 NSS 输出」要立刻把 NSS 落到引脚，USART 关掉流控要释放 RTS/CTS。
+ * 收回规则不变：只收「模式 / 参数管的线」，用户手工配的其它脚不动。
+ *
+ * grouped 器件的落组规则：
+ *   · 一条没配 → 整组规划（planPins 保证同一组）；
+ *   · 已有部分引脚 → 新脚必须落在**已分配信号所在的组**里，组内候选被占
+ *     又没有同组替补时宁可不配（调用方回退参数），绝不为了 NSS 把外设搞成混组。
+ */
+export function applyConfigPins(
+  dev: DeviceDef,
+  project: Project,
+  periph: PeripheralDef,
+  cfg: PeripheralConfig,
+): Record<string, string | null> {
+  const schema = schemaFor(periph.schema);
+  const mode = String((schema?.modeKey && cfg.params[schema.modeKey]) || cfg.mode || "");
+  const wantList = wantedSignals(periph, mode, cfg.params).filter((s) => !isChannelSignal(periph, s));
+  const want = new Set(wantList);
+  const owned = optionOwnedSignals(periph);
+  const usage = collectUsage(project, dev);
+  const next: Record<string, string | null> = { ...cfg.pins };
+
+  // 1) 不再需要的线收回
+  for (const sig of Object.keys(next)) {
+    if (owned.has(sig) && !want.has(sig)) next[sig] = null;
+  }
+
+  // 2) 新增的线自动挑脚
+  const missing = [...want].filter((s) => !next[s]);
+  if (missing.length) {
+    if (dev.afGrouping === "grouped" && missing.length < wantList.length) {
+      // 部分已分配：跟着已分配信号所在的组走
+      const assigned = wantList.filter((s) => next[s]);
+      const cur = assignedGroupOf(dev, periph, assigned, next);
+      if (typeof cur === "number") {
+        const gp = groupPinsFor(dev, periph, wantList, cur, next, usage);
+        for (const s of missing) {
+          const pin = gp[s];
+          // 组内没有这根线、或组内唯一的脚被别人占着 → 宁缺，调用方回退
+          if (!pin || usage.some((u) => u.pin === pin && u.owner !== periph.id)) continue;
+          next[s] = pin;
+        }
+        return next;
+      }
+    }
+    const staged: Project = {
+      ...project,
+      configs: { ...project.configs, [periph.id]: { ...cfg, pins: next } },
+    };
+    const plan = planPins(dev, staged, periph.id, missing.length === wantList.length ? wantList : missing, collectUsage(staged, dev));
+    if (plan) Object.assign(next, plan);
+  }
+  return next;
+}
+
 /** 全工程的引脚占用 */
 export function collectUsage(project: Project, dev: DeviceDef): PinUsage[] {
   const out: PinUsage[] = [];
@@ -687,12 +769,12 @@ export function planEnable(
   const order = modeOrder(dev, periph, cfg);
   const cur = String(cfg.mode ?? "");
   if (!order) {
-    const pins = planPins(dev, project, periph.id, requiredInMode(periph, cur, cfg.params), usage);
+    const pins = planPins(dev, project, periph.id, wantedSignals(periph, cur, cfg.params), usage);
     return pins ? { mode: cur, pins } : null;
   }
   for (const mode of order) {
-    // 占几根线由模式决定（单线只 TX），不能再无条件把器件包的 TX+RX 都算上
-    const pins = planPins(dev, project, periph.id, requiredInMode(periph, mode, cfg.params), usage);
+    // 占几根线由模式 + 参数共同决定（单线只 TX、硬件 NSS 要多占一根）
+    const pins = planPins(dev, project, periph.id, wantedSignals(periph, mode, cfg.params), usage);
     if (pins) return { mode, pins };
   }
   return null;
@@ -730,7 +812,7 @@ export function planEnableSmart(
   const modes = order ?? [cur];
 
   for (const mode of modes) {
-    const sigs = requiredInMode(periph, mode, cfg.params);
+    const sigs = wantedSignals(periph, mode, cfg.params);
     const strict = planPins(dev, project, periph.id, sigs, usage);
     if (strict) return { mode, pins: strict, relocations: [] };
     const flex = planPinsRelocating(dev, project, periph, sigs, usage);
@@ -923,7 +1005,7 @@ export function diagnoseEnable(
 ): BlockerInfo[] {
   const order = modeOrder(dev, periph, cfg);
   const mode = order?.[0] ?? String(cfg.mode ?? "");
-  const sigs = requiredInMode(periph, mode, cfg.params);
+  const sigs = wantedSignals(periph, mode, cfg.params);
   // 一个脚上可能压着好几个外设，全部列出来 —— 只报一个的话关掉它还是启用不了
   const occ = occupantsOf(usage, periph.id, project);
   const taken = (pin: string) => (occ.get(pin)?.length ?? 0) > 0;

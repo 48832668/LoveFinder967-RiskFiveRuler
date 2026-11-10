@@ -240,6 +240,57 @@ page.on("console", (m) => {
   check(remaps.includes("00"), "引脚表显示当前复用值（00）", remaps.join(","));
 }
 
+/* ── 4d. SPI 半双工主机：MISO 不再误报；硬件 NSS 自动落脚 / 组内冲突回退 ── */
+{
+  // 成功路径：无占用时 NSS 落到第一个候选 PA4
+  await page.goto(`${BASE}/?dev=CH32L103K8U6&sel=SPI1`, { waitUntil: "networkidle" });
+  await page.waitForTimeout(900);
+  await page.locator(".cfg-head .switch").click();
+  await page.waitForTimeout(300);
+  const modeSel = page.locator(".field-row select").filter({ has: page.locator("option", { hasText: "半双工主机" }) });
+  await modeSel.selectOption("half_master");
+  await page.waitForTimeout(300);
+  await page.locator(".cfg-tabs button", { hasText: "引脚" }).click();
+  await page.waitForTimeout(250);
+  const notes = await page.locator(".block-note").allInnerTexts();
+  check(!notes.some((t) => t.includes("MISO")), "半双工主机不再误报 MISO 未分配", notes.join("|").slice(0, 120));
+  await page.locator(".cfg-tabs button", { hasText: "参数" }).click();
+  await page.waitForTimeout(250);
+  const nssSel = page.locator(".field-row select").filter({ has: page.locator("option", { hasText: "硬件 NSS 输出" }) });
+  await nssSel.selectOption("hardware_out");
+  await page.waitForTimeout(300);
+  await page.locator(".cfg-tabs button", { hasText: "引脚" }).click();
+  await page.waitForTimeout(250);
+  const nssRow = await page.locator(".pin-table tr", { hasText: "NSS" }).innerText();
+  check(nssRow.includes("PA4"), "硬件 NSS 立即自动配置（第一个候选 PA4）", nssRow.replace(/\s+/g, " "));
+
+  // 冲突路径：组内唯一的 NSS 候选 PA4 被 EXTI_LINE4 占 → 改回软件 NSS + toast
+  await page.locator(".tree-item", { hasText: "EXTI" }).first().click();
+  await page.waitForTimeout(400);
+  await page.locator(".cfg-head .switch").click();
+  await page.waitForTimeout(300);
+  await page.locator(".cfg-tabs button", { hasText: "中断线" }).click();
+  await page.waitForTimeout(250);
+  const card = page.locator(".chan-card", { hasText: "LINE4" }).first();
+  await card.locator("input[type=checkbox]").first().check();
+  await page.waitForTimeout(150);
+  await card.locator(".chan-body select").last().selectOption("PA4");
+  await page.waitForTimeout(200);
+  await page.locator(".tree-item", { hasText: "SPI1" }).first().click();
+  await page.waitForTimeout(400);
+  await page.locator(".cfg-tabs button", { hasText: "参数" }).click();
+  await page.waitForTimeout(250);
+  await nssSel.selectOption("software");
+  await page.waitForTimeout(250);
+  await nssSel.selectOption("hardware_out");
+  await page.waitForTimeout(500);
+  check((await nssSel.inputValue()) === "software", "NSS 组内候选全被占 → 自动改回软件 NSS");
+  const toast = await page.locator(".toast-text").innerText().catch(() => "");
+  check(toast.includes("NSS") && toast.includes("冲突"), "冲突提示 toast 出现", toast);
+}
+
+/* ── 5. 分层模块可直接调用（不经过 core 兼容层） ─────────────── */
+
 /* ── 5. 分层模块可直接调用（不经过 core 兼容层） ─────────────── */
 {
   const ok = await page.evaluate(async () => {

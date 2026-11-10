@@ -4,9 +4,9 @@
 import { useMemo, useState, useEffect } from "react";
 import type { DeviceDef, PeripheralConfig, PeripheralDef, Project } from "../../model/types";
 import type { ClockDerived } from "../../model/types";
-import { colorOf, collectUsage, isChannelSignal, pinsForSignal, requiredInMode } from "../../semantic/pinmux";
+import { colorOf, collectUsage, isChannelSignal, pinsForSignal, requiredInMode, paramSignals, applyConfigPins } from "../../semantic/pinmux";
 import { schemaFor } from "../../semantic/schemas";
-import { applyModePins, applyRelocations, planEnable, planEnableSmart, diagnoseEnable } from "../../semantic/pinmux";
+import { applyRelocations, planEnable, planEnableSmart, diagnoseEnable } from "../../semantic/pinmux";
 import { DmaOverview, DmaTab } from "./DmaTab";
 import { ParamsTab } from "./ParamsTab";
 import { PinsTab } from "./PinsTab";
@@ -25,10 +25,12 @@ interface Props {
   onChangeMany: (next: Record<string, PeripheralConfig>) => void;
   onFree: (id: string) => void;
   onJumpPeripheral: (id: string) => void;
+  /** 参数改动引发的临时提示（如「NSS 和 XXX 冲突，已改回原配置」），宿主用 toast 展示 */
+  onNote?: (msg: string) => void;
   beginner: boolean;
 }
 
-export function ConfigPanel({ dev, project, periph, clock, pane, onChange, onChangeMany, onFree, onJumpPeripheral, beginner }: Props) {
+export function ConfigPanel({ dev, project, periph, clock, pane, onChange, onChangeMany, onFree, onJumpPeripheral, onNote, beginner }: Props) {
   const schema = schemaFor(periph.schema);
   const cfg = project.configs[periph.id];
   const [tab, setTab] = useState<Tab>(() => {
@@ -37,6 +39,16 @@ export function ConfigPanel({ dev, project, periph, clock, pane, onChange, onCha
   });
 
   useEffect(() => { if (pane) setTab(pane); }, [pane, periph.id]);
+
+  // 从别的外设切过来时，当前页签可能在新外设上不存在（EXTI 的「中断线」→ SPI1）——回到参数页
+  useEffect(() => {
+    setTab((t) => {
+      if (t === "channel" && !schema?.channelSpec) return "params";
+      if (t === "pins" && !periph.signals.some((s) => !isChannelSignal(periph, s.name))) return "params";
+      return t;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [periph.id]);
 
   const usage = useMemo(() => collectUsage(project, dev), [project, dev]);
   const plan = useMemo(
@@ -77,8 +89,28 @@ export function ConfigPanel({ dev, project, periph, clock, pane, onChange, onCha
   const patch = (p: Partial<PeripheralConfig>) => onChange(periph.id, { ...cfg, ...p });
   const setParam = (k: string, v: string | number | boolean) => {
     const next = { ...cfg, params: { ...cfg.params, [k]: v } };
-    if (k === (schema?.modeKey ?? "") && cfg.enabled) {
-      next.pins = applyModePins(dev, project, periph, next, String(v));
+    // 模式键与 cfg.mode 必须同步：引脚规划、引脚表、代码生成都认 cfg.mode
+    if (schema?.modeKey && k === schema.modeKey) next.mode = String(v);
+    if (cfg.enabled) {
+      const before = paramSignals(periph, cfg.params);
+      next.pins = applyConfigPins(dev, project, periph, next);
+      // 新增的信号落不下去（所有候选都被占）→ 回退这项参数，并指出是谁占着
+      const added = paramSignals(periph, next.params).filter((s) => !before.includes(s));
+      const failed = added.filter((s) => !next.pins[s] && pinsForSignal(dev, `${periph.id}_${s}`).length > 0);
+      if (failed.length) {
+        const owners = [
+          ...new Set(
+            failed.flatMap((s) =>
+              pinsForSignal(dev, `${periph.id}_${s}`).flatMap((c) =>
+                usage.filter((u) => u.pin === c.name && u.owner !== periph.id).map((u) => u.fn),
+              ),
+            ),
+          ),
+        ];
+        onNote?.(`${failed.join(" / ")} 和 ${owners.join("、")} 引脚冲突，已改回原配置`);
+        onChange(periph.id, cfg);
+        return;
+      }
     }
     onChange(periph.id, next);
   };
