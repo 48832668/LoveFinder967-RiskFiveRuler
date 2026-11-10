@@ -6,9 +6,11 @@ interface Props {
   dev: DeviceDef;
   project: Project;
   onExport: () => void;
+  /** 工程已保存到磁盘（生成代码需要落盘目录；未保存时按钮隐藏） */
+  canExport: boolean;
 }
 
-export function CodePanel({ dev, project, onExport }: Props) {
+export function CodePanel({ dev, project, onExport, canExport }: Props) {
   /**
    * 资料不足的器件不生成初始化代码。
    *
@@ -96,7 +98,7 @@ export function CodePanel({ dev, project, onExport }: Props) {
         >
           {copied ? "已复制" : "复制"}
         </button>
-        <button className="btn btn-primary btn-sm" onClick={onExport}>导出到目录</button>
+        {canExport && <button className="btn btn-primary btn-sm" onClick={onExport}>导出到目录</button>}
       </div>
 
       <div className="code-path">{current?.path}</div>

@@ -71,6 +71,24 @@ export async function exportTree(files: ExportFile[], subdir?: string): Promise<
 }
 
 /**
+ * 导出到**已知目录**，不弹目录选择框。
+ *
+ * 工程已保存过（filePath 存在）时，生成代码直接落在工程所在目录 ——
+ * 与「保存后一键生成」的工作流配套；未保存过的工程根本不给生成入口。
+ */
+export async function exportTreeTo(files: ExportFile[], root: string, subdir?: string): Promise<string | null> {
+  const prefix = subdir ? `${subdir.replace(/[\\/]+$/, "")}/` : "";
+  const entries = files.map((f) => ({ path: `${prefix}${f.path}`, content: f.content }));
+  if (!inTauri()) {
+    for (const f of entries) downloadText(f.path.split("/").pop() ?? "file.txt", f.content);
+    return "浏览器下载";
+  }
+  const clean = root.replace(/[\\/]+$/, "");
+  await invoke("write_tree", { root: clean, files: entries });
+  return `${clean}${prefix ? ` → ${prefix}` : ""}`;
+}
+
+/**
  * 保存到**已知路径**，不弹对话框。
  *
  * 「保存」和「另存为」的区别就在这里：前者覆盖当前文件，后者总是重新选。

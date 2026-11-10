@@ -5,9 +5,9 @@ import { createProject, createDemoProject, freePeripheral, retarget } from "./ap
 import { solveClock } from "./engine/clock";
 import { applyModePins, applyRelocations, collectUsage, findConflicts, groupPinsFor, modeForSignal, normalizeModes, paramSignals, pinTableSignals, planEnableSmart, planPins, remapOf, remapsAt, requiredInMode } from "./semantic/pinmux";
 import { schemaFor } from "./semantic/schemas";
-import { mrsProjectName } from "./backends/wch/codegen";
-import { generate, pinmapOnly } from "./backends/index";
-import { exportTree, inTauri, openExternal, openProjectFile, readProjectAt, saveProjectFile, saveProjectToPath } from "./platform/io";
+import { generateWithLib, mrsProjectName } from "./backends/wch/codegen";
+import { pinmapOnly } from "./backends/index";
+import { exportTree, exportTreeTo, inTauri, openExternal, openProjectFile, readProjectAt, saveProjectFile, saveProjectToPath } from "./platform/io";
 import { clearRecent, dropRecent, loadRecent, pushRecent } from "./platform/recent";
 import type { RecentEntry } from "./platform/recent";
 import { DEFAULT_UI_PREFS, loadUiPrefs, saveUiPrefs } from "./platform/settings";
@@ -629,11 +629,18 @@ export default function App() {
       notify(dev.codegenNote ?? `${dev.id} 未提供代码生成`);
       return;
     }
-    const files = generate(project, dev);
-    // MRS 工程整体放进 <工程名>/ 子目录，选 EVT 的 EXAM 目录就能直接 Import
+    // 生成入口只在工程已落盘后出现；这里再兜一道（菜单 / 快捷键仍可能进来）
+    if (!filePath) {
+      notify("请先保存工程，再生成代码");
+      return;
+    }
+    // MRS 工程整体放进 <工程名>/ 子目录，导入 MRS 时一个目录即是完整工程
     const subdir = project.settings.toolchain === "mrs" ? mrsProjectName(project) : undefined;
-    const dir = await exportTree(files, subdir);
-    if (dir) notify(`已导出 ${files.length} 个文件到 ${dir}`);
+    // 工程已在磁盘上：直接生成到工程所在目录，不再弹目录选择
+    const root = filePath.replace(/[\\/][^\\/]+$/, "");
+    const files = await generateWithLib(project, dev, inTauri());
+    const dir = await exportTreeTo(files, root, subdir);
+    if (dir) notify(`已生成 ${files.length} 个文件到 ${dir}`);
   };
 
   /** 资料不足的器件仍然可以导出引脚映射表 —— 那是纯数据，手工移植要用 */
@@ -887,9 +894,12 @@ export default function App() {
           <button className="btn btn-ghost btn-sm" onClick={doSave}>
             保存{dirty ? " •" : ""}
           </button>
-          {dev.codegenEnabled ? (
-            <button className="btn btn-primary btn-sm" onClick={doExport}>生成代码</button>
-          ) : (
+          {dev.codegenEnabled && filePath && (
+            <button className="btn btn-primary btn-sm" onClick={doExport} title={`生成到 ${filePath.replace(/[\\/][^\\/]+$/, "")}`}>
+              生成代码
+            </button>
+          )}
+          {!dev.codegenEnabled && (
             <button
               className="btn btn-primary btn-sm"
               onClick={doExportPinmap}
@@ -977,7 +987,7 @@ export default function App() {
             <ClockPanel topo={dev.clock} clock={project.clock} derived={clock} onChange={setClock} family={dev.family} beginner={prefs.beginner} />
           )}
 
-          {tab === "code" && <CodePanel dev={dev} project={project} onExport={doExport} />}
+          {tab === "code" && <CodePanel dev={dev} project={project} onExport={doExport} canExport={Boolean(filePath)} />}
 
           {tab === "project" && (
             <ProjectPanel dev={dev} project={project} clock={clock} conflicts={conflicts} onChange={setSettings} />

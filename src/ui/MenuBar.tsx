@@ -60,6 +60,9 @@ export function MenuBar({ recent, filePath, onOpenRecent, onClearRecent, onActio
   const [recentOpen, setRecentOpen] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
 
+  // 工程没保存过就不给「导出代码目录」入口 —— 生成代码需要落盘目录
+  const fileMenu = FILE_MENU.filter((i) => !("id" in i) || i.id !== "export" || Boolean(filePath));
+
   useEffect(() => {
     if (!open) return;
     const onDown = (e: MouseEvent) => {
@@ -186,7 +189,7 @@ export function MenuBar({ recent, filePath, onOpenRecent, onClearRecent, onActio
         设置
       </button>
 
-      {open === "file" && <div className="menu-pop menubar-menu dropdown">{renderItems(FILE_MENU)}</div>}
+      {open === "file" && <div className="menu-pop menubar-menu dropdown">{renderItems(fileMenu)}</div>}
       {open === "about" && <div className="menu-pop about-pop menubar-menu dropdown">{renderItems(ABOUT_MENU)}</div>}
     </div>
   );

@@ -311,7 +311,29 @@ page.on("console", (m) => {
   check(toast.includes("NSS") && toast.includes("冲突"), "冲突提示 toast 出现", toast);
 }
 
-/* ── 5. 分层模块可直接调用（不经过 core 兼容层） ─────────────── */
+/* ── 4e. 生成代码入口：未保存隐藏、保存后出现 ── */
+{
+  await page.goto(`${BASE}/?dev=CH32L103K8U6`, { waitUntil: "networkidle" });
+  await page.waitForTimeout(900);
+  const genBtn = page.locator(".top-actions .btn-primary", { hasText: "生成代码" });
+  check((await genBtn.count()) === 0, "未保存工程时「生成代码」按钮隐藏");
+  // 保存（浏览器端直接落到下载，filePath 随即记录）→ 按钮出现
+  await page.locator(".top-actions .btn-ghost", { hasText: "保存" }).click();
+  await page.waitForTimeout(500);
+  check((await genBtn.count()) === 1, "保存工程后「生成代码」按钮出现");
+  // .project 不再用 PARENT-2 链接 —— 自包含工程
+  await page.locator(".topnav button", { hasText: "生成代码" }).click();
+  await page.waitForTimeout(400);
+  const projFile = await page.evaluate(() => {
+    const btns = [...document.querySelectorAll(".file-tabs button")];
+    return btns.map((b) => b.textContent);
+  });
+  check(projFile.includes(".project"), "生成代码页签包含 .project", projFile.join(","));
+  await page.locator(".file-tabs button", { hasText: ".project" }).first().click();
+  await page.waitForTimeout(250);
+  const proj = await page.locator(".code-view").first().innerText();
+  check(!proj.includes("linkedResources"), ".project 为自包含（无 PARENT-2 链接）");
+}
 
 /* ── 5. 分层模块可直接调用（不经过 core 兼容层） ─────────────── */
 {
@@ -320,19 +342,26 @@ page.on("console", (m) => {
     const project = await import("/src/app/project.ts");
     const codegen = await import("/src/backends/index.ts");
     const schemas = await import("/src/semantic/schemas.ts");
+    const mculib = await import("/src/mculib/index.ts");
     const d = dev.DEVICE_MAP["CH32L103K8U6"];
     const p = project.createDemoProject(d);
     const files = codegen.generate(p, d);
+    // mculib：L103 库应能取到（Core/Debug/Ld/Peripheral/Startup 全套）
+    const lib = await mculib.mculibFilesFor("ch32l103");
+    const libDirs = new Set(lib.map((f) => f.path.split("/")[0]));
     return {
       devices: dev.DEVICES.length,
       files: files.length,
       init: files.some((f) => f.path.includes("rfr_init.c")),
       schema: !!schemas.schemaFor("USART"),
+      libCount: lib.length,
+      libDirs: [...libDirs].sort().join(","),
     };
   });
   check(ok.devices >= 6, "devices/ 注册表可独立加载", `${ok.devices} 个器件`);
   check(ok.files > 5 && ok.init, "backends/ 可独立生成代码", `${ok.files} 个文件`);
   check(ok.schema, "semantic/ 可独立取参数模式");
+  check(ok.libCount >= 45 && ok.libDirs === "Core,Debug,Ld,Peripheral,Startup", "mculib/ 收录 WCH 库文件（L103）", `${ok.libCount} 个文件，目录：${ok.libDirs}`);
 }
 
 /* ── 6. X033 USART3 数据完整性：PC18=TX / PC19=RX（AFIO 组 1） ── */

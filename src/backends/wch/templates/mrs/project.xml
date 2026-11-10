@@ -23,33 +23,8 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>Core</name>
-			<type>2</type>
-			<locationURI>PARENT-2-PROJECT_LOC/SRC/Core</locationURI>
-		</link>
-		<link>
-			<name>Debug</name>
-			<type>2</type>
-			<locationURI>PARENT-2-PROJECT_LOC/SRC/Debug</locationURI>
-		</link>
-		<link>
-			<name>Ld</name>
-			<type>2</type>
-			<locationURI>PARENT-2-PROJECT_LOC/SRC/Ld</locationURI>
-		</link>
-		<link>
-			<name>Peripheral</name>
-			<type>2</type>
-			<locationURI>PARENT-2-PROJECT_LOC/SRC/Peripheral</locationURI>
-		</link>
-		<link>
-			<name>Startup</name>
-			<type>2</type>
-			<locationURI>PARENT-2-PROJECT_LOC/SRC/Startup</locationURI>
-		</link>
-	</linkedResources>
+	<!-- Core / Debug / Ld / Peripheral / Startup 是工程内的实体目录（由 RiskFiveRuler
+	     从 mculib 写入），不再用 EVT 的 PARENT-2 链接 —— 导出的工程单个目录即可 Import -->
 	<filteredResources>
 		<filter>
 			<id>1595986042669</id>

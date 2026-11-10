@@ -5,21 +5,23 @@ import { schemaFor } from "../../semantic/schemas";
 import { sdkHeaderOf } from "../../devices/index";
 import { dmaRef } from "../../engine/dma";
 import cprojectTpl from "./templates/mrs/cproject.xml?raw";
+import { mculibFilesFor } from "../../mculib/index";
 import projectTpl from "./templates/mrs/project.xml?raw";
 
 /**
  * 代码生成。
  *
  * 输出的是「WCH 官方 SDK 风格」的工程骨架：使用 ch32xxx.h 里的标准外设库 API，
- * 中断向量与启动文件沿用 SDK，用户只需要把生成的文件放进 EVT 模板里编译。
- * 每个 Init 函数都带一行寄存器注释，方便对着手册复核。
+ * 中断向量与启动文件沿用 SDK。每个 Init 函数都带一行寄存器注释，方便对着手册复核。
  *
  * 两种导出布局（按工程设置里的 toolchain 选择）：
  *   mrs  —— MounRiver Studio 工程，结构对齐 WCH EVT 的 EXAM 例程：
  *           `.project` / `.cproject` / `.template` + `User/`，
- *           Core / Startup / Ld / Peripheral / Debug 通过 linkedResources
- *           指向上两级 `../SRC/`（与 WCH 官方例程完全一致的引用方式）。
- *   core —— 纯源码树 Core/Inc + Core/Src，配 Makefile，交给任意工具链。
+ *           Core / Startup / Ld / Peripheral / Debug 是**工程内实体目录**
+ *           （内容由 `generateWithLib` 从 src/mculib 写入）——
+ *           导出的单个目录在 MRS 里 Import 即用。
+ *   core —— 纯源码树 Core/Inc + Core/Src，配 Makefile；库文件落在 SDK/ 前缀下
+ *           （Makefile 里的 -ISDK/... 与之一致）。
  */
 
 export interface GenFile {
@@ -27,9 +29,6 @@ export interface GenFile {
   content: string;
   lang: "c" | "h" | "make" | "md" | "ld" | "xml" | "txt";
 }
-
-/** MRS 例程里被链接进工程的公共目录（相对工程上两级的 SRC/） */
-const MRS_LINKED = ["Core", "Debug", "Ld", "Peripheral", "Startup"];
 
 const PORT_ALIAS: Record<string, string> = {
   PA: "GPIOA",
@@ -161,6 +160,44 @@ export function generate(project: Project, dev: DeviceDef): GenFile[] {
   }
   files.push({ path: "README.md", lang: "md", content: genReadme(project, dev, clk, mrs) });
   return files;
+}
+
+/**
+ * 生成 + EVT 标准外设库（自包含可编译工程）。
+ *
+ * 库文件按工具链落位：
+ *   - MRS：工程根下的 Core / Debug / Ld / Peripheral / Startup（.project 里是
+ *     实体目录，不再是 EVT 的 PARENT-2 链接 —— 导出的工程单个目录即可 Import）；
+ *   - Make：SDK/ 前缀（与 Makefile 里的 -ISDK/... / SDK/Ld/Link.ld 一致）。
+ * `includeLib` 由宿主决定（浏览器演示环境不掺 200 个库文件）。
+ * HC32 没有官方库（codegen=disable），走不到这里。
+ */
+export async function generateWithLib(
+  project: Project,
+  dev: DeviceDef,
+  includeLib: boolean,
+): Promise<GenFile[]> {
+  const files = generate(project, dev);
+  if (!includeLib || project.settings.toolchain !== "mrs") {
+    if (includeLib && project.settings.toolchain === "make") {
+      const lib = await mculibFilesFor(sdkHeaderOf(dev));
+      return [...files, ...lib.map((f) => ({ path: `SDK/${f.path}`, content: f.content, lang: "c" as const }))];
+    }
+    return files;
+  }
+  const lib = await mculibFilesFor(sdkHeaderOf(dev));
+  return [
+    ...files,
+    ...lib.map((f) => ({
+      path: f.path,
+      content: f.content,
+      lang: (f.path.endsWith(".h") || f.path.endsWith(".c")
+        ? "c"
+        : f.path.endsWith(".ld")
+          ? "ld"
+          : "txt") as GenFile["lang"],
+    })),
+  ];
 }
 
 /** MRS 布局的源码一律放进 User/；Core 布局下头文件进 Core/Inc、其余进 Core/Src */
