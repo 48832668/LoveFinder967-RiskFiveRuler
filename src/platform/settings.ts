@@ -37,6 +37,39 @@ const LS_KEY = "rfr.uiprefs";
 const HEX = /^#[0-9a-fA-F]{6}$/;
 
 /**
+ * 主题色的**可读性归一化**。
+ *
+ * 用户可以选任何颜色（包括纯黑 / 纯白），但派生出的 accent 会直接当文字色用
+ * （选中项、链接、激活 chip……）：暗色模式里过暗的主色 = 黑字黑底，浅色模式里
+ * 过亮的主色 = 白字白底。这里按感知亮度把极端值往相反方向混，保证 accent
+ * 在对应底色上可读；亮度正常的主色原样返回。
+ */
+export function normalizeThemeColor(hex: string, mode: "dark" | "light"): string {
+  const m = /^#([0-9a-fA-F]{6})$/.exec(hex.trim());
+  if (!m) return hex;
+  const n = parseInt(m[1]!, 16);
+  const r = (n >> 16) & 255;
+  const g = (n >> 8) & 255;
+  const b = n & 255;
+  const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  // 暗色模式：感知亮度 < 0.35 提亮到 0.35；浅色模式：> 0.78 压暗到 0.78
+  const [min, max] = mode === "dark" ? [0.35, 1] : [0, 0.78];
+  const target = Math.min(Math.max(lum, min), max);
+  if (Math.abs(target - lum) < 0.004) return hex.toLowerCase();
+  // 线性插值：lum(c) ≈ (1-t)*lum + t*255（往白）或 (1-t)*lum（往黑）
+  const towardWhite = target > lum;
+  const t = towardWhite
+    ? (target * 255 - lum * 255) / (255 - lum * 255)
+    : 1 - target / Math.max(lum, 0.004);
+  const mix = (c: number) => {
+    const v = towardWhite ? c + (255 - c) * t : c * (1 - t);
+    return Math.round(Math.min(255, Math.max(0, v)));
+  };
+  const to2 = (v: number) => v.toString(16).padStart(2, "0");
+  return `#${to2(mix(r))}${to2(mix(g))}${to2(mix(b))}`;
+}
+
+/**
  * 容错解析：任何字段不合法就落回默认 —— config.json 用户手改得动，坏了别崩。
  *
  * 字段以 saveUiPrefs 写出的**扁平**结构为准（themeColor / mode / beginner / pinColors）；

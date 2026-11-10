@@ -10,7 +10,7 @@ import { pinmapOnly } from "./backends/index";
 import { exportTree, exportTreeTo, inTauri, openExternal, openProjectFile, readProjectAt, saveProjectFile, saveProjectToPath } from "./platform/io";
 import { clearRecent, dropRecent, loadRecent, pushRecent } from "./platform/recent";
 import type { RecentEntry } from "./platform/recent";
-import { DEFAULT_UI_PREFS, loadUiPrefs, saveUiPrefs } from "./platform/settings";
+import { DEFAULT_UI_PREFS, loadUiPrefs, normalizeThemeColor, saveUiPrefs } from "./platform/settings";
 import type { UiPrefs } from "./platform/settings";
 import { setKindColorOverrides } from "./semantic/pinmux";
 import { MenuBar } from "./ui/MenuBar";
@@ -194,7 +194,9 @@ export default function App() {
 
   /** 主题色 / 图例配色：写 CSS 变量 + 通知 semantic 层；style 属性变化会让引脚图重绘 */
   useEffect(() => {
-    document.documentElement.style.setProperty("--app-theme", prefs.themeColor);
+    // 可读性归一化：纯黑在暗色模式、纯白在浅色模式会被提亮/压暗到可读亮度，
+    // 用户在设置里的原始色值不受影响（输入框读的是 prefs 本身）
+    document.documentElement.style.setProperty("--app-theme", normalizeThemeColor(prefs.themeColor, prefs.mode));
     setKindColorOverrides(prefs.pinColors);
   }, [prefs]);
 
