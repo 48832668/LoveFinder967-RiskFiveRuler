@@ -1,0 +1,66 @@
+//// FILE: User/rfr_pinmap.h
+/* RFR_Golden — 引脚映射表
+ * 器件: CH32X035R8T6 (CH32X035, QingKe V4C · RV32IMAC)
+ * 由 RiskFiveRuler 自动生成，请勿手工修改；改动请在工具里做。
+ */
+#ifndef __RFR_PINMAP_H
+#define __RFR_PINMAP_H
+
+#include "ch32x035.h"
+
+/* ── GPIOC ── */
+#define DBG_SWDIO_PIN              GPIO_Pin_18   /* PC18 ← DBG_SWDIO */
+#define DBG_SWDIO_PORT             GPIOC
+#define DBG_SWCLK_PIN              GPIO_Pin_19   /* PC19 ← DBG_SWCLK */
+#define DBG_SWCLK_PORT             GPIOC
+
+#endif /* __RFR_PINMAP_H */
+
+//// FILE: User/rfr_init.c
+/* RFR_Golden — 外设初始化
+ * 目标: CH32X035R8T6 / LQFP64M / QingKe V4C · RV32IMAC
+ * 时钟: SYSCLK 48 MHz, HCLK 48 MHz, PCLK1 48 MHz, PCLK2 48 MHz
+ */
+#include "rfr_init.h"
+
+/* ───────────────── 系统时钟 ───────────────── */
+void RFR_ClockInit(void)
+{
+    /* CH32X035 只有内部 48 MHz RC 振荡器，无 HSE、无 PLL（DS 1.4.6） */
+    RCC_DeInit();
+    RCC_HSICmd(ENABLE);
+
+    /* Flash 等待周期由主频推导：48 MHz → 1 */
+    FLASH_SetLatency(FLASH_Latency_1);
+}
+
+/* ───────────────── GPIO ───────────────── */
+void RFR_GPIOInit(void)
+{
+    GPIO_InitTypeDef gpio = {0};
+    /* 没有需要单独配置的普通 GPIO */
+}
+
+/* ───────────────── DBG ───────────────── */
+void RFR_DBG_Init(void)
+{
+    DBGMCU_Config(DBGMCU_IWDG_STOP, ENABLE); /* 调试器停住时冻结，不影响脱机运行 */
+    DBGMCU_Config(DBGMCU_WWDG_STOP, ENABLE); /* 调试器停住时冻结，不影响脱机运行 */
+    /* 保持 SDI 默认开启（复位状态） */
+}
+
+/* ───────────────── USB1 ───────────────── */
+void RFR_USB1_Init(void)
+{
+    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_USBFS, ENABLE);
+    /* TODO: USB1（USB）的初始化还没生成 ——
+     * 参考 EVT 里 USB 例程，
+     * 或在器件手册里查 USBFS->BASE_CTRL / USBOTG 寄存器 的配置位。 */
+}
+
+/* ───────────────── 中断 ───────────────── */
+void RFR_NVICInit(void)
+{
+    NVIC_InitTypeDef nvic = {0};
+    /* 未启用任何外设中断 */
+}

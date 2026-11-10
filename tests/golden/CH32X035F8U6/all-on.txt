@@ -1,0 +1,1137 @@
+//// FILE: User/rfr_pinmap.h
+/* RFR_Golden — 引脚映射表
+ * 器件: CH32X035F8U6 (CH32X035, QingKe V4C · RV32IMAC)
+ * 由 RiskFiveRuler 自动生成，请勿手工修改；改动请在工具里做。
+ */
+#ifndef __RFR_PINMAP_H
+#define __RFR_PINMAP_H
+
+#include "ch32x035.h"
+
+/* ── GPIOC ── */
+#define DBG_SWDIO_PIN              GPIO_Pin_18   /* PC18 ← DBG_SWDIO */
+#define DBG_SWDIO_PORT             GPIOC
+#define DBG_SWCLK_PIN              GPIO_Pin_19   /* PC19 ← DBG_SWCLK */
+#define DBG_SWCLK_PORT             GPIOC
+
+#endif /* __RFR_PINMAP_H */
+
+//// FILE: User/rfr_init.h
+#ifndef __RFR_INIT_H
+#define __RFR_INIT_H
+
+#include "ch32x035.h"
+#include "rfr_pinmap.h"
+
+void RFR_ClockInit(void);
+void RFR_GPIOInit(void);
+void RFR_NVICInit(void);
+void RFR_DBG_Init(void);
+void RFR_DMA_Init(void);
+void RFR_EXTI_Init(void);
+void RFR_PWR_Init(void);
+void RFR_I2C1_Init(void);
+void RFR_SPI1_Init(void);
+void RFR_USART1_Init(void);
+void RFR_USART2_Init(void);
+void RFR_USART3_Init(void);
+void RFR_USART4_Init(void);
+void RFR_USBPD_Init(void);
+void RFR_USB1_Init(void);
+void RFR_TIM1_Init(void);
+void RFR_TIM2_Init(void);
+void RFR_TIM3_Init(void);
+void RFR_ADC1_Init(void);
+void RFR_CMP1_Init(void);
+void RFR_CMP2_Init(void);
+void RFR_CMP3_Init(void);
+void RFR_OPA1_Init(void);
+void RFR_OPA2_Init(void);
+void RFR_IWDG_Init(void);
+void RFR_WWDG_Init(void);
+
+#endif /* __RFR_INIT_H */
+
+//// FILE: User/rfr_init.c
+/* RFR_Golden — 外设初始化
+ * 目标: CH32X035F8U6 / QFN20 / QingKe V4C · RV32IMAC
+ * 时钟: SYSCLK 48 MHz, HCLK 48 MHz, PCLK1 48 MHz, PCLK2 48 MHz
+ */
+#include "rfr_init.h"
+
+/* ───────────────── 系统时钟 ───────────────── */
+void RFR_ClockInit(void)
+{
+    /* CH32X035 只有内部 48 MHz RC 振荡器，无 HSE、无 PLL（DS 1.4.6） */
+    RCC_DeInit();
+    RCC_HSICmd(ENABLE);
+
+    /* Flash 等待周期由主频推导：48 MHz → 1 */
+    FLASH_SetLatency(FLASH_Latency_1);
+}
+
+/* ───────────────── GPIO ───────────────── */
+void RFR_GPIOInit(void)
+{
+    GPIO_InitTypeDef gpio = {0};
+    /* 没有需要单独配置的普通 GPIO */
+}
+
+/* ───────────────── DBG ───────────────── */
+void RFR_DBG_Init(void)
+{
+    DBGMCU_Config(DBGMCU_IWDG_STOP, ENABLE); /* 调试器停住时冻结，不影响脱机运行 */
+    DBGMCU_Config(DBGMCU_WWDG_STOP, ENABLE); /* 调试器停住时冻结，不影响脱机运行 */
+    /* 保持 SDI 默认开启（复位状态） */
+}
+
+/* ───────────────── DMA ───────────────── */
+void RFR_DMA_Init(void)
+{
+    /* TODO: DMA（DMA）的初始化还没生成 ——
+     * 参考 EVT 里 DMA 例程，
+     * 或在器件手册里查 对应外设的控制寄存器 的配置位。 */
+}
+
+/* ───────────────── EXTI ───────────────── */
+void RFR_EXTI_Init(void)
+{
+    EXTI_InitTypeDef exti = {0};
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+    /* EXTI: 没有启用任何中断线 */
+}
+
+/* ───────────────── PWR ───────────────── */
+void RFR_PWR_Init(void)
+{
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
+}
+
+/* ───────────────── I2C1 ───────────────── */
+void RFR_I2C1_Init(void)
+{
+    GPIO_InitTypeDef gpio = {0};
+    I2C_InitTypeDef i2c = {0};
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);
+    /* 需要外部 4.7k 上拉；I2C 为开漏复用输出 */
+    i2c.I2C_ClockSpeed = 400000;
+    i2c.I2C_Mode = I2C_Mode_I2C;
+    i2c.I2C_DutyCycle = I2C_DutyCycle_2;
+    i2c.I2C_OwnAddress1 = 0x30;
+    i2c.I2C_Ack = I2C_Ack_Enable;
+    i2c.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
+    I2C_Init(I2C1, &i2c);
+    I2C_Cmd(I2C1, ENABLE);
+}
+
+/* ───────────────── SPI1 ───────────────── */
+void RFR_SPI1_Init(void)
+{
+    GPIO_InitTypeDef gpio = {0};
+    SPI_InitTypeDef spi = {0};
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
+    /* fSCK = 6.00 MHz */
+    spi.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
+    spi.SPI_Mode = SPI_Mode_Slave;
+    spi.SPI_DataSize = SPI_DataSize_8b;
+    spi.SPI_CPOL = SPI_CPOL_Low;
+    spi.SPI_CPHA = SPI_CPHA_1Edge;
+    spi.SPI_NSS = SPI_NSS_Soft;
+    spi.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_8;
+    spi.SPI_FirstBit = SPI_FirstBit_MSB;
+    SPI_Init(SPI1, &spi);
+    SPI_Cmd(SPI1, ENABLE);
+    SPI_I2S_ITConfig(SPI1, SPI_I2S_IT_RXNE, ENABLE);
+}
+
+/* ───────────────── USART1 ───────────────── */
+void RFR_USART1_Init(void)
+{
+    GPIO_InitTypeDef gpio = {0};
+    USART_InitTypeDef uart = {0};
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
+    /* BRR = 0x1A1 → 实际 115107.9 bit/s，误差 -0.08% */
+    uart.USART_BaudRate = 115200;
+    uart.USART_WordLength = USART_WordLength_8b;
+    uart.USART_StopBits = USART_StopBits_1;
+    uart.USART_Parity = USART_Parity_No;
+    uart.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+    uart.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
+    USART_Init(USART1, &uart);
+    USART_Cmd(USART1, ENABLE);
+    USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+}
+
+/* ───────────────── USART2 ───────────────── */
+void RFR_USART2_Init(void)
+{
+    GPIO_InitTypeDef gpio = {0};
+    USART_InitTypeDef uart = {0};
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
+    /* BRR = 0x1A1 → 实际 115107.9 bit/s，误差 -0.08% */
+    uart.USART_BaudRate = 115200;
+    uart.USART_WordLength = USART_WordLength_8b;
+    uart.USART_StopBits = USART_StopBits_1;
+    uart.USART_Parity = USART_Parity_No;
+    uart.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+    uart.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
+    USART_Init(USART2, &uart);
+    USART_Cmd(USART2, ENABLE);
+    USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
+}
+
+/* ───────────────── USART3 ───────────────── */
+void RFR_USART3_Init(void)
+{
+    GPIO_InitTypeDef gpio = {0};
+    USART_InitTypeDef uart = {0};
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
+    /* BRR = 0x1A1 → 实际 115107.9 bit/s，误差 -0.08% */
+    uart.USART_BaudRate = 115200;
+    uart.USART_WordLength = USART_WordLength_8b;
+    uart.USART_StopBits = USART_StopBits_1;
+    uart.USART_Parity = USART_Parity_No;
+    uart.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+    uart.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
+    USART_Init(USART3, &uart);
+    USART_Cmd(USART3, ENABLE);
+    USART_ITConfig(USART3, USART_IT_RXNE, ENABLE);
+}
+
+/* ───────────────── USART4 ───────────────── */
+void RFR_USART4_Init(void)
+{
+    GPIO_InitTypeDef gpio = {0};
+    USART_InitTypeDef uart = {0};
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART4, ENABLE);
+    /* BRR = 0x1A1 → 实际 115107.9 bit/s，误差 -0.08% */
+    uart.USART_BaudRate = 115200;
+    uart.USART_WordLength = USART_WordLength_8b;
+    uart.USART_StopBits = USART_StopBits_1;
+    uart.USART_Parity = USART_Parity_No;
+    uart.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+    uart.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
+    USART_Init(USART4, &uart);
+    USART_Cmd(USART4, ENABLE);
+    USART_ITConfig(USART4, USART_IT_RXNE, ENABLE);
+}
+
+/* ───────────────── USBPD ───────────────── */
+void RFR_USBPD_Init(void)
+{
+    GPIO_InitTypeDef gpio = {0};
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_USBPD, ENABLE);
+    /* 角色：disable，协议：USB PD 3.0 */
+    /* CC 极性自动翻转：正插用 CC1、反插用 CC2 */
+    /* TODO: USBPD 的 PD 报文收发表（PD_DMA / PD_STAT）按 EVT 的 USBPD 例程填 ——
+     * 各系列的寄存器命名不同，这里不猜；引脚与角色已经配好。 */
+    /* TODO: 打开 CC 状态变化中断 */
+    /* TODO: 打开 PD 收/发中断 */
+}
+
+/* ───────────────── USB1 ───────────────── */
+void RFR_USB1_Init(void)
+{
+    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_USBFS, ENABLE);
+    /* TODO: USB1（USB）的初始化还没生成 ——
+     * 参考 EVT 里 USB 例程，
+     * 或在器件手册里查 USBFS->BASE_CTRL / USBOTG 寄存器 的配置位。 */
+}
+
+/* ───────────────── TIM1 ───────────────── */
+void RFR_TIM1_Init(void)
+{
+    GPIO_InitTypeDef gpio = {0};
+    TIM_TimeBaseInitTypeDef tb = {0};
+    TIM_OCInitTypeDef oc = {0};
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
+    /* fCNT = 48.000 MHz, 周期 = 20.83 us */
+    tb.TIM_Prescaler = 0;
+    tb.TIM_Period = 999;
+    tb.TIM_CounterMode = TIM_CounterMode_Up;
+    tb.TIM_ClockDivision = TIM_CKD_DIV1;
+    tb.TIM_RepetitionCounter = 0;
+    TIM_TimeBaseInit(TIM1, &tb);
+    TIM_ARRPreloadConfig(TIM1, ENABLE);
+    TIM_CtrlPWMOutputs(TIM1, ENABLE);
+    TIM_Cmd(TIM1, ENABLE);
+}
+
+/* ───────────────── TIM2 ───────────────── */
+void RFR_TIM2_Init(void)
+{
+    GPIO_InitTypeDef gpio = {0};
+    TIM_TimeBaseInitTypeDef tb = {0};
+    TIM_OCInitTypeDef oc = {0};
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+    /* fCNT = 48.000 MHz, 周期 = 20.83 us */
+    tb.TIM_Prescaler = 0;
+    tb.TIM_Period = 999;
+    tb.TIM_CounterMode = TIM_CounterMode_Up;
+    tb.TIM_ClockDivision = TIM_CKD_DIV1;
+    tb.TIM_RepetitionCounter = 0;
+    TIM_TimeBaseInit(TIM2, &tb);
+    TIM_ARRPreloadConfig(TIM2, ENABLE);
+    TIM_Cmd(TIM2, ENABLE);
+}
+
+/* ───────────────── TIM3 ───────────────── */
+void RFR_TIM3_Init(void)
+{
+    GPIO_InitTypeDef gpio = {0};
+    TIM_TimeBaseInitTypeDef tb = {0};
+    TIM_OCInitTypeDef oc = {0};
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+    /* fCNT = 48.000 MHz, 周期 = 20.83 us */
+    tb.TIM_Prescaler = 0;
+    tb.TIM_Period = 999;
+    tb.TIM_CounterMode = TIM_CounterMode_Up;
+    tb.TIM_ClockDivision = TIM_CKD_DIV1;
+    tb.TIM_RepetitionCounter = 0;
+    TIM_TimeBaseInit(TIM3, &tb);
+    TIM_ARRPreloadConfig(TIM3, ENABLE);
+    TIM_Cmd(TIM3, ENABLE);
+}
+
+/* ───────────────── ADC1 ───────────────── */
+void RFR_ADC1_Init(void)
+{
+    GPIO_InitTypeDef gpio = {0};
+    ADC_InitTypeDef adc = {0};
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
+    ADC_CLKConfig(ADC1, ADC_CLK_Div4);
+    ADC_DeInit(ADC1);
+    adc.ADC_Mode = ADC_Mode_Independent;
+    adc.ADC_ScanConvMode = DISABLE;
+    adc.ADC_ContinuousConvMode = DISABLE;
+    adc.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
+    adc.ADC_DataAlign = ADC_DataAlign_Right;
+    adc.ADC_NbrOfChannel = 1;
+    ADC_Init(ADC1, &adc);
+    ADC_Cmd(ADC1, ENABLE);
+    ADC_SoftwareStartConvCmd(ADC1, ENABLE);
+}
+
+/* ───────────────── CMP1 ───────────────── */
+void RFR_CMP1_Init(void)
+{
+    /* TODO: CMP1（CMP）的初始化还没生成 ——
+     * 参考 EVT 里 OPA/CMP 例程，
+     * 或在器件手册里查 CMP->CTLR（CMP_InitTypeDef 的 PSEL / NSEL / HYEN） 的配置位。 */
+}
+
+/* ───────────────── CMP2 ───────────────── */
+void RFR_CMP2_Init(void)
+{
+    /* TODO: CMP2（CMP）的初始化还没生成 ——
+     * 参考 EVT 里 OPA/CMP 例程，
+     * 或在器件手册里查 CMP->CTLR（CMP_InitTypeDef 的 PSEL / NSEL / HYEN） 的配置位。 */
+}
+
+/* ───────────────── CMP3 ───────────────── */
+void RFR_CMP3_Init(void)
+{
+    /* TODO: CMP3（CMP）的初始化还没生成 ——
+     * 参考 EVT 里 OPA/CMP 例程，
+     * 或在器件手册里查 CMP->CTLR（CMP_InitTypeDef 的 PSEL / NSEL / HYEN） 的配置位。 */
+}
+
+/* ───────────────── OPA1 ───────────────── */
+void RFR_OPA1_Init(void)
+{
+    /* TODO: OPA1（OPA）的初始化还没生成 ——
+     * 参考 EVT 里 OPA/OPA 例程，
+     * 或在器件手册里查 OPA->CTLR（OPA_InitTypeDef 的 PSEL / NSEL / Mode） 的配置位。 */
+}
+
+/* ───────────────── OPA2 ───────────────── */
+void RFR_OPA2_Init(void)
+{
+    /* TODO: OPA2（OPA）的初始化还没生成 ——
+     * 参考 EVT 里 OPA/OPA 例程，
+     * 或在器件手册里查 OPA->CTLR（OPA_InitTypeDef 的 PSEL / NSEL / Mode） 的配置位。 */
+}
+
+/* ───────────────── IWDG ───────────────── */
+void RFR_IWDG_Init(void)
+{
+    IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
+    IWDG_SetPrescaler(IWDG_Prescaler_64);
+    IWDG_SetReload(4095);
+    IWDG_ReloadCounter();
+    IWDG_Enable();
+}
+
+/* ───────────────── WWDG ───────────────── */
+void RFR_WWDG_Init(void)
+{
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_WWDG, ENABLE);
+    WWDG_SetPrescaler(WWDG_Prescaler_8);
+    WWDG_SetWindowValue(0x50);
+    WWDG_Enable(0x7F);
+}
+
+/* ───────────────── 中断 ───────────────── */
+void RFR_NVICInit(void)
+{
+    NVIC_InitTypeDef nvic = {0};
+    nvic.NVIC_IRQChannel = DMA1_Channel1_IRQn; nvic.NVIC_IRQChannelPreemptionPriority = 0; nvic.NVIC_IRQChannelSubPriority = 0; nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
+    nvic.NVIC_IRQChannel = DMA1_Channel2_IRQn; nvic.NVIC_IRQChannelPreemptionPriority = 0; nvic.NVIC_IRQChannelSubPriority = 0; nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
+    nvic.NVIC_IRQChannel = DMA1_Channel3_IRQn; nvic.NVIC_IRQChannelPreemptionPriority = 0; nvic.NVIC_IRQChannelSubPriority = 0; nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
+    nvic.NVIC_IRQChannel = DMA1_Channel4_IRQn; nvic.NVIC_IRQChannelPreemptionPriority = 0; nvic.NVIC_IRQChannelSubPriority = 0; nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
+    nvic.NVIC_IRQChannel = DMA1_Channel5_IRQn; nvic.NVIC_IRQChannelPreemptionPriority = 0; nvic.NVIC_IRQChannelSubPriority = 0; nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
+    nvic.NVIC_IRQChannel = DMA1_Channel6_IRQn; nvic.NVIC_IRQChannelPreemptionPriority = 0; nvic.NVIC_IRQChannelSubPriority = 0; nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
+    nvic.NVIC_IRQChannel = DMA1_Channel7_IRQn; nvic.NVIC_IRQChannelPreemptionPriority = 0; nvic.NVIC_IRQChannelSubPriority = 0; nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
+    nvic.NVIC_IRQChannel = DMA1_Channel8_IRQn; nvic.NVIC_IRQChannelPreemptionPriority = 0; nvic.NVIC_IRQChannelSubPriority = 0; nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
+    nvic.NVIC_IRQChannel = EXTI7_0_IRQn; nvic.NVIC_IRQChannelPreemptionPriority = 0; nvic.NVIC_IRQChannelSubPriority = 0; nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
+    nvic.NVIC_IRQChannel = EXTI15_8_IRQn; nvic.NVIC_IRQChannelPreemptionPriority = 0; nvic.NVIC_IRQChannelSubPriority = 0; nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
+    nvic.NVIC_IRQChannel = EXTI25_16_IRQn; nvic.NVIC_IRQChannelPreemptionPriority = 0; nvic.NVIC_IRQChannelSubPriority = 0; nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
+    nvic.NVIC_IRQChannel = PVD_IRQn; nvic.NVIC_IRQChannelPreemptionPriority = 0; nvic.NVIC_IRQChannelSubPriority = 0; nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
+    nvic.NVIC_IRQChannel = AWU_IRQn; nvic.NVIC_IRQChannelPreemptionPriority = 0; nvic.NVIC_IRQChannelSubPriority = 0; nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
+    nvic.NVIC_IRQChannel = SPI1_IRQn; nvic.NVIC_IRQChannelPreemptionPriority = 0; nvic.NVIC_IRQChannelSubPriority = 0; nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
+    nvic.NVIC_IRQChannel = PIOC_IRQn; nvic.NVIC_IRQChannelPreemptionPriority = 0; nvic.NVIC_IRQChannelSubPriority = 0; nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
+    nvic.NVIC_IRQChannel = USART1_IRQn; nvic.NVIC_IRQChannelPreemptionPriority = 0; nvic.NVIC_IRQChannelSubPriority = 0; nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
+    nvic.NVIC_IRQChannel = USART2_IRQn; nvic.NVIC_IRQChannelPreemptionPriority = 0; nvic.NVIC_IRQChannelSubPriority = 0; nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
+    nvic.NVIC_IRQChannel = USART3_IRQn; nvic.NVIC_IRQChannelPreemptionPriority = 0; nvic.NVIC_IRQChannelSubPriority = 0; nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
+    nvic.NVIC_IRQChannel = USART4_IRQn; nvic.NVIC_IRQChannelPreemptionPriority = 0; nvic.NVIC_IRQChannelSubPriority = 0; nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
+    nvic.NVIC_IRQChannel = USBPD_IRQn; nvic.NVIC_IRQChannelPreemptionPriority = 0; nvic.NVIC_IRQChannelSubPriority = 0; nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
+    nvic.NVIC_IRQChannel = USBPDWakeUp_IRQn; nvic.NVIC_IRQChannelPreemptionPriority = 0; nvic.NVIC_IRQChannelSubPriority = 0; nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
+    nvic.NVIC_IRQChannel = USBFS_IRQn; nvic.NVIC_IRQChannelPreemptionPriority = 0; nvic.NVIC_IRQChannelSubPriority = 0; nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
+    nvic.NVIC_IRQChannel = USBFSWakeUp_IRQn; nvic.NVIC_IRQChannelPreemptionPriority = 0; nvic.NVIC_IRQChannelSubPriority = 0; nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
+    nvic.NVIC_IRQChannel = OPA_IRQn; nvic.NVIC_IRQChannelPreemptionPriority = 0; nvic.NVIC_IRQChannelSubPriority = 0; nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
+    nvic.NVIC_IRQChannel = WWDG_IRQn; nvic.NVIC_IRQChannelPreemptionPriority = 0; nvic.NVIC_IRQChannelSubPriority = 0; nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
+}
+
+//// FILE: User/main.c
+/*
+ * RFR_Golden
+ * 器件   : CH32X035F8U6 (QingKe V4C · RV32IMAC)
+ * 封装   : QFN20
+ * 生成于 : <TIMESTAMP>  by RiskFiveRuler
+ */
+#include "debug.h"
+#include "rfr_init.h"
+
+int main(void)
+{
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
+    SystemCoreClockUpdate();
+    Delay_Init();
+#if (SDI_PRINT == SDI_PR_OPEN)
+    SDI_Printf_Enable();
+#else
+    USART_Printf_Init(115200);
+#endif
+    printf("SystemClk:%d\r\n", SystemCoreClock);
+    printf("ChipID:%08x\r\n", DBGMCU_GetCHIPID());
+    RFR_ClockInit();
+    RFR_GPIOInit();
+    RFR_DBG_Init();
+    RFR_DMA_Init();
+    RFR_EXTI_Init();
+    RFR_PWR_Init();
+    RFR_I2C1_Init();
+    RFR_SPI1_Init();
+    RFR_USART1_Init();
+    RFR_USART2_Init();
+    RFR_USART3_Init();
+    RFR_USART4_Init();
+    RFR_USBPD_Init();
+    RFR_USB1_Init();
+    RFR_TIM1_Init();
+    RFR_TIM2_Init();
+    RFR_TIM3_Init();
+    RFR_ADC1_Init();
+    RFR_CMP1_Init();
+    RFR_CMP2_Init();
+    RFR_CMP3_Init();
+    RFR_OPA1_Init();
+    RFR_OPA2_Init();
+    RFR_IWDG_Init();
+    RFR_WWDG_Init();
+    RFR_NVICInit();
+
+    while (1)
+    {
+    }
+}
+
+//// FILE: User/ch32x035_conf.h
+/* CH32X035F8U6 — 库配置文件，由 RiskFiveRuler 生成 */
+#ifndef __CH32X035_CONF_H
+#define __CH32X035_CONF_H
+
+#if defined(__has_include)
+#  if __has_include("ch32x035_adc.h")
+#    include "ch32x035_adc.h"
+#  endif
+#  if __has_include("ch32x035_awu.h")
+#    include "ch32x035_awu.h"
+#  endif
+#  if __has_include("ch32x035_bkp.h")
+#    include "ch32x035_bkp.h"
+#  endif
+#  if __has_include("ch32x035_can.h")
+#    include "ch32x035_can.h"
+#  endif
+#  if __has_include("ch32x035_cmp.h")
+#    include "ch32x035_cmp.h"
+#  endif
+#  if __has_include("ch32x035_crc.h")
+#    include "ch32x035_crc.h"
+#  endif
+#  if __has_include("ch32x035_dbgmcu.h")
+#    include "ch32x035_dbgmcu.h"
+#  endif
+#  if __has_include("ch32x035_dma.h")
+#    include "ch32x035_dma.h"
+#  endif
+#  if __has_include("ch32x035_exti.h")
+#    include "ch32x035_exti.h"
+#  endif
+#  if __has_include("ch32x035_flash.h")
+#    include "ch32x035_flash.h"
+#  endif
+#  if __has_include("ch32x035_gpio.h")
+#    include "ch32x035_gpio.h"
+#  endif
+#  if __has_include("ch32x035_i2c.h")
+#    include "ch32x035_i2c.h"
+#  endif
+#  if __has_include("ch32x035_iwdg.h")
+#    include "ch32x035_iwdg.h"
+#  endif
+#  if __has_include("ch32x035_lptim.h")
+#    include "ch32x035_lptim.h"
+#  endif
+#  if __has_include("ch32x035_misc.h")
+#    include "ch32x035_misc.h"
+#  endif
+#  if __has_include("ch32x035_opa.h")
+#    include "ch32x035_opa.h"
+#  endif
+#  if __has_include("ch32x035_pwr.h")
+#    include "ch32x035_pwr.h"
+#  endif
+#  if __has_include("ch32x035_rcc.h")
+#    include "ch32x035_rcc.h"
+#  endif
+#  if __has_include("ch32x035_rtc.h")
+#    include "ch32x035_rtc.h"
+#  endif
+#  if __has_include("ch32x035_spi.h")
+#    include "ch32x035_spi.h"
+#  endif
+#  if __has_include("ch32x035_tim.h")
+#    include "ch32x035_tim.h"
+#  endif
+#  if __has_include("ch32x035_usart.h")
+#    include "ch32x035_usart.h"
+#  endif
+#  if __has_include("ch32x035_usb.h")
+#    include "ch32x035_usb.h"
+#  endif
+#  if __has_include("ch32x035_usbpd.h")
+#    include "ch32x035_usbpd.h"
+#  endif
+#  if __has_include("ch32x035_wwdg.h")
+#    include "ch32x035_wwdg.h"
+#  endif
+#endif
+#include "ch32x035_it.h"
+
+#endif /* __CH32X035_CONF_H */
+
+//// FILE: User/ch32x035_it.h
+/* RFR_Golden — 中断服务函数声明，由 RiskFiveRuler 生成 */
+#ifndef __CH32X035_IT_H
+#define __CH32X035_IT_H
+
+#include "debug.h"
+
+#endif /* __CH32X035_IT_H */
+
+//// FILE: User/ch32x035_it.c
+/* RFR_Golden — 中断服务函数，由 RiskFiveRuler 生成 */
+#include "ch32x035_it.h"
+
+#ifndef RFR_ISR
+#  define RFR_ISR __attribute__((interrupt("WCH-Interrupt-fast")))
+#endif
+
+void DMA1_Channel1_IRQHandler(void) RFR_ISR;
+void DMA1_Channel2_IRQHandler(void) RFR_ISR;
+void DMA1_Channel3_IRQHandler(void) RFR_ISR;
+void DMA1_Channel4_IRQHandler(void) RFR_ISR;
+void DMA1_Channel5_IRQHandler(void) RFR_ISR;
+void DMA1_Channel6_IRQHandler(void) RFR_ISR;
+void DMA1_Channel7_IRQHandler(void) RFR_ISR;
+void DMA1_Channel8_IRQHandler(void) RFR_ISR;
+void EXTI7_0_IRQHandler(void) RFR_ISR;
+void EXTI15_8_IRQHandler(void) RFR_ISR;
+void EXTI25_16_IRQHandler(void) RFR_ISR;
+void PVD_IRQHandler(void) RFR_ISR;
+void AWU_IRQHandler(void) RFR_ISR;
+void SPI1_IRQHandler(void) RFR_ISR;
+void PIOC_IRQHandler(void) RFR_ISR;
+void USART1_IRQHandler(void) RFR_ISR;
+void USART2_IRQHandler(void) RFR_ISR;
+void USART3_IRQHandler(void) RFR_ISR;
+void USART4_IRQHandler(void) RFR_ISR;
+void USBPD_IRQHandler(void) RFR_ISR;
+void USBPDWakeUp_IRQHandler(void) RFR_ISR;
+void USBFS_IRQHandler(void) RFR_ISR;
+void USBFSWakeUp_IRQHandler(void) RFR_ISR;
+void OPA_IRQHandler(void) RFR_ISR;
+void WWDG_IRQHandler(void) RFR_ISR;
+
+void NMI_Handler(void) RFR_ISR;
+void HardFault_Handler(void) RFR_ISR;
+
+void NMI_Handler(void)
+{
+    while (1) { }
+}
+
+void HardFault_Handler(void)
+{
+    while (1) { }
+}
+
+/* DMA: DMA1_Channel1 */
+void DMA1_Channel1_IRQHandler(void)
+{
+    /* TODO: 读状态位、处理、清标志 */
+}
+
+/* DMA: DMA1_Channel2 */
+void DMA1_Channel2_IRQHandler(void)
+{
+    /* TODO: 读状态位、处理、清标志 */
+}
+
+/* DMA: DMA1_Channel3 */
+void DMA1_Channel3_IRQHandler(void)
+{
+    /* TODO: 读状态位、处理、清标志 */
+}
+
+/* DMA: DMA1_Channel4 */
+void DMA1_Channel4_IRQHandler(void)
+{
+    /* TODO: 读状态位、处理、清标志 */
+}
+
+/* DMA: DMA1_Channel5 */
+void DMA1_Channel5_IRQHandler(void)
+{
+    /* TODO: 读状态位、处理、清标志 */
+}
+
+/* DMA: DMA1_Channel6 */
+void DMA1_Channel6_IRQHandler(void)
+{
+    /* TODO: 读状态位、处理、清标志 */
+}
+
+/* DMA: DMA1_Channel7 */
+void DMA1_Channel7_IRQHandler(void)
+{
+    /* TODO: 读状态位、处理、清标志 */
+}
+
+/* DMA: DMA1_Channel8 */
+void DMA1_Channel8_IRQHandler(void)
+{
+    /* TODO: 读状态位、处理、清标志 */
+}
+
+/* EXTI: EXTI7_0 */
+void EXTI7_0_IRQHandler(void)
+{
+    /* TODO: 读状态位、处理、清标志 */
+}
+
+/* EXTI: EXTI15_8 */
+void EXTI15_8_IRQHandler(void)
+{
+    /* TODO: 读状态位、处理、清标志 */
+}
+
+/* EXTI: EXTI25_16 */
+void EXTI25_16_IRQHandler(void)
+{
+    /* TODO: 读状态位、处理、清标志 */
+}
+
+/* PWR: PVD */
+void PVD_IRQHandler(void)
+{
+    /* TODO: 读状态位、处理、清标志 */
+}
+
+/* PWR: AWU */
+void AWU_IRQHandler(void)
+{
+    /* TODO: 读状态位、处理、清标志 */
+}
+
+/* SPI1: SPI1 */
+void SPI1_IRQHandler(void)
+{
+    /* TODO: 读状态位、处理、清标志 */
+}
+
+/* PIOC: PIOC */
+void PIOC_IRQHandler(void)
+{
+    /* TODO: 读状态位、处理、清标志 */
+}
+
+/* USART1: USART1 */
+void USART1_IRQHandler(void)
+{
+    /* TODO: 读状态位、处理、清标志 */
+}
+
+/* USART2: USART2 */
+void USART2_IRQHandler(void)
+{
+    /* TODO: 读状态位、处理、清标志 */
+}
+
+/* USART3: USART3 */
+void USART3_IRQHandler(void)
+{
+    /* TODO: 读状态位、处理、清标志 */
+}
+
+/* USART4: USART4 */
+void USART4_IRQHandler(void)
+{
+    /* TODO: 读状态位、处理、清标志 */
+}
+
+/* USBPD: USBPD */
+void USBPD_IRQHandler(void)
+{
+    /* TODO: 读状态位、处理、清标志 */
+}
+
+/* USBPD: USBPDWakeUp */
+void USBPDWakeUp_IRQHandler(void)
+{
+    /* TODO: 读状态位、处理、清标志 */
+}
+
+/* USB1: USBFS */
+void USBFS_IRQHandler(void)
+{
+    /* TODO: 读状态位、处理、清标志 */
+}
+
+/* USB1: USBFSWakeUp */
+void USBFSWakeUp_IRQHandler(void)
+{
+    /* TODO: 读状态位、处理、清标志 */
+}
+
+/* OPA1: OPA */
+void OPA_IRQHandler(void)
+{
+    /* TODO: 读状态位、处理、清标志 */
+}
+
+/* WWDG: WWDG */
+void WWDG_IRQHandler(void)
+{
+    /* TODO: 读状态位、处理、清标志 */
+}
+
+//// FILE: User/system_ch32x035.h
+#ifndef __SYSTEM_CH32X035_H
+#define __SYSTEM_CH32X035_H
+
+#include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern uint32_t SystemCoreClock;
+extern const uint8_t AHBPrescTable[16];
+
+void SystemInit(void);
+void SystemCoreClockUpdate(void);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* __SYSTEM_CH32X035_H */
+
+//// FILE: User/system_ch32x035.c
+/* RFR_Golden — 系统初始化，由 RiskFiveRuler 生成
+ *
+ * 时钟的具体配置在 main() 里的 RFR_ClockInit() 中完成，
+ * 这里只在启动早期把 SystemCoreClock 对齐到目标频率，
+ * 供 Delay_Init() / USART_Printf_Init() 等依赖主频的例程使用。
+ */
+#include "ch32x035.h"
+#include "system_ch32x035.h"
+
+uint32_t SystemCoreClock = 48000000; /* 48 MHz */
+
+const uint8_t AHBPrescTable[16] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9};
+
+void SystemInit(void)
+{
+    /* 复位后默认跑 HSI，时钟切换交给 RFR_ClockInit() */
+}
+
+void SystemCoreClockUpdate(void)
+{
+    SystemCoreClock = 48000000;
+}
+
+//// FILE: .project
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>RFR_Golden</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.cdt.managedbuilder.core.genmakebuilder</name>
+			<triggers>clean,full,incremental,</triggers>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.cdt.managedbuilder.core.ScannerConfigBuilder</name>
+			<triggers>full,incremental,</triggers>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.cdt.core.cnature</nature>
+		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
+		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>Core</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/SRC/Core</locationURI>
+		</link>
+		<link>
+			<name>Debug</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/SRC/Debug</locationURI>
+		</link>
+		<link>
+			<name>Ld</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/SRC/Ld</locationURI>
+		</link>
+		<link>
+			<name>Peripheral</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/SRC/Peripheral</locationURI>
+		</link>
+		<link>
+			<name>Startup</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/SRC/Startup</locationURI>
+		</link>
+	</linkedResources>
+	<filteredResources>
+		<filter>
+			<id>1595986042669</id>
+			<name></name>
+			<type>22</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-*.wvproj</arguments>
+			</matcher>
+		</filter>
+	</filteredResources>
+</projectDescription>
+
+//// FILE: .cproject
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+	<storageModule moduleId="org.eclipse.cdt.core.settings">
+		<cconfiguration id="ilg.gnumcueclipse.managedbuild.cross.riscv.config.elf.release.1008047074">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="ilg.gnumcueclipse.managedbuild.cross.riscv.config.elf.release.1008047074" moduleId="org.eclipse.cdt.core.settings" name="obj">
+				<externalSettings/>
+				<extensions>
+					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+				</extensions>
+			</storageModule>
+			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release" cleanCommand="${cross_rm} -rf" description="" id="ilg.gnumcueclipse.managedbuild.cross.riscv.config.elf.release.1008047074" name="obj" parent="ilg.gnumcueclipse.managedbuild.cross.riscv.config.elf.release">
+					<folderInfo id="ilg.gnumcueclipse.managedbuild.cross.riscv.config.elf.release.1008047074." name="/" resourcePath="">
+						<toolChain id="ilg.gnumcueclipse.managedbuild.cross.riscv.toolchain.elf.release.231146001" name="RISC-V Cross GCC" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.toolchain.elf.release">
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.addtools.createflash.1311852988" name="Create flash image" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.addtools.createflash" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.addtools.createlisting.1983282875" name="Create extended listing" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.addtools.createlisting" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.addtools.printsize.1000761142" name="Print size" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.addtools.printsize" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.optimization.level.514997414" name="Optimization Level" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.optimization.level" useByScannerDiscovery="true" value="ilg.gnumcueclipse.managedbuild.cross.riscv.option.optimization.level.size" valueType="enumerated"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.optimization.messagelength.1008570639" name="Message length (-fmessage-length=0)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.optimization.messagelength" useByScannerDiscovery="true" value="true" valueType="boolean"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.optimization.signedchar.467272439" name="'char' is signed (-fsigned-char)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.optimization.signedchar" useByScannerDiscovery="true" value="true" valueType="boolean"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.optimization.functionsections.2047756949" name="Function sections (-ffunction-sections)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.optimization.functionsections" useByScannerDiscovery="true" value="true" valueType="boolean"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.optimization.datasections.207613650" name="Data sections (-fdata-sections)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.optimization.datasections" useByScannerDiscovery="true" value="true" valueType="boolean"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.debugging.level.1204865254" name="Debug level" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.debugging.level" useByScannerDiscovery="true"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.debugging.format.867779652" name="Debug format" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.debugging.format" useByScannerDiscovery="true"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.target.isa.base.1900297968" name="Architecture" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.target.isa.base" useByScannerDiscovery="false" value="ilg.gnumcueclipse.managedbuild.cross.riscv.option.target.arch.rv32i" valueType="enumerated"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.target.abi.integer.387605487" name="Integer ABI" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.target.abi.integer" useByScannerDiscovery="false" value="ilg.gnumcueclipse.managedbuild.cross.riscv.option.abi.integer.ilp32" valueType="enumerated"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.target.isa.multiply.1509705449" name="Multiply extension (RVM)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.target.isa.multiply" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.target.isa.compressed.1038505275" name="Compressed extension (RVC)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.target.isa.compressed" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.toolchain.name.1218760634" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.toolchain.name" useByScannerDiscovery="false" value="GNU MCU RISC-V GCC" valueType="string"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.command.prefix.103341323" name="Prefix" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.command.prefix" useByScannerDiscovery="false" value="riscv-none-embed-" valueType="string"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.command.c.487601824" name="C compiler" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.command.c" useByScannerDiscovery="false" value="gcc" valueType="string"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.command.cpp.1062130429" name="C++ compiler" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.command.cpp" useByScannerDiscovery="false" value="g++" valueType="string"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.command.ar.1194282993" name="Archiver" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.command.ar" useByScannerDiscovery="false" value="ar" valueType="string"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.command.objcopy.1529355265" name="Hex/Bin converter" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.command.objcopy" useByScannerDiscovery="false" value="objcopy" valueType="string"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.command.objdump.1053750745" name="Listing generator" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.command.objdump" useByScannerDiscovery="false" value="objdump" valueType="string"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.command.size.1441326233" name="Size command" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.command.size" useByScannerDiscovery="false" value="size" valueType="string"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.command.make.550105535" name="Build command" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.command.make" useByScannerDiscovery="false" value="make" valueType="string"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.command.rm.719280496" name="Remove command" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.command.rm" useByScannerDiscovery="false" value="rm" valueType="string"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.toolchain.id.226017994" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.toolchain.id" useByScannerDiscovery="false" value="512258282" valueType="string"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.target.isa.atomic.1590833110" name="Atomic extension (RVA)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.target.isa.atomic" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.warnings.unused.1961191588" name="Warn on various unused elements (-Wunused)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.warnings.unused" useByScannerDiscovery="true" value="true" valueType="boolean"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.warnings.uninitialized.929829166" name="Warn on uninitialized variables (-Wuninitialised)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.warnings.uninitialized" useByScannerDiscovery="true" value="true" valueType="boolean"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.target.isa.xw.838697485" name="Extra Compressed extension (RVXW)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.target.isa.xw" value="true" valueType="boolean"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.target.saverestore.470373682" name="Small prologue/epilogue (-msave-restore)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.target.saverestore" value="true" valueType="boolean"/>
+							<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.optimization.nocommon.1080590537" name="No common unitialized (-fno-common)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.optimization.nocommon" value="true" valueType="boolean"/>
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="ilg.gnumcueclipse.managedbuild.cross.riscv.targetPlatform.1944008784" isAbstract="false" osList="all" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.targetPlatform"/>
+							<builder buildPath="${workspace_loc:/RFR_Golden}/obj" id="ilg.gnumcueclipse.managedbuild.cross.riscv.builder.1421508906" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="GNU Make 构建器" parallelBuildOn="true" parallelizationNumber="optimal" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.builder"/>
+							<tool id="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.assembler.1244756189" name="GNU RISC-V Cross Assembler" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.assembler">
+								<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.assembler.usepreprocessor.1692176068" name="Use preprocessor" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.assembler.usepreprocessor" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.assembler.include.paths.1034038285" name="Include paths (-I)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.assembler.include.paths" useByScannerDiscovery="true" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Startup}&quot;"/>
+								</option>
+								<inputType id="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.assembler.input.126366858" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.assembler.input"/>
+							</tool>
+							<tool id="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.c.compiler.1731377187" name="GNU RISC-V Cross C Compiler" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.c.compiler">
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.compiler.include.paths.1567947810" name="Include paths (-I)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.compiler.include.paths" useByScannerDiscovery="true" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Debug}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Core}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/User}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Peripheral/inc}&quot;"/>
+								</option>
+								<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.compiler.std.2020844713" name="Language standard" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.compiler.std" useByScannerDiscovery="true" value="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.compiler.std.gnu99" valueType="enumerated"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="true" id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.compiler.defs.177116515" name="Defined symbols (-D)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.compiler.defs" useByScannerDiscovery="true" valueType="definedSymbols"/>
+								<inputType id="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.c.compiler.input.2036806839" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.c.compiler.input"/>
+							</tool>
+							<tool id="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.cpp.compiler.1610882921" name="GNU RISC-V Cross C++ Compiler" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.cpp.compiler"/>
+							<tool id="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.c.linker.1620074387" name="GNU RISC-V Cross C Linker" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.c.linker">
+								<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.linker.gcsections.194760422" name="Remove unused sections (-Xlinker --gc-sections)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.linker.gcsections" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="true" id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.linker.paths.2057340378" name="Library search path (-L)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.linker.paths" useByScannerDiscovery="false" valueType="libPaths"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.linker.scriptfile.1390103472" name="Script files (-T)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.linker.scriptfile" useByScannerDiscovery="false" valueType="stringList">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Ld/Link.ld}&quot;"/>
+								</option>
+								<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.linker.nostart.913830613" name="Do not use standard start files (-nostartfiles)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.linker.nostart" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.linker.usenewlibnano.239404511" name="Use newlib-nano (--specs=nano.specs)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.linker.usenewlibnano" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.linker.usenewlibnosys.351964161" name="Do not use syscalls (--specs=nosys.specs)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.linker.usenewlibnosys" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="true" id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.linker.otherobjs.16994550" name="Other objects" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.linker.otherobjs" useByScannerDiscovery="false" valueType="userObjs"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="true" id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.linker.flags.1125808200" name="Linker flags (-Xlinker [option])" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.linker.flags" useByScannerDiscovery="false" valueType="stringList"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.linker.libs.1275229956" name="Libraries (-l)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.linker.libs" useByScannerDiscovery="false" valueType="libs">
+									<listOptionValue builtIn="false" value="m"/>
+								</option>
+								<inputType id="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.c.linker.input.1859223768" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.c.linker.input">
+									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
+									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
+								</inputType>
+							</tool>
+							<tool id="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.cpp.linker.1947503520" name="GNU RISC-V Cross C++ Linker" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.cpp.linker">
+								<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.cpp.linker.gcsections.1689063433" name="Remove unused sections (-Xlinker --gc-sections)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.cpp.linker.gcsections" value="true" valueType="boolean"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.cpp.linker.paths.1029177148" name="Library search path (-L)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.cpp.linker.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="&quot;../LD&quot;"/>
+								</option>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.cpp.linker.scriptfile.1751226764" name="Script files (-T)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.cpp.linker.scriptfile" valueType="stringList">
+									<listOptionValue builtIn="false" value="Link.ld"/>
+								</option>
+								<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.cpp.linker.nostart.642896175" name="Do not use standard start files (-nostartfiles)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.cpp.linker.nostart" value="true" valueType="boolean"/>
+								<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.cpp.linker.usenewlibnano.1540675679" name="Use newlib-nano (--specs=nano.specs)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.cpp.linker.usenewlibnano" value="true" valueType="boolean"/>
+							</tool>
+							<tool id="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.archiver.1292785366" name="GNU RISC-V Cross Archiver" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.archiver"/>
+							<tool id="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.createflash.1801165667" name="GNU RISC-V Cross Create Flash Image" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.createflash"/>
+							<tool id="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.createlisting.1356766765" name="GNU RISC-V Cross Create Listing" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.createlisting">
+								<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.createlisting.source.2052761852" name="Display source (--source|-S)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.createlisting.source" useByScannerDiscovery="false" value="false" valueType="boolean"/>
+								<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.createlisting.allheaders.439659821" name="Display all headers (--all-headers|-x)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.createlisting.allheaders" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.createlisting.demangle.67111865" name="Demangle names (--demangle|-C)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.createlisting.demangle" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.createlisting.linenumbers.1549373929" name="Display line numbers (--line-numbers|-l)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.createlisting.linenumbers" useByScannerDiscovery="false" value="false" valueType="boolean"/>
+								<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.createlisting.wide.1298918921" name="Wide lines (--wide|-w)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.createlisting.wide" useByScannerDiscovery="false" value="false" valueType="boolean"/>
+								<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.createlisting.disassemble.1859590835" name="Disassemble (--disassemble|-d)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.createlisting.disassemble" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+							</tool>
+							<tool id="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.printsize.712424314" name="GNU RISC-V Cross Print Size" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.printsize">
+								<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.printsize.format.1404031980" name="Size format" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.printsize.format" useByScannerDiscovery="false"/>
+							</tool>
+						</toolChain>
+					</folderInfo>
+					<sourceEntries>
+						<entry excluding="Startup|Peripheral|Ld|Debug|Core" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Ld"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Peripheral"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Startup"/>
+					</sourceEntries>
+				</configuration>
+			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+			<storageModule moduleId="ilg.gnumcueclipse.managedbuild.packs"/>
+		</cconfiguration>
+	</storageModule>
+	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+		<project id="999.ilg.gnumcueclipse.managedbuild.cross.riscv.target.elf.275846018" name="Executable file" projectType="ilg.gnumcueclipse.managedbuild.cross.riscv.target.elf"/>
+	</storageModule>
+	<storageModule moduleId="scannerConfiguration">
+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="ilg.gnumcueclipse.managedbuild.cross.riscv.config.elf.debug.767917625;ilg.gnumcueclipse.managedbuild.cross.riscv.config.elf.debug.767917625.;ilg.gnumcueclipse.managedbuild.cross.riscv.tool.c.compiler.1375371130;ilg.gnumcueclipse.managedbuild.cross.riscv.tool.c.compiler.input.1473381709">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="ilg.gnumcueclipse.managedbuild.cross.riscv.config.elf.release.1008047074;ilg.gnumcueclipse.managedbuild.cross.riscv.config.elf.release.1008047074.;ilg.gnumcueclipse.managedbuild.cross.riscv.tool.c.compiler.1731377187;ilg.gnumcueclipse.managedbuild.cross.riscv.tool.c.compiler.input.2036806839">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
+	
+</cproject>
+
+//// FILE: .template
+Mcu Type=CH32X035
+Address=0x08000000
+Target Path=obj\RFR_Golden.hex
+Erase All=true
+Program=true
+Verify=true
+Reset=true
+
+Vendor=WCH
+Link=WCH-Link
+Toolchain=RISC-V
+Series=CH32X035
+Description=ROM(byte): 62K, SRAM(byte): 20K, CHIP PINS: 20, GPIO PORTS: 3.
+Generated by RiskFiveRuler for CH32X035F8U6.
+PeripheralVersion=1.5
+MCU=CH32X035F8U6
+
+//// FILE: README.md
+# RFR_Golden
+
+由 **RiskFiveRuler** 生成。
+
+## 器件
+
+| 项目 | 值 |
+| --- | --- |
+| 型号 | CH32X035F8U6 |
+| 家族 | CH32X035 |
+| 内核 | QingKe V4C · RV32IMAC |
+| 封装 | QFN20 |
+| Flash / RAM | 62 KB / 20 KB |
+| 供电 | 2.0 – 5.5 V |
+
+## 时钟
+
+| 节点 | 频率 |
+| --- | --- |
+| SYSCLK | 48 MHz |
+| HCLK | 48 MHz |
+| PCLK1 (APB1) | 48 MHz |
+| PCLK2 (APB2) | 48 MHz |
+| ADCCLK | 12 MHz |
+
+## 已启用外设
+
+- DBG
+- DMA
+- EXTI
+- PWR
+- SYSTEM
+- I2C1
+- SPI1
+- PIOC
+- USART1
+- USART2
+- USART3
+- USART4
+- USBPD
+- USB1
+- TIM1
+- TIM2
+- TIM3
+- ADC1
+- CMP1
+- CMP2
+- CMP3
+- OPA1
+- OPA2
+- IWDG
+- WWDG
+
+## 引脚分配
+
+| 引脚 | 信号 | 外设 |
+| --- | --- | --- |
+| PC18 | DBG_SWDIO | DBG |
+| PC19 | DBG_SWCLK | DBG |
+
+## 目录结构
+
+```
+.project / .cproject / .template   MounRiver Studio 工程文件
+User/main.c                        主程序（MRS 例程风格：debug.h + printf）
+User/rfr_pinmap.h                  引脚宏
+User/rfr_init.c                    外设初始化
+User/ch32x035_it.c                   中断服务函数
+User/ch32x035_conf.h                 库配置头
+User/system_ch32x035.c               SystemCoreClock
+```
+
+## 在 MounRiver Studio 里打开
+
+1. 把导出的整个文件夹放到 WCH 官方 EVT 的 `EXAM/` 目录下（和 `GPIO_Toggle` 等例程平级），
+   目录名保持 `RFR_Golden`。
+2. MRS → File → Import → Existing Projects into Workspace，选中该文件夹。
+   `Core` / `Startup` / `Ld` / `Peripheral` / `Debug` 五个目录通过
+   linkedResources 指向 `../SRC/` 下的公共代码，不需要拷贝。
+3. 直接 Build。产物在 `obj/RFR_Golden.hex`。
+
+> `.wvproj` 是 WCH 加密的调试器配置文件，MRS 在首次保存工程时会自动生成，导出时不包含。
+

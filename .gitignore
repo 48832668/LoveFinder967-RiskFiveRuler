@@ -1,0 +1,21 @@
+node_modules/
+dist/
+src-tauri/target/
+src-tauri/gen/
+_shots/
+docs/
+*.log
+.DS_Store
+Thumbs.db
+
+# 版本计数器（当日构建次数），每次 build 都会变，不该进版本库
+.build-counter.json
+
+# 本机运行数据与构建产物（exe 可用 npm run package:exe 重建）
+RiskFiveRuler.exe
+RiskFiveRuler.new.exe
+config.json
+.tmp/
+.commandcode/
+.workbuddy-ai/
+

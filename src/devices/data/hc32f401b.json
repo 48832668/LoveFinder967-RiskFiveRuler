@@ -1,0 +1,3226 @@
+{
+  "packVersion": "0.2.0",
+  "series": "HC32F401B",
+  "vendor": "HDSC",
+  "core": "Cortex-M4F",
+  "source": "HC32F401B 数据手册 Ver1.1.1 第 4.2 节「引脚说明」（端口‑AF‑模拟映射）＋用户手册 Ver1.0.14；封装引脚序号由端口范围推导，非物理引脚号",
+  "flashKb": 256,
+  "ramKb": 192,
+  "voltage": "1.8-3.6V",
+  "maxSysclk": 168,
+  "usb": {
+    "speeds": ["fs"],
+    "roles": ["device"]
+  },
+  "debug": {
+    "twoWire": true,
+    "singleWire": false,
+    "swdio": "PA13",
+    "swclk": "PA14"
+  },
+  "sdkHeader": "hc32f4xx",
+  "backend": "generic",
+  "codegen": "disable",
+  "codegenNote": "HC32F401B 目前只录入了引脚与复用功能，尚无完整的寄存器/SDK 资料，因此不生成初始化代码；引脚映射表仍可导出。",
+  "afGrouping": "independent",
+  "clock": {
+    "hsi": 16,
+    "hseOptions": [
+      8,
+      16,
+      24
+    ],
+    "lsi": 32.768,
+    "pllSource": "HSI_DIV2",
+    "pllMin": 2,
+    "pllMax": 63,
+    "maxSysclk": 168,
+    "apb1Divs": [
+      1,
+      2,
+      4,
+      8,
+      16
+    ],
+    "apb2Divs": [
+      1,
+      2,
+      4,
+      8,
+      16
+    ],
+    "ahbDivs": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32,
+      64,
+      128,
+      256,
+      512
+    ],
+    "adcDivs": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32,
+      64,
+      128
+    ],
+    "notes": [
+      "时钟树参数待按用户手册核对：HSI 频率、PLL 输入分频、各总线最高频率"
+    ]
+  },
+  "meta": {
+    "ADC1": {
+      "kind": "ADC",
+      "group": "Analog",
+      "schema": "ADC",
+      "brief": "12 位逐次逼近 ADC",
+      "label": "ADC1"
+    },
+    "ADC2": {
+      "kind": "ADC",
+      "group": "Analog",
+      "schema": "ADC",
+      "brief": "12 位逐次逼近 ADC",
+      "label": "ADC2"
+    },
+    "CAN1": {
+      "kind": "CAN",
+      "group": "Connectivity",
+      "schema": "CAN",
+      "brief": "CAN‑FD 控制器",
+      "required": [
+        "TX",
+        "RX"
+      ],
+      "label": "CAN1"
+    },
+    "CLK": {
+      "kind": "CLK",
+      "group": "System",
+      "schema": "CLK",
+      "brief": "外部晶振与时钟输出",
+      "label": "时钟源"
+    },
+    "DAC1": {
+      "kind": "DAC",
+      "group": "Analog",
+      "schema": "DAC",
+      "brief": "12 位电压输出 DAC",
+      "required": [
+        "OUT"
+      ],
+      "label": "DAC1"
+    },
+    "DBG": {
+      "kind": "DBG",
+      "group": "System",
+      "schema": "DBG",
+      "brief": "JTAG / SWD 调试口",
+      "required": [
+        "SWDIO",
+        "SWCLK"
+      ],
+      "label": "DBG"
+    },
+    "FDA0": {
+      "kind": "OPA",
+      "group": "Analog",
+      "schema": "FDA",
+      "brief": "差分运放 / PGA",
+      "label": "FDA0"
+    },
+    "FDA1": {
+      "kind": "OPA",
+      "group": "Analog",
+      "schema": "FDA",
+      "brief": "差分运放 / PGA",
+      "label": "FDA1"
+    },
+    "I2C1": {
+      "kind": "I2C",
+      "group": "Connectivity",
+      "schema": "I2C",
+      "brief": "I²C 控制器",
+      "required": [
+        "SCL",
+        "SDA"
+      ],
+      "label": "I2C1"
+    },
+    "I2C2": {
+      "kind": "I2C",
+      "group": "Connectivity",
+      "schema": "I2C",
+      "brief": "I²C 控制器",
+      "required": [
+        "SCL",
+        "SDA"
+      ],
+      "label": "I2C2"
+    },
+    "I2S2": {
+      "kind": "I2S",
+      "group": "Connectivity",
+      "schema": "I2S",
+      "brief": "I²S 音频接口",
+      "required": [
+        "WS",
+        "CK"
+      ],
+      "label": "I2S2"
+    },
+    "I2S3": {
+      "kind": "I2S",
+      "group": "Connectivity",
+      "schema": "I2S",
+      "brief": "I²S 音频接口",
+      "required": [
+        "WS",
+        "CK"
+      ],
+      "label": "I2S3"
+    },
+    "QSPI1": {
+      "kind": "QSPI",
+      "group": "Connectivity",
+      "schema": "QSPI",
+      "brief": "四线 QSPI 控制器",
+      "required": [
+        "NSS",
+        "CLK",
+        "D0",
+        "D1"
+      ],
+      "label": "QSPI1"
+    },
+    "RTC": {
+      "kind": "RTC",
+      "group": "System",
+      "schema": "RTC",
+      "brief": "实时时钟（含校准时钟输出）",
+      "label": "RTC"
+    },
+    "SPI2": {
+      "kind": "SPI",
+      "group": "Connectivity",
+      "schema": "SPI",
+      "brief": "串行外设接口",
+      "required": [
+        "SCK",
+        "MOSI",
+        "MISO"
+      ],
+      "label": "SPI2"
+    },
+    "SPI3": {
+      "kind": "SPI",
+      "group": "Connectivity",
+      "schema": "SPI",
+      "brief": "串行外设接口",
+      "required": [
+        "SCK",
+        "MOSI",
+        "MISO"
+      ],
+      "label": "SPI3"
+    },
+    "TIM1": {
+      "kind": "TIM",
+      "group": "Timers",
+      "schema": "TIM",
+      "brief": "16 位定时器",
+      "label": "TIM1"
+    },
+    "TIM10": {
+      "kind": "TIM",
+      "group": "Timers",
+      "schema": "TIM",
+      "brief": "16 位定时器",
+      "label": "TIM10"
+    },
+    "TIM2": {
+      "kind": "TIM",
+      "group": "Timers",
+      "schema": "TIM",
+      "brief": "16 位定时器",
+      "label": "TIM2"
+    },
+    "TIM3": {
+      "kind": "TIM",
+      "group": "Timers",
+      "schema": "TIM",
+      "brief": "16 位定时器",
+      "label": "TIM3"
+    },
+    "TIM4": {
+      "kind": "TIM",
+      "group": "Timers",
+      "schema": "TIM",
+      "brief": "16 位定时器",
+      "label": "TIM4"
+    },
+    "TIM5": {
+      "kind": "TIM",
+      "group": "Timers",
+      "schema": "TIM",
+      "brief": "16 位定时器",
+      "label": "TIM5"
+    },
+    "TIM6": {
+      "kind": "TIM",
+      "group": "Timers",
+      "schema": "TIM",
+      "brief": "16 位定时器",
+      "label": "TIM6"
+    },
+    "TIM7": {
+      "kind": "TIM",
+      "group": "Timers",
+      "schema": "TIM",
+      "brief": "16 位定时器",
+      "label": "TIM7"
+    },
+    "TIM8": {
+      "kind": "TIM",
+      "group": "Timers",
+      "schema": "TIM",
+      "brief": "16 位定时器",
+      "label": "TIM8"
+    },
+    "TIM9": {
+      "kind": "TIM",
+      "group": "Timers",
+      "schema": "TIM",
+      "brief": "16 位定时器",
+      "label": "TIM9"
+    },
+    "UART4": {
+      "kind": "UART",
+      "group": "Connectivity",
+      "schema": "UART",
+      "brief": "异步串口（无 CK）",
+      "required": [
+        "TX",
+        "RX"
+      ],
+      "label": "UART4"
+    },
+    "UART5": {
+      "kind": "UART",
+      "group": "Connectivity",
+      "schema": "UART",
+      "brief": "异步串口（无 CK）",
+      "required": [
+        "TX",
+        "RX"
+      ],
+      "label": "UART5"
+    },
+    "USART1": {
+      "kind": "USART",
+      "group": "Connectivity",
+      "schema": "USART",
+      "brief": "通用同步/异步收发器",
+      "required": [
+        "TX",
+        "RX"
+      ],
+      "label": "USART1"
+    },
+    "USART2": {
+      "kind": "USART",
+      "group": "Connectivity",
+      "schema": "USART",
+      "brief": "通用同步/异步收发器",
+      "required": [
+        "TX",
+        "RX"
+      ],
+      "label": "USART2"
+    },
+    "USART3": {
+      "kind": "USART",
+      "group": "Connectivity",
+      "schema": "USART",
+      "brief": "通用同步/异步收发器",
+      "required": [
+        "TX",
+        "RX"
+      ],
+      "label": "USART3"
+    },
+    "USB1": {
+      "kind": "USB",
+      "group": "Connectivity",
+      "schema": "USB",
+      "brief": "USB 2.0 全速设备",
+      "required": [
+        "DP",
+        "DM"
+      ],
+      "label": "USB1"
+    },
+    "VC0": {
+      "kind": "VCMP",
+      "group": "Analog",
+      "schema": "VCMP",
+      "brief": "电压比较器",
+      "required": [
+        "OUT"
+      ],
+      "label": "VC0"
+    },
+    "VC1": {
+      "kind": "VCMP",
+      "group": "Analog",
+      "schema": "VCMP",
+      "brief": "电压比较器",
+      "required": [
+        "OUT"
+      ],
+      "label": "VC1"
+    },
+    "VC2": {
+      "kind": "VCMP",
+      "group": "Analog",
+      "schema": "VCMP",
+      "brief": "电压比较器",
+      "required": [
+        "OUT"
+      ],
+      "label": "VC2"
+    }
+  },
+  "packages": [
+    {
+      "id": "HC32F401BRET6YM",
+      "label": "LQFP64",
+      "shape": "quad",
+      "pinNumbering": "package",
+      "pins": [
+        {
+          "num": 1,
+          "name": "PD3",
+          "kind": "io"
+        },
+        {
+          "num": 2,
+          "name": "PC13",
+          "kind": "io"
+        },
+        {
+          "num": 3,
+          "name": "PC14",
+          "kind": "io"
+        },
+        {
+          "num": 4,
+          "name": "PC15",
+          "kind": "io"
+        },
+        {
+          "num": 5,
+          "name": "PD0",
+          "kind": "io"
+        },
+        {
+          "num": 6,
+          "name": "PD1",
+          "kind": "io"
+        },
+        {
+          "num": 7,
+          "name": "NRST",
+          "kind": "reset"
+        },
+        {
+          "num": 8,
+          "name": "PC0",
+          "kind": "io"
+        },
+        {
+          "num": 9,
+          "name": "PC1",
+          "kind": "io"
+        },
+        {
+          "num": 10,
+          "name": "PC2",
+          "kind": "io"
+        },
+        {
+          "num": 11,
+          "name": "PC3",
+          "kind": "io"
+        },
+        {
+          "num": 12,
+          "name": "VSSA",
+          "kind": "power"
+        },
+        {
+          "num": 13,
+          "name": "VDDA",
+          "kind": "power"
+        },
+        {
+          "num": 14,
+          "name": "PA0",
+          "kind": "io",
+          "note": "PA0_WKUP"
+        },
+        {
+          "num": 15,
+          "name": "PA1",
+          "kind": "io"
+        },
+        {
+          "num": 16,
+          "name": "PA2",
+          "kind": "io"
+        },
+        {
+          "num": 17,
+          "name": "PA3",
+          "kind": "io"
+        },
+        {
+          "num": 18,
+          "name": "VSS",
+          "kind": "power"
+        },
+        {
+          "num": 19,
+          "name": "VDD",
+          "kind": "power"
+        },
+        {
+          "num": 20,
+          "name": "PA4",
+          "kind": "io"
+        },
+        {
+          "num": 21,
+          "name": "PA5",
+          "kind": "io"
+        },
+        {
+          "num": 22,
+          "name": "PA6",
+          "kind": "io"
+        },
+        {
+          "num": 23,
+          "name": "PA7",
+          "kind": "io"
+        },
+        {
+          "num": 24,
+          "name": "PC4",
+          "kind": "io"
+        },
+        {
+          "num": 25,
+          "name": "PC5",
+          "kind": "io"
+        },
+        {
+          "num": 26,
+          "name": "PB0",
+          "kind": "io"
+        },
+        {
+          "num": 27,
+          "name": "PB1",
+          "kind": "io"
+        },
+        {
+          "num": 28,
+          "name": "PB2",
+          "kind": "io",
+          "note": "PB2/BOOT1",
+          "aliases": [
+            "BOOT1"
+          ]
+        },
+        {
+          "num": 29,
+          "name": "PB10",
+          "kind": "io"
+        },
+        {
+          "num": 30,
+          "name": "PB11",
+          "kind": "io"
+        },
+        {
+          "num": 31,
+          "name": "VCAP_1",
+          "kind": "power"
+        },
+        {
+          "num": 32,
+          "name": "VDD",
+          "kind": "power"
+        },
+        {
+          "num": 33,
+          "name": "PB12",
+          "kind": "io"
+        },
+        {
+          "num": 34,
+          "name": "PB13",
+          "kind": "io"
+        },
+        {
+          "num": 35,
+          "name": "PB14",
+          "kind": "io"
+        },
+        {
+          "num": 36,
+          "name": "PB15",
+          "kind": "io"
+        },
+        {
+          "num": 37,
+          "name": "PC6",
+          "kind": "io"
+        },
+        {
+          "num": 38,
+          "name": "PC7",
+          "kind": "io"
+        },
+        {
+          "num": 39,
+          "name": "PC8",
+          "kind": "io"
+        },
+        {
+          "num": 40,
+          "name": "PC9",
+          "kind": "io"
+        },
+        {
+          "num": 41,
+          "name": "PA8",
+          "kind": "io"
+        },
+        {
+          "num": 42,
+          "name": "PA9",
+          "kind": "io"
+        },
+        {
+          "num": 43,
+          "name": "PA10",
+          "kind": "io"
+        },
+        {
+          "num": 44,
+          "name": "PA11",
+          "kind": "io"
+        },
+        {
+          "num": 45,
+          "name": "PA12",
+          "kind": "io"
+        },
+        {
+          "num": 46,
+          "name": "PA13",
+          "kind": "io",
+          "note": "JTMS-SWDIO"
+        },
+        {
+          "num": 47,
+          "name": "VCAP_2",
+          "kind": "power"
+        },
+        {
+          "num": 48,
+          "name": "VDD",
+          "kind": "power"
+        },
+        {
+          "num": 49,
+          "name": "PA14",
+          "kind": "io",
+          "note": "JTCK-SWCLK"
+        },
+        {
+          "num": 50,
+          "name": "PA15",
+          "kind": "io",
+          "note": "JTDI"
+        },
+        {
+          "num": 51,
+          "name": "PC10",
+          "kind": "io"
+        },
+        {
+          "num": 52,
+          "name": "PC11",
+          "kind": "io"
+        },
+        {
+          "num": 53,
+          "name": "PC12",
+          "kind": "io"
+        },
+        {
+          "num": 54,
+          "name": "PD2",
+          "kind": "io"
+        },
+        {
+          "num": 55,
+          "name": "PB3",
+          "kind": "io",
+          "note": "JTDO-SWO"
+        },
+        {
+          "num": 56,
+          "name": "PB4",
+          "kind": "io",
+          "note": "JTAST"
+        },
+        {
+          "num": 57,
+          "name": "PB5",
+          "kind": "io"
+        },
+        {
+          "num": 58,
+          "name": "PB6",
+          "kind": "io"
+        },
+        {
+          "num": 59,
+          "name": "PB7",
+          "kind": "io"
+        },
+        {
+          "num": 60,
+          "name": "PB8",
+          "kind": "io"
+        },
+        {
+          "num": 61,
+          "name": "BOOT0",
+          "kind": "boot"
+        },
+        {
+          "num": 62,
+          "name": "PB9",
+          "kind": "io"
+        },
+        {
+          "num": 63,
+          "name": "VSS",
+          "kind": "power"
+        },
+        {
+          "num": 64,
+          "name": "VDD",
+          "kind": "power"
+        }
+      ]
+    },
+    {
+      "id": "HC32F401BKEU6YM",
+      "label": "LQFP32",
+      "shape": "quad",
+      "pinNumbering": "package",
+      "pins": [
+        {
+          "num": 1,
+          "name": "VDD",
+          "kind": "power"
+        },
+        {
+          "num": 2,
+          "name": "PD0",
+          "kind": "io"
+        },
+        {
+          "num": 3,
+          "name": "PD1",
+          "kind": "io"
+        },
+        {
+          "num": 4,
+          "name": "NRST",
+          "kind": "reset"
+        },
+        {
+          "num": 5,
+          "name": "VDDA",
+          "kind": "power"
+        },
+        {
+          "num": 6,
+          "name": "PA0",
+          "kind": "io",
+          "note": "PA0_WKUP"
+        },
+        {
+          "num": 7,
+          "name": "PA1",
+          "kind": "io"
+        },
+        {
+          "num": 8,
+          "name": "PA2",
+          "kind": "io"
+        },
+        {
+          "num": 9,
+          "name": "PA3",
+          "kind": "io"
+        },
+        {
+          "num": 10,
+          "name": "PA4",
+          "kind": "io"
+        },
+        {
+          "num": 11,
+          "name": "PA5",
+          "kind": "io"
+        },
+        {
+          "num": 12,
+          "name": "PB0",
+          "kind": "io"
+        },
+        {
+          "num": 13,
+          "name": "PB1",
+          "kind": "io"
+        },
+        {
+          "num": 14,
+          "name": "PB2",
+          "kind": "io",
+          "note": "PB2/BOOT1",
+          "aliases": [
+            "BOOT1"
+          ]
+        },
+        {
+          "num": 15,
+          "name": "PB11",
+          "kind": "io"
+        },
+        {
+          "num": 16,
+          "name": "VSS",
+          "kind": "power"
+        },
+        {
+          "num": 17,
+          "name": "VDD",
+          "kind": "power"
+        },
+        {
+          "num": 18,
+          "name": "PB14",
+          "kind": "io"
+        },
+        {
+          "num": 19,
+          "name": "PC8",
+          "kind": "io"
+        },
+        {
+          "num": 20,
+          "name": "PC9",
+          "kind": "io"
+        },
+        {
+          "num": 21,
+          "name": "PA8",
+          "kind": "io"
+        },
+        {
+          "num": 22,
+          "name": "PA11",
+          "kind": "io"
+        },
+        {
+          "num": 23,
+          "name": "PA12",
+          "kind": "io"
+        },
+        {
+          "num": 24,
+          "name": "PA13",
+          "kind": "io",
+          "note": "JTMS-SWDIO"
+        },
+        {
+          "num": 25,
+          "name": "PA14",
+          "kind": "io",
+          "note": "JTCK-SWCLK"
+        },
+        {
+          "num": 26,
+          "name": "PA15",
+          "kind": "io",
+          "note": "JTDI"
+        },
+        {
+          "num": 27,
+          "name": "PB3",
+          "kind": "io",
+          "note": "JTDO-SWO"
+        },
+        {
+          "num": 28,
+          "name": "PB4",
+          "kind": "io",
+          "note": "JTAST"
+        },
+        {
+          "num": 29,
+          "name": "PB5",
+          "kind": "io"
+        },
+        {
+          "num": 30,
+          "name": "PB7",
+          "kind": "io"
+        },
+        {
+          "num": 31,
+          "name": "BOOT0",
+          "kind": "boot"
+        },
+        {
+          "num": 32,
+          "name": "PC13",
+          "kind": "io"
+        }
+      ]
+    },
+    {
+      "id": "HC32F401BKCU6RM1",
+      "label": "QFN32-4×4",
+      "shape": "qfn",
+      "pinNumbering": "package",
+      "pins": [
+        {
+          "num": 1,
+          "name": "VDD",
+          "kind": "power"
+        },
+        {
+          "num": 2,
+          "name": "PD0",
+          "kind": "io"
+        },
+        {
+          "num": 3,
+          "name": "PD1",
+          "kind": "io"
+        },
+        {
+          "num": 4,
+          "name": "NRST",
+          "kind": "reset"
+        },
+        {
+          "num": 5,
+          "name": "VDDA",
+          "kind": "power"
+        },
+        {
+          "num": 6,
+          "name": "PA0",
+          "kind": "io",
+          "note": "PA0_WKUP"
+        },
+        {
+          "num": 7,
+          "name": "PA1",
+          "kind": "io"
+        },
+        {
+          "num": 8,
+          "name": "PA2",
+          "kind": "io"
+        },
+        {
+          "num": 9,
+          "name": "PA3",
+          "kind": "io"
+        },
+        {
+          "num": 10,
+          "name": "PA4",
+          "kind": "io"
+        },
+        {
+          "num": 11,
+          "name": "PA5",
+          "kind": "io"
+        },
+        {
+          "num": 12,
+          "name": "PB0",
+          "kind": "io"
+        },
+        {
+          "num": 13,
+          "name": "PB1",
+          "kind": "io"
+        },
+        {
+          "num": 14,
+          "name": "PB2",
+          "kind": "io",
+          "note": "PB2/BOOT1",
+          "aliases": [
+            "BOOT1"
+          ]
+        },
+        {
+          "num": 15,
+          "name": "PB11",
+          "kind": "io"
+        },
+        {
+          "num": 16,
+          "name": "VSS",
+          "kind": "power"
+        },
+        {
+          "num": 17,
+          "name": "VDD",
+          "kind": "power"
+        },
+        {
+          "num": 18,
+          "name": "PB14",
+          "kind": "io"
+        },
+        {
+          "num": 19,
+          "name": "PC8",
+          "kind": "io"
+        },
+        {
+          "num": 20,
+          "name": "PC9",
+          "kind": "io"
+        },
+        {
+          "num": 21,
+          "name": "PA8",
+          "kind": "io"
+        },
+        {
+          "num": 22,
+          "name": "PA11",
+          "kind": "io"
+        },
+        {
+          "num": 23,
+          "name": "PA12",
+          "kind": "io"
+        },
+        {
+          "num": 24,
+          "name": "PA13",
+          "kind": "io",
+          "note": "JTMS-SWDIO"
+        },
+        {
+          "num": 25,
+          "name": "PA14",
+          "kind": "io",
+          "note": "JTCK-SWCLK"
+        },
+        {
+          "num": 26,
+          "name": "PA15",
+          "kind": "io",
+          "note": "JTDI"
+        },
+        {
+          "num": 27,
+          "name": "PB3",
+          "kind": "io",
+          "note": "JTDO-SWO"
+        },
+        {
+          "num": 28,
+          "name": "PB4",
+          "kind": "io",
+          "note": "JTAST"
+        },
+        {
+          "num": 29,
+          "name": "PB5",
+          "kind": "io"
+        },
+        {
+          "num": 30,
+          "name": "PB7",
+          "kind": "io"
+        },
+        {
+          "num": 31,
+          "name": "BOOT0",
+          "kind": "boot"
+        },
+        {
+          "num": 32,
+          "name": "PC13",
+          "kind": "io"
+        }
+      ]
+    },
+    {
+      "id": "HC32F401BKCU6RM2",
+      "label": "QFN32-5×5",
+      "shape": "qfn",
+      "pinNumbering": "package",
+      "pins": [
+        {
+          "num": 1,
+          "name": "VDD",
+          "kind": "power"
+        },
+        {
+          "num": 2,
+          "name": "PD0",
+          "kind": "io"
+        },
+        {
+          "num": 3,
+          "name": "PD1",
+          "kind": "io"
+        },
+        {
+          "num": 4,
+          "name": "NRST",
+          "kind": "reset"
+        },
+        {
+          "num": 5,
+          "name": "VDDA",
+          "kind": "power"
+        },
+        {
+          "num": 6,
+          "name": "PA0",
+          "kind": "io",
+          "note": "PA0_WKUP"
+        },
+        {
+          "num": 7,
+          "name": "PA1",
+          "kind": "io"
+        },
+        {
+          "num": 8,
+          "name": "PA2",
+          "kind": "io"
+        },
+        {
+          "num": 9,
+          "name": "PA3",
+          "kind": "io"
+        },
+        {
+          "num": 10,
+          "name": "PA4",
+          "kind": "io"
+        },
+        {
+          "num": 11,
+          "name": "PA5",
+          "kind": "io"
+        },
+        {
+          "num": 12,
+          "name": "PB0",
+          "kind": "io"
+        },
+        {
+          "num": 13,
+          "name": "PB1",
+          "kind": "io"
+        },
+        {
+          "num": 14,
+          "name": "PB2",
+          "kind": "io",
+          "note": "PB2/BOOT1",
+          "aliases": [
+            "BOOT1"
+          ]
+        },
+        {
+          "num": 15,
+          "name": "PB11",
+          "kind": "io"
+        },
+        {
+          "num": 16,
+          "name": "VSS",
+          "kind": "power"
+        },
+        {
+          "num": 17,
+          "name": "VDD",
+          "kind": "power"
+        },
+        {
+          "num": 18,
+          "name": "PB14",
+          "kind": "io"
+        },
+        {
+          "num": 19,
+          "name": "PC8",
+          "kind": "io"
+        },
+        {
+          "num": 20,
+          "name": "PC9",
+          "kind": "io"
+        },
+        {
+          "num": 21,
+          "name": "PA8",
+          "kind": "io"
+        },
+        {
+          "num": 22,
+          "name": "PA11",
+          "kind": "io"
+        },
+        {
+          "num": 23,
+          "name": "PA12",
+          "kind": "io"
+        },
+        {
+          "num": 24,
+          "name": "PA13",
+          "kind": "io",
+          "note": "JTMS-SWDIO"
+        },
+        {
+          "num": 25,
+          "name": "PA14",
+          "kind": "io",
+          "note": "JTCK-SWCLK"
+        },
+        {
+          "num": 26,
+          "name": "PA15",
+          "kind": "io",
+          "note": "JTDI"
+        },
+        {
+          "num": 27,
+          "name": "PB3",
+          "kind": "io",
+          "note": "JTDO-SWO"
+        },
+        {
+          "num": 28,
+          "name": "PB4",
+          "kind": "io",
+          "note": "JTAST"
+        },
+        {
+          "num": 29,
+          "name": "PB5",
+          "kind": "io"
+        },
+        {
+          "num": 30,
+          "name": "PB7",
+          "kind": "io"
+        },
+        {
+          "num": 31,
+          "name": "BOOT0",
+          "kind": "boot"
+        },
+        {
+          "num": 32,
+          "name": "PC13",
+          "kind": "io"
+        }
+      ]
+    },
+    {
+      "id": "HC32F401BECU6RM",
+      "label": "QFN24",
+      "shape": "qfn",
+      "pinNumbering": "package",
+      "pins": [
+        {
+          "num": 1,
+          "name": "PC13",
+          "kind": "io"
+        },
+        {
+          "num": 2,
+          "name": "PD0",
+          "kind": "io"
+        },
+        {
+          "num": 3,
+          "name": "PD1",
+          "kind": "io"
+        },
+        {
+          "num": 4,
+          "name": "NRST",
+          "kind": "reset"
+        },
+        {
+          "num": 5,
+          "name": "PA0",
+          "kind": "io",
+          "note": "PA0_WKUP"
+        },
+        {
+          "num": 6,
+          "name": "PA1",
+          "kind": "io"
+        },
+        {
+          "num": 7,
+          "name": "PA2",
+          "kind": "io"
+        },
+        {
+          "num": 8,
+          "name": "PA3",
+          "kind": "io"
+        },
+        {
+          "num": 9,
+          "name": "PA4",
+          "kind": "io"
+        },
+        {
+          "num": 10,
+          "name": "PB0",
+          "kind": "io"
+        },
+        {
+          "num": 11,
+          "name": "PB1",
+          "kind": "io"
+        },
+        {
+          "num": 12,
+          "name": "PB2",
+          "kind": "io",
+          "note": "PB2/BOOT1",
+          "aliases": [
+            "BOOT1"
+          ]
+        },
+        {
+          "num": 13,
+          "name": "PB11",
+          "kind": "io"
+        },
+        {
+          "num": 14,
+          "name": "PB14",
+          "kind": "io"
+        },
+        {
+          "num": 15,
+          "name": "PA8",
+          "kind": "io"
+        },
+        {
+          "num": 16,
+          "name": "PA12",
+          "kind": "io"
+        },
+        {
+          "num": 17,
+          "name": "PA13",
+          "kind": "io",
+          "note": "JTMS-SWDIO"
+        },
+        {
+          "num": 18,
+          "name": "PA14",
+          "kind": "io",
+          "note": "JTCK-SWCLK"
+        },
+        {
+          "num": 19,
+          "name": "PA15",
+          "kind": "io",
+          "note": "JTDI"
+        },
+        {
+          "num": 20,
+          "name": "PB3",
+          "kind": "io",
+          "note": "JTDO-SWO"
+        },
+        {
+          "num": 21,
+          "name": "PB4",
+          "kind": "io",
+          "note": "JTAST"
+        },
+        {
+          "num": 22,
+          "name": "PB7",
+          "kind": "io"
+        },
+        {
+          "num": 23,
+          "name": "PB8",
+          "kind": "io"
+        },
+        {
+          "num": 24,
+          "name": "VDD",
+          "kind": "power"
+        }
+      ]
+    }
+  ],
+  "ports": {
+    "PA0": [
+      {
+        "fn": "TIM1_CH4",
+        "remap": "1"
+      },
+      {
+        "fn": "SPI2_NSS",
+        "remap": "5"
+      },
+      {
+        "fn": "I2S2_WS",
+        "remap": "5"
+      },
+      {
+        "fn": "VC2_OUT",
+        "remap": "11"
+      },
+      {
+        "fn": "ADC1_START",
+        "remap": "12"
+      },
+      {
+        "fn": "SPI3_NSS",
+        "remap": "13"
+      },
+      {
+        "fn": "I2S3_WS",
+        "remap": "13"
+      },
+      {
+        "fn": "ADC2_IN12"
+      }
+    ],
+    "PA1": [
+      {
+        "fn": "TIM3_CH1",
+        "remap": "2"
+      },
+      {
+        "fn": "ADC2_IN13"
+      },
+      {
+        "fn": "FDA0_INN0"
+      }
+    ],
+    "PA10": [
+      {
+        "fn": "TIM7_ETR",
+        "remap": "10"
+      },
+      {
+        "fn": "ADC1_IN2"
+      }
+    ],
+    "PA11": [
+      {
+        "fn": "TIM2_CH1",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM8_CH1",
+        "remap": "3"
+      },
+      {
+        "fn": "I2C2_SCL",
+        "remap": "4"
+      },
+      {
+        "fn": "SPI2_NSS",
+        "remap": "5"
+      },
+      {
+        "fn": "I2S2_WS",
+        "remap": "5"
+      },
+      {
+        "fn": "UART4_TX",
+        "remap": "7"
+      },
+      {
+        "fn": "ADC1_SQR3_TRGO",
+        "remap": "12"
+      },
+      {
+        "fn": "SPI3_NSS",
+        "remap": "13"
+      },
+      {
+        "fn": "I2S3_WS",
+        "remap": "13"
+      },
+      {
+        "fn": "ADC1_IN3"
+      },
+      {
+        "fn": "USB1_DM"
+      }
+    ],
+    "PA12": [
+      {
+        "fn": "TIM2_CH2",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM8_CH1N",
+        "remap": "3"
+      },
+      {
+        "fn": "I2C2_SDA",
+        "remap": "4"
+      },
+      {
+        "fn": "SPI2_SCK",
+        "remap": "5"
+      },
+      {
+        "fn": "I2S2_CK",
+        "remap": "5"
+      },
+      {
+        "fn": "UART4_RX",
+        "remap": "7"
+      },
+      {
+        "fn": "QSPI1_NSS",
+        "remap": "9"
+      },
+      {
+        "fn": "SPI3_SCK",
+        "remap": "13"
+      },
+      {
+        "fn": "I2S3_CK",
+        "remap": "13"
+      },
+      {
+        "fn": "ADC1_IN4"
+      },
+      {
+        "fn": "USB1_DP"
+      }
+    ],
+    "PA13": [
+      {
+        "fn": "DBG_SWDIO"
+      },
+      {
+        "fn": "TIM2_ETR",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM5_CH1",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM8_CH2",
+        "remap": "3"
+      },
+      {
+        "fn": "SPI2_MISO",
+        "remap": "5"
+      },
+      {
+        "fn": "I2S2_SDIN",
+        "remap": "5"
+      },
+      {
+        "fn": "QSPI1_D0",
+        "remap": "9"
+      },
+      {
+        "fn": "SPI3_MISO",
+        "remap": "13"
+      },
+      {
+        "fn": "I2S3_SDIN",
+        "remap": "13"
+      },
+      {
+        "fn": "ADC1_IN5"
+      }
+    ],
+    "PA14": [
+      {
+        "fn": "DBG_SWCLK"
+      },
+      {
+        "fn": "TIM5_CH2",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM8_CH2N",
+        "remap": "3"
+      },
+      {
+        "fn": "SPI2_MOSI",
+        "remap": "5"
+      },
+      {
+        "fn": "I2S2_SDOUT",
+        "remap": "5"
+      },
+      {
+        "fn": "USART3_TX",
+        "remap": "6"
+      },
+      {
+        "fn": "CAN1_RX",
+        "remap": "8"
+      },
+      {
+        "fn": "QSPI1_D1",
+        "remap": "9"
+      },
+      {
+        "fn": "SPI3_MOSI",
+        "remap": "13"
+      },
+      {
+        "fn": "I2S3_SDOUT",
+        "remap": "13"
+      },
+      {
+        "fn": "ADC1_IN6"
+      }
+    ],
+    "PA15": [
+      {
+        "fn": "DBG_JTDI"
+      },
+      {
+        "fn": "TIM5_ETR",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM8_CH3",
+        "remap": "3"
+      },
+      {
+        "fn": "I2S2_MCK",
+        "remap": "5"
+      },
+      {
+        "fn": "USART3_RX",
+        "remap": "6"
+      },
+      {
+        "fn": "CAN1_TX",
+        "remap": "8"
+      },
+      {
+        "fn": "QSPI1_D2",
+        "remap": "9"
+      },
+      {
+        "fn": "TIM6_CH1",
+        "remap": "10"
+      },
+      {
+        "fn": "I2S3_MCK",
+        "remap": "13"
+      },
+      {
+        "fn": "ADC1_IN7"
+      }
+    ],
+    "PA2": [
+      {
+        "fn": "TIM1_CH1",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM3_CH2",
+        "remap": "2"
+      },
+      {
+        "fn": "I2C1_SCL",
+        "remap": "4"
+      },
+      {
+        "fn": "SPI2_SCK",
+        "remap": "5"
+      },
+      {
+        "fn": "I2S2_CK",
+        "remap": "5"
+      },
+      {
+        "fn": "USART1_TX",
+        "remap": "6"
+      },
+      {
+        "fn": "CAN1_RX",
+        "remap": "8"
+      },
+      {
+        "fn": "ADC1_SQR0_TRGO",
+        "remap": "12"
+      },
+      {
+        "fn": "SPI3_SCK",
+        "remap": "13"
+      },
+      {
+        "fn": "I2S3_CK",
+        "remap": "13"
+      },
+      {
+        "fn": "ADC2_IN14"
+      },
+      {
+        "fn": "FDA0_INP0"
+      }
+    ],
+    "PA3": [
+      {
+        "fn": "TIM1_CH2",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM3_ETR",
+        "remap": "2"
+      },
+      {
+        "fn": "I2C1_SDA",
+        "remap": "4"
+      },
+      {
+        "fn": "SPI2_MISO",
+        "remap": "5"
+      },
+      {
+        "fn": "I2S2_SDIN",
+        "remap": "5"
+      },
+      {
+        "fn": "USART1_RX",
+        "remap": "6"
+      },
+      {
+        "fn": "CAN1_TX",
+        "remap": "8"
+      },
+      {
+        "fn": "VC0_OUT",
+        "remap": "11"
+      },
+      {
+        "fn": "ADC1_SQR1_TRGO",
+        "remap": "12"
+      },
+      {
+        "fn": "SPI3_MISO",
+        "remap": "13"
+      },
+      {
+        "fn": "I2S3_SDIN",
+        "remap": "13"
+      },
+      {
+        "fn": "ADC2_IN15"
+      }
+    ],
+    "PA4": [
+      {
+        "fn": "TIM1_CH3",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM4_CH1",
+        "remap": "2"
+      },
+      {
+        "fn": "SPI2_MOSI",
+        "remap": "5"
+      },
+      {
+        "fn": "I2S2_SDOUT",
+        "remap": "5"
+      },
+      {
+        "fn": "USART1_CK",
+        "remap": "6"
+      },
+      {
+        "fn": "VC1_OUT",
+        "remap": "11"
+      },
+      {
+        "fn": "ADC1_SQR2_TRGO",
+        "remap": "12"
+      },
+      {
+        "fn": "SPI3_MOSI",
+        "remap": "13"
+      },
+      {
+        "fn": "I2S3_SDOUT",
+        "remap": "13"
+      },
+      {
+        "fn": "ADC2_IN16"
+      },
+      {
+        "fn": "DAC1_OUT"
+      }
+    ],
+    "PA5": [
+      {
+        "fn": "TIM4_CH2",
+        "remap": "2"
+      },
+      {
+        "fn": "ADC2_IN17"
+      },
+      {
+        "fn": "FDA1_INN2"
+      }
+    ],
+    "PA6": [
+      {
+        "fn": "TIM4_ETR",
+        "remap": "2"
+      },
+      {
+        "fn": "USART2_TX",
+        "remap": "6"
+      },
+      {
+        "fn": "ADC2_IN18"
+      },
+      {
+        "fn": "FDA1_INP2"
+      }
+    ],
+    "PA7": [
+      {
+        "fn": "TIM5_CH1",
+        "remap": "2"
+      },
+      {
+        "fn": "USART2_RX",
+        "remap": "6"
+      },
+      {
+        "fn": "ADC2_IN19"
+      }
+    ],
+    "PA8": [
+      {
+        "fn": "CLK_MCO"
+      },
+      {
+        "fn": "TIM5_CH2",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM7_CH1",
+        "remap": "10"
+      },
+      {
+        "fn": "ADC1_IN0"
+      },
+      {
+        "fn": "DAC1_OUT"
+      }
+    ],
+    "PA9": [
+      {
+        "fn": "TIM5_ETR",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM7_CH2",
+        "remap": "10"
+      },
+      {
+        "fn": "ADC1_IN1"
+      }
+    ],
+    "PB0": [
+      {
+        "fn": "TIM1_CH1N",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM8_CH3N",
+        "remap": "3"
+      },
+      {
+        "fn": "USART3_CK",
+        "remap": "6"
+      },
+      {
+        "fn": "QSPI1_D3",
+        "remap": "9"
+      },
+      {
+        "fn": "TIM6_CH2",
+        "remap": "10"
+      },
+      {
+        "fn": "ADC1_IN8"
+      }
+    ],
+    "PB1": [
+      {
+        "fn": "TIM1_CH2N",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM8_CH4",
+        "remap": "3"
+      },
+      {
+        "fn": "QSPI1_CLK",
+        "remap": "9"
+      },
+      {
+        "fn": "TIM6_ETR",
+        "remap": "10"
+      },
+      {
+        "fn": "ADC1_IN9"
+      },
+      {
+        "fn": "FDA0_INP1"
+      }
+    ],
+    "PB10": [
+      {
+        "fn": "TIM1_ETR",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM4_CH2",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM9_CH4",
+        "remap": "3"
+      },
+      {
+        "fn": "I2C2_SCL",
+        "remap": "4"
+      },
+      {
+        "fn": "USART2_RX",
+        "remap": "6"
+      },
+      {
+        "fn": "QSPI1_D1",
+        "remap": "9"
+      },
+      {
+        "fn": "ADC1_IN18"
+      },
+      {
+        "fn": "VC2_CH2"
+      }
+    ],
+    "PB11": [
+      {
+        "fn": "TIM1_BKIN",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM4_ETR",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM9_ETR",
+        "remap": "3"
+      },
+      {
+        "fn": "I2C2_SDA",
+        "remap": "4"
+      },
+      {
+        "fn": "USART2_CK",
+        "remap": "6"
+      },
+      {
+        "fn": "QSPI1_D2",
+        "remap": "9"
+      },
+      {
+        "fn": "ADC1_IN19"
+      },
+      {
+        "fn": "FDA1_OUTP"
+      }
+    ],
+    "PB12": [
+      {
+        "fn": "QSPI1_D3",
+        "remap": "9"
+      },
+      {
+        "fn": "ADC1_IN20"
+      },
+      {
+        "fn": "ADC2_IN20"
+      },
+      {
+        "fn": "VC2_CH3"
+      }
+    ],
+    "PB13": [
+      {
+        "fn": "QSPI1_CLK",
+        "remap": "9"
+      },
+      {
+        "fn": "ADC1_IN21"
+      },
+      {
+        "fn": "ADC2_IN21"
+      },
+      {
+        "fn": "VC2_CH4"
+      }
+    ],
+    "PB14": [
+      {
+        "fn": "TIM1_BKIN2",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM6_CH1",
+        "remap": "10"
+      },
+      {
+        "fn": "ADC2_IN22"
+      },
+      {
+        "fn": "FDA1_OUTN"
+      }
+    ],
+    "PB15": [
+      {
+        "fn": "TIM6_CH2",
+        "remap": "10"
+      },
+      {
+        "fn": "ADC2_IN23"
+      }
+    ],
+    "PB2": [
+      {
+        "fn": "TIM1_CH3N",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM8_BKIN",
+        "remap": "3"
+      },
+      {
+        "fn": "ADC1_IN10"
+      },
+      {
+        "fn": "FDA0_INN1"
+      }
+    ],
+    "PB3": [
+      {
+        "fn": "DBG_SWO"
+      },
+      {
+        "fn": "TIM8_BKIN2",
+        "remap": "3"
+      },
+      {
+        "fn": "I2C1_SCL",
+        "remap": "4"
+      },
+      {
+        "fn": "CAN1_RX",
+        "remap": "8"
+      },
+      {
+        "fn": "ADC1_IN11"
+      },
+      {
+        "fn": "FDA0_OUTP"
+      },
+      {
+        "fn": "VC1_CH2"
+      }
+    ],
+    "PB4": [
+      {
+        "fn": "DBG_JTAG"
+      },
+      {
+        "fn": "TIM3_CH1",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM8_ETR",
+        "remap": "3"
+      },
+      {
+        "fn": "I2C1_SDA",
+        "remap": "4"
+      },
+      {
+        "fn": "CAN1_TX",
+        "remap": "8"
+      },
+      {
+        "fn": "VC0_OUT",
+        "remap": "11"
+      },
+      {
+        "fn": "ADC1_IN12"
+      },
+      {
+        "fn": "FDA0_OUTN"
+      }
+    ],
+    "PB5": [
+      {
+        "fn": "TIM3_CH2",
+        "remap": "2"
+      },
+      {
+        "fn": "SPI2_NSS",
+        "remap": "5"
+      },
+      {
+        "fn": "I2S2_WS",
+        "remap": "5"
+      },
+      {
+        "fn": "VC1_OUT",
+        "remap": "11"
+      },
+      {
+        "fn": "SPI3_NSS",
+        "remap": "13"
+      },
+      {
+        "fn": "I2S3_WS",
+        "remap": "13"
+      },
+      {
+        "fn": "ADC1_IN13"
+      },
+      {
+        "fn": "FDA0_INP2"
+      },
+      {
+        "fn": "VC1_CH3"
+      }
+    ],
+    "PB6": [
+      {
+        "fn": "TIM3_ETR",
+        "remap": "2"
+      },
+      {
+        "fn": "SPI2_SCK",
+        "remap": "5"
+      },
+      {
+        "fn": "I2S2_CK",
+        "remap": "5"
+      },
+      {
+        "fn": "VC2_OUT",
+        "remap": "11"
+      },
+      {
+        "fn": "SPI3_SCK",
+        "remap": "13"
+      },
+      {
+        "fn": "I2S3_CK",
+        "remap": "13"
+      },
+      {
+        "fn": "ADC1_IN14"
+      },
+      {
+        "fn": "FDA0_INN2"
+      },
+      {
+        "fn": "VC1_CH4"
+      }
+    ],
+    "PB7": [
+      {
+        "fn": "TIM9_CH1",
+        "remap": "3"
+      },
+      {
+        "fn": "SPI2_MISO",
+        "remap": "5"
+      },
+      {
+        "fn": "I2S2_SDIN",
+        "remap": "5"
+      },
+      {
+        "fn": "UART5_TX",
+        "remap": "7"
+      },
+      {
+        "fn": "RTC_TRIMCLK",
+        "remap": "11"
+      },
+      {
+        "fn": "SPI3_MISO",
+        "remap": "13"
+      },
+      {
+        "fn": "I2S3_SDIN",
+        "remap": "13"
+      },
+      {
+        "fn": "ADC1_IN15"
+      },
+      {
+        "fn": "FDA1_INP0"
+      }
+    ],
+    "PB8": [
+      {
+        "fn": "TIM9_CH2",
+        "remap": "3"
+      },
+      {
+        "fn": "SPI2_MOSI",
+        "remap": "5"
+      },
+      {
+        "fn": "I2S2_SDOUT",
+        "remap": "5"
+      },
+      {
+        "fn": "UART5_RX",
+        "remap": "7"
+      },
+      {
+        "fn": "QSPI1_NSS",
+        "remap": "9"
+      },
+      {
+        "fn": "SPI3_MOSI",
+        "remap": "13"
+      },
+      {
+        "fn": "I2S3_SDOUT",
+        "remap": "13"
+      },
+      {
+        "fn": "ADC1_IN16"
+      },
+      {
+        "fn": "FDA1_INN0"
+      },
+      {
+        "fn": "VC2_CH0"
+      }
+    ],
+    "PB9": [
+      {
+        "fn": "CLK_MCO"
+      },
+      {
+        "fn": "TIM4_CH1",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM9_CH3",
+        "remap": "3"
+      },
+      {
+        "fn": "I2S2_MCK",
+        "remap": "5"
+      },
+      {
+        "fn": "USART2_TX",
+        "remap": "6"
+      },
+      {
+        "fn": "QSPI1_D0",
+        "remap": "9"
+      },
+      {
+        "fn": "I2S3_MCK",
+        "remap": "13"
+      },
+      {
+        "fn": "ADC1_IN17"
+      },
+      {
+        "fn": "FDA1_INP1"
+      },
+      {
+        "fn": "VC2_CH1"
+      }
+    ],
+    "PC0": [
+      {
+        "fn": "TIM10_CH1",
+        "remap": "3"
+      },
+      {
+        "fn": "I2C1_SCL",
+        "remap": "4"
+      },
+      {
+        "fn": "USART3_TX",
+        "remap": "6"
+      },
+      {
+        "fn": "TIM6_ETR",
+        "remap": "10"
+      },
+      {
+        "fn": "ADC1_IN22"
+      }
+    ],
+    "PC1": [
+      {
+        "fn": "TIM2_CH1",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM10_CH1N",
+        "remap": "3"
+      },
+      {
+        "fn": "I2C1_SDA",
+        "remap": "4"
+      },
+      {
+        "fn": "USART3_RX",
+        "remap": "6"
+      },
+      {
+        "fn": "TIM7_CH1",
+        "remap": "10"
+      },
+      {
+        "fn": "ADC1_IN23"
+      }
+    ],
+    "PC10": [
+      {
+        "fn": "TIM1_CH3N",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM3_CH1",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM8_CH1",
+        "remap": "3"
+      },
+      {
+        "fn": "I2S2_MCK",
+        "remap": "5"
+      },
+      {
+        "fn": "I2S3_MCK",
+        "remap": "13"
+      },
+      {
+        "fn": "ADC2_IN2"
+      },
+      {
+        "fn": "VC0_CH2"
+      }
+    ],
+    "PC11": [
+      {
+        "fn": "TIM1_CH4",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM3_CH2",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM8_CH1N",
+        "remap": "3"
+      },
+      {
+        "fn": "ADC2_IN3"
+      }
+    ],
+    "PC12": [
+      {
+        "fn": "TIM1_ETR",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM3_ETR",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM8_CH2",
+        "remap": "3"
+      },
+      {
+        "fn": "QSPI1_NSS",
+        "remap": "9"
+      },
+      {
+        "fn": "TIM7_CH1",
+        "remap": "10"
+      },
+      {
+        "fn": "ADC2_IN4"
+      },
+      {
+        "fn": "VC0_CH3"
+      }
+    ],
+    "PC13": [
+      {
+        "fn": "TIM1_BKIN",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM4_CH1",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM8_CH2N",
+        "remap": "3"
+      },
+      {
+        "fn": "QSPI1_D0",
+        "remap": "9"
+      },
+      {
+        "fn": "TIM7_CH2",
+        "remap": "10"
+      },
+      {
+        "fn": "ADC2_IN5"
+      },
+      {
+        "fn": "VC0_CH4"
+      }
+    ],
+    "PC14": [
+      {
+        "fn": "TIM1_BKIN2",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM4_CH2",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM8_CH3",
+        "remap": "3"
+      },
+      {
+        "fn": "SPI2_NSS",
+        "remap": "5"
+      },
+      {
+        "fn": "I2S2_WS",
+        "remap": "5"
+      },
+      {
+        "fn": "UART4_TX",
+        "remap": "7"
+      },
+      {
+        "fn": "QSPI1_D1",
+        "remap": "9"
+      },
+      {
+        "fn": "TIM7_ETR",
+        "remap": "10"
+      },
+      {
+        "fn": "SPI3_NSS",
+        "remap": "13"
+      },
+      {
+        "fn": "I2S3_WS",
+        "remap": "13"
+      },
+      {
+        "fn": "ADC2_IN6"
+      }
+    ],
+    "PC15": [
+      {
+        "fn": "TIM4_ETR",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM8_CH3N",
+        "remap": "3"
+      },
+      {
+        "fn": "SPI2_SCK",
+        "remap": "5"
+      },
+      {
+        "fn": "I2S2_CK",
+        "remap": "5"
+      },
+      {
+        "fn": "UART4_RX",
+        "remap": "7"
+      },
+      {
+        "fn": "QSPI1_D2",
+        "remap": "9"
+      },
+      {
+        "fn": "SPI3_SCK",
+        "remap": "13"
+      },
+      {
+        "fn": "I2S3_CK",
+        "remap": "13"
+      },
+      {
+        "fn": "ADC2_IN7"
+      }
+    ],
+    "PC2": [
+      {
+        "fn": "TIM2_CH2",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM10_ETR",
+        "remap": "3"
+      },
+      {
+        "fn": "USART3_CK",
+        "remap": "6"
+      },
+      {
+        "fn": "TIM7_CH2",
+        "remap": "10"
+      },
+      {
+        "fn": "ADC1_IN24"
+      },
+      {
+        "fn": "ADC2_IN24"
+      }
+    ],
+    "PC3": [
+      {
+        "fn": "TIM2_ETR",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM7_ETR",
+        "remap": "10"
+      },
+      {
+        "fn": "ADC1_START",
+        "remap": "12"
+      },
+      {
+        "fn": "ADC1_IN25"
+      },
+      {
+        "fn": "ADC2_IN25"
+      }
+    ],
+    "PC4": [
+      {
+        "fn": "VC0_OUT",
+        "remap": "11"
+      },
+      {
+        "fn": "ADC1_SQR0_TRGO",
+        "remap": "12"
+      },
+      {
+        "fn": "ADC1_IN26"
+      },
+      {
+        "fn": "ADC2_IN26"
+      }
+    ],
+    "PC5": [
+      {
+        "fn": "TIM1_CH1",
+        "remap": "1"
+      },
+      {
+        "fn": "VC1_OUT",
+        "remap": "11"
+      },
+      {
+        "fn": "ADC1_SQR1_TRGO",
+        "remap": "12"
+      },
+      {
+        "fn": "ADC1_IN27"
+      },
+      {
+        "fn": "ADC2_IN27"
+      }
+    ],
+    "PC6": [
+      {
+        "fn": "TIM1_CH1N",
+        "remap": "1"
+      },
+      {
+        "fn": "UART4_TX",
+        "remap": "7"
+      },
+      {
+        "fn": "VC2_OUT",
+        "remap": "11"
+      },
+      {
+        "fn": "ADC1_SQR2_TRGO",
+        "remap": "12"
+      },
+      {
+        "fn": "ADC1_IN28"
+      },
+      {
+        "fn": "ADC2_IN28"
+      }
+    ],
+    "PC7": [
+      {
+        "fn": "TIM1_CH2",
+        "remap": "1"
+      },
+      {
+        "fn": "UART4_RX",
+        "remap": "7"
+      },
+      {
+        "fn": "RTC_TRIMCLK",
+        "remap": "11"
+      },
+      {
+        "fn": "ADC1_SQR3_TRGO",
+        "remap": "12"
+      },
+      {
+        "fn": "ADC1_IN29"
+      },
+      {
+        "fn": "ADC2_IN29"
+      }
+    ],
+    "PC8": [
+      {
+        "fn": "TIM1_CH2N",
+        "remap": "1"
+      },
+      {
+        "fn": "I2C2_SCL",
+        "remap": "4"
+      },
+      {
+        "fn": "USART1_TX",
+        "remap": "6"
+      },
+      {
+        "fn": "UART5_TX",
+        "remap": "7"
+      },
+      {
+        "fn": "CAN1_RX",
+        "remap": "8"
+      },
+      {
+        "fn": "ADC2_IN0"
+      },
+      {
+        "fn": "VC0_CH0"
+      }
+    ],
+    "PC9": [
+      {
+        "fn": "TIM1_CH3",
+        "remap": "1"
+      },
+      {
+        "fn": "I2C2_SDA",
+        "remap": "4"
+      },
+      {
+        "fn": "USART1_RX",
+        "remap": "6"
+      },
+      {
+        "fn": "UART5_RX",
+        "remap": "7"
+      },
+      {
+        "fn": "CAN1_TX",
+        "remap": "8"
+      },
+      {
+        "fn": "ADC2_IN1"
+      },
+      {
+        "fn": "VC0_CH1"
+      }
+    ],
+    "PD0": [
+      {
+        "fn": "TIM5_CH1",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM8_CH4",
+        "remap": "3"
+      },
+      {
+        "fn": "SPI2_MISO",
+        "remap": "5"
+      },
+      {
+        "fn": "I2S2_SDIN",
+        "remap": "5"
+      },
+      {
+        "fn": "QSPI1_D3",
+        "remap": "9"
+      },
+      {
+        "fn": "VC0_OUT",
+        "remap": "11"
+      },
+      {
+        "fn": "SPI3_MISO",
+        "remap": "13"
+      },
+      {
+        "fn": "I2S3_SDIN",
+        "remap": "13"
+      },
+      {
+        "fn": "ADC2_IN8"
+      }
+    ],
+    "PD1": [
+      {
+        "fn": "TIM5_CH2",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM8_ETR",
+        "remap": "3"
+      },
+      {
+        "fn": "SPI2_MOSI",
+        "remap": "5"
+      },
+      {
+        "fn": "I2S2_SDOUT",
+        "remap": "5"
+      },
+      {
+        "fn": "QSPI1_CLK",
+        "remap": "9"
+      },
+      {
+        "fn": "VC1_OUT",
+        "remap": "11"
+      },
+      {
+        "fn": "SPI3_MOSI",
+        "remap": "13"
+      },
+      {
+        "fn": "I2S3_SDOUT",
+        "remap": "13"
+      },
+      {
+        "fn": "ADC2_IN9"
+      }
+    ],
+    "PD2": [
+      {
+        "fn": "TIM5_ETR",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM8_BKIN",
+        "remap": "3"
+      },
+      {
+        "fn": "VC2_OUT",
+        "remap": "11"
+      },
+      {
+        "fn": "ADC2_IN10"
+      },
+      {
+        "fn": "VC1_CH0"
+      }
+    ],
+    "PD3": [
+      {
+        "fn": "TIM8_BKIN2",
+        "remap": "3"
+      },
+      {
+        "fn": "ADC2_IN11"
+      },
+      {
+        "fn": "FDA1_INN1"
+      },
+      {
+        "fn": "VC1_CH1"
+      }
+    ]
+  },
+  "peripherals": [
+    {
+      "id": "ADC1",
+      "signals": [
+        "IN0",
+        "IN1",
+        "IN10",
+        "IN11",
+        "IN12",
+        "IN13",
+        "IN14",
+        "IN15",
+        "IN16",
+        "IN17",
+        "IN18",
+        "IN19",
+        "IN2",
+        "IN20",
+        "IN21",
+        "IN22",
+        "IN23",
+        "IN24",
+        "IN25",
+        "IN26",
+        "IN27",
+        "IN28",
+        "IN29",
+        "IN3",
+        "IN4",
+        "IN5",
+        "IN6",
+        "IN7",
+        "IN8",
+        "IN9",
+        "SQR0_TRGO",
+        "SQR1_TRGO",
+        "SQR2_TRGO",
+        "SQR3_TRGO",
+        "START"
+      ]
+    },
+    {
+      "id": "ADC2",
+      "signals": [
+        "IN0",
+        "IN1",
+        "IN10",
+        "IN11",
+        "IN12",
+        "IN13",
+        "IN14",
+        "IN15",
+        "IN16",
+        "IN17",
+        "IN18",
+        "IN19",
+        "IN2",
+        "IN20",
+        "IN21",
+        "IN22",
+        "IN23",
+        "IN24",
+        "IN25",
+        "IN26",
+        "IN27",
+        "IN28",
+        "IN29",
+        "IN3",
+        "IN4",
+        "IN5",
+        "IN6",
+        "IN7",
+        "IN8",
+        "IN9"
+      ]
+    },
+    {
+      "id": "CAN1",
+      "signals": [
+        "RX",
+        "TX"
+      ]
+    },
+    {
+      "id": "CLK",
+      "signals": [
+        "MCO"
+      ]
+    },
+    {
+      "id": "DAC1",
+      "signals": [
+        "OUT"
+      ]
+    },
+    {
+      "id": "DBG",
+      "signals": [
+        "JTAG",
+        "JTDI",
+        "SWCLK",
+        "SWDIO",
+        "SWO"
+      ]
+    },
+    {
+      "id": "FDA0",
+      "signals": [
+        "INN0",
+        "INN1",
+        "INN2",
+        "INP0",
+        "INP1",
+        "INP2",
+        "OUTN",
+        "OUTP"
+      ]
+    },
+    {
+      "id": "FDA1",
+      "signals": [
+        "INN0",
+        "INN1",
+        "INN2",
+        "INP0",
+        "INP1",
+        "INP2",
+        "OUTN",
+        "OUTP"
+      ]
+    },
+    {
+      "id": "I2C1",
+      "signals": [
+        "SCL",
+        "SDA"
+      ]
+    },
+    {
+      "id": "I2C2",
+      "signals": [
+        "SCL",
+        "SDA"
+      ]
+    },
+    {
+      "id": "I2S2",
+      "signals": [
+        "CK",
+        "MCK",
+        "SDIN",
+        "SDOUT",
+        "WS"
+      ]
+    },
+    {
+      "id": "I2S3",
+      "signals": [
+        "CK",
+        "MCK",
+        "SDIN",
+        "SDOUT",
+        "WS"
+      ]
+    },
+    {
+      "id": "QSPI1",
+      "signals": [
+        "CLK",
+        "D0",
+        "D1",
+        "D2",
+        "D3",
+        "NSS"
+      ]
+    },
+    {
+      "id": "RTC",
+      "signals": [
+        "TRIMCLK"
+      ]
+    },
+    {
+      "id": "SPI2",
+      "signals": [
+        "MISO",
+        "MOSI",
+        "NSS",
+        "SCK"
+      ]
+    },
+    {
+      "id": "SPI3",
+      "signals": [
+        "MISO",
+        "MOSI",
+        "NSS",
+        "SCK"
+      ]
+    },
+    {
+      "id": "TIM1",
+      "signals": [
+        "BKIN",
+        "BKIN2",
+        "CH1",
+        "CH1N",
+        "CH2",
+        "CH2N",
+        "CH3",
+        "CH3N",
+        "CH4",
+        "ETR"
+      ]
+    },
+    {
+      "id": "TIM10",
+      "signals": [
+        "CH1",
+        "CH1N",
+        "ETR"
+      ]
+    },
+    {
+      "id": "TIM2",
+      "signals": [
+        "CH1",
+        "CH2",
+        "ETR"
+      ]
+    },
+    {
+      "id": "TIM3",
+      "signals": [
+        "CH1",
+        "CH2",
+        "ETR"
+      ]
+    },
+    {
+      "id": "TIM4",
+      "signals": [
+        "CH1",
+        "CH2",
+        "ETR"
+      ]
+    },
+    {
+      "id": "TIM5",
+      "signals": [
+        "CH1",
+        "CH2",
+        "ETR"
+      ]
+    },
+    {
+      "id": "TIM6",
+      "signals": [
+        "CH1",
+        "CH2",
+        "ETR"
+      ]
+    },
+    {
+      "id": "TIM7",
+      "signals": [
+        "CH1",
+        "CH2",
+        "ETR"
+      ]
+    },
+    {
+      "id": "TIM8",
+      "signals": [
+        "BKIN",
+        "BKIN2",
+        "CH1",
+        "CH1N",
+        "CH2",
+        "CH2N",
+        "CH3",
+        "CH3N",
+        "CH4",
+        "ETR"
+      ]
+    },
+    {
+      "id": "TIM9",
+      "signals": [
+        "CH1",
+        "CH2",
+        "CH3",
+        "CH4",
+        "ETR"
+      ]
+    },
+    {
+      "id": "UART4",
+      "signals": [
+        "RX",
+        "TX"
+      ]
+    },
+    {
+      "id": "UART5",
+      "signals": [
+        "RX",
+        "TX"
+      ]
+    },
+    {
+      "id": "USART1",
+      "signals": [
+        "CK",
+        "RX",
+        "TX"
+      ]
+    },
+    {
+      "id": "USART2",
+      "signals": [
+        "CK",
+        "RX",
+        "TX"
+      ]
+    },
+    {
+      "id": "USART3",
+      "signals": [
+        "CK",
+        "RX",
+        "TX"
+      ]
+    },
+    {
+      "id": "USB1",
+      "signals": [
+        "DM",
+        "DP"
+      ]
+    },
+    {
+      "id": "VC0",
+      "signals": [
+        "CH0",
+        "CH1",
+        "CH2",
+        "CH3",
+        "CH4",
+        "OUT"
+      ]
+    },
+    {
+      "id": "VC1",
+      "signals": [
+        "CH0",
+        "CH1",
+        "CH2",
+        "CH3",
+        "CH4",
+        "OUT"
+      ]
+    },
+    {
+      "id": "VC2",
+      "signals": [
+        "CH0",
+        "CH1",
+        "CH2",
+        "CH3",
+        "CH4",
+        "OUT"
+      ]
+    }
+  ],
+  "irqs": [],
+  "pending": [
+    "引脚号来自引脚定义大图（逐脚录入），是封装的真实物理引脚号",
+    "尚无中断向量表（irqs 为空），NVIC 面板暂无条目",
+    "尚无 DMA 请求映射表，DMA 面板按通道号手选",
+    "代码生成明确禁止（codegen = disable）：资料只到引脚/AF 层级，尚无寄存器手册与 SDK 头文件；引脚映射表仍可导出",
+    "ADC 通道按本项目的 INn 命名（手册为 ANn），便于与既有 ADC 面板共用",
+    "TIM10 的 TO_GP/TO_GN 归一化为 CH1/CH1N；TIM1/TIM8 的 BK1/BK2 归一化为 BKIN/BKIN2（这两条是推断，待手册确认）",
+    "复用的分组语义 = independent（逐引脚 AF，无重映射组）。同一外设的信号允许落在不同 AF 上，与 WCH 的 AFIO 整组切换不同"
+  ]
+}

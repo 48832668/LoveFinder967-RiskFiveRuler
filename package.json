@@ -1,0 +1,41 @@
+{
+  "name": "risk-five-ruler",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "RiskFiveRuler — WCH CH32V (RISC-V) MCU 图形化配置与代码生成工具",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --port 4173",
+    "typecheck": "tsc --noEmit",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build",
+    "package:exe": "node scripts/package-exe.mjs",
+    "test": "npm run typecheck && npm run check:layers && npm run test:golden && npm run test:groups",
+    "check:layers": "node scripts/check_layers.mjs",
+    "test:golden": "node scripts/golden.mjs",
+    "golden:update": "node scripts/golden.mjs --update",
+    "test:ui": "node scripts/ui-smoke.mjs",
+    "test:groups": "node scripts/check_groups.mjs",
+    "test:rust": "node scripts/test-rust.mjs"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-dialog": "^2",
+    "@tauri-apps/plugin-fs": "^2",
+    "@tauri-apps/plugin-opener": "^2",
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^5",
+    "playwright": "^1.64.1",
+    "typescript": "^5.9",
+    "vite": "^7"
+  }
+}

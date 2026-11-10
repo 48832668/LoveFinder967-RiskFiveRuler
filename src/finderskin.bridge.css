@@ -1,0 +1,131 @@
+/* FinderSkin 桥接层
+ * ────────────────────────────────────────────────────────────────
+ * 作用：把 RiskFiveRuler 历史上的变量名（--bg-0 / --fg-1 / --accent …）
+ * 一次性收口到 FinderSkin 的令牌（--fs-*）。这样组件样式不用改名，
+ * 但颜色、形状、字体、节奏全部由 finderskin.theme.css 决定。
+ *
+ * 引入顺序（main.tsx，不能变）：
+ *   finderskin.theme.css → finderskin.bridge.css → finderskin-ui.css → styles.css
+ */
+
+:root {
+  /* ── 界面尺度 ──
+   * FinderSkin 默认是「17px 正文 / 34px 按钮」的舒适档；本工具是高密度
+   * 工程软件，整体缩到 0.8（正文约 13.6px、控件约 28px）。
+   * 需要整体放大/缩小时改这里（或给 <html> 设 --rfr-scale）。 */
+  --rfr-scale: 1;
+  --fs-zoom: calc(0.8 * var(--rfr-scale));
+
+  /* ── 颜色：旧名字 → 令牌 ── */
+  --bg-0: var(--fs-bg);
+  --bg-1: var(--fs-surface);
+  --bg-2: var(--fs-surface-2);
+  --bg-3: var(--fs-surface-3);
+  --bg-4: var(--fs-border);
+  --border: var(--fs-border);
+  --border-soft: var(--fs-border);
+
+  --fg-0: var(--fs-text);
+  --fg-1: var(--fs-text-2);
+  --fg-2: var(--fs-text-3);
+
+  --accent: var(--fs-primary);
+  --accent-dim: var(--fs-primary-hover);
+  --accent-soft: var(--fs-primary-soft);
+  --blue: var(--fs-info);
+  --amber: var(--fs-warning);
+  --red: var(--fs-danger);
+  --purple: color-mix(in srgb, var(--fs-info) 62%, var(--fs-danger));
+
+  /* ── 形状 / 字体 ── */
+  --radius: var(--fs-card-radius);
+  --radius-sm: var(--fs-r-sm);
+  --font: var(--fs-font);
+  --mono: var(--fs-font-mono);
+}
+
+/* ── 主题色派生 ──
+ * 设置界面只让用户选一个颜色（--app-theme），其余全部由它派生：
+ * 主色阶、中性面（背景/卡片/边框/文字底色）、引脚图画布色。
+ * 明色往黑混（文字可读），暗色往白混（在深底上够亮）。
+ * 覆盖 FinderSkin 令牌块里的同名变量 —— 本文件在其之后引入，后者生效。 */
+:root,
+[data-fs-mode="light"] {
+  --app-theme: #008dd7;
+  --fs-primary: var(--app-theme);
+  --fs-primary-hover: color-mix(in srgb, var(--app-theme) 86%, #000);
+  --fs-primary-active: color-mix(in srgb, var(--app-theme) 74%, #000);
+  --fs-primary-soft: color-mix(in srgb, var(--app-theme) 14%, transparent);
+  --fs-primary-soft-2: color-mix(in srgb, var(--app-theme) 24%, transparent);
+  --fs-primary-text: color-mix(in srgb, var(--app-theme) 72%, #000);
+  --fs-on-primary: #ffffff;
+
+  /* 中性面也吃主题色：浅色底往主题方向轻混，整个界面同一色相 */
+  --fs-bg: color-mix(in srgb, var(--app-theme) 4%, #fdfeff);
+  --fs-bg-sub: color-mix(in srgb, var(--app-theme) 5%, #fbfdff);
+  --fs-surface: color-mix(in srgb, var(--app-theme) 4%, #ffffff);
+  --fs-surface-2: color-mix(in srgb, var(--app-theme) 6%, #f5fafd);
+  --fs-surface-3: color-mix(in srgb, var(--app-theme) 9%, #edf4f9);
+  --fs-border: color-mix(in srgb, var(--app-theme) 12%, #dde9ef);
+  --fs-border-strong: color-mix(in srgb, var(--app-theme) 16%, #c5dae1);
+  --fs-border-subtle: color-mix(in srgb, var(--app-theme) 7%, #edf4f9);
+  --fs-input-bg: var(--fs-surface);
+  --fs-text: color-mix(in srgb, var(--app-theme) 7%, #17282d);
+  --fs-text-2: color-mix(in srgb, var(--app-theme) 7%, #5f767e);
+  --fs-text-3: color-mix(in srgb, var(--app-theme) 7%, #7a9199);
+  --fs-text-inverse: #fdfeff;
+  --fs-range-bg: var(--fs-surface-3);
+}
+
+[data-fs-mode="dark"] {
+  --fs-primary: color-mix(in srgb, var(--app-theme) 94%, #fff);
+  --fs-primary-hover: color-mix(in srgb, var(--app-theme) 82%, #fff);
+  --fs-primary-active: color-mix(in srgb, var(--app-theme) 68%, #fff);
+  --fs-primary-soft: color-mix(in srgb, var(--app-theme) 18%, transparent);
+  --fs-primary-soft-2: color-mix(in srgb, var(--app-theme) 28%, transparent);
+  --fs-primary-text: color-mix(in srgb, var(--app-theme) 52%, #fff);
+  --fs-on-primary: #0c0e13;
+
+  /* 深色底同样往主题方向混，暗色不再是纯灰黑 */
+  --fs-bg: color-mix(in srgb, var(--app-theme) 7%, #010b0f);
+  --fs-bg-sub: color-mix(in srgb, var(--app-theme) 8%, #05141a);
+  --fs-surface: color-mix(in srgb, var(--app-theme) 8%, #061519);
+  --fs-surface-2: color-mix(in srgb, var(--app-theme) 9%, #0e1f25);
+  --fs-surface-3: color-mix(in srgb, var(--app-theme) 11%, #15272d);
+  --fs-border: color-mix(in srgb, var(--app-theme) 14%, #1d2f34);
+  --fs-border-strong: color-mix(in srgb, var(--app-theme) 16%, #31444a);
+  --fs-border-subtle: color-mix(in srgb, var(--app-theme) 9%, #16272c);
+  --fs-input-bg: var(--fs-bg-sub);
+  --fs-text: color-mix(in srgb, var(--app-theme) 5%, #feffff);
+  --fs-text-2: color-mix(in srgb, var(--app-theme) 8%, #9cb2ba);
+  --fs-text-3: color-mix(in srgb, var(--app-theme) 8%, #7a9199);
+  --fs-text-inverse: #010b0f;
+  --fs-range-bg: var(--fs-surface-3);
+}
+
+/* ── 引脚图画布 ──
+ * canvas 直接读具体色值上色，同样全部从主题色派生（混入 3%~16%），
+ * 换主题色时芯片图一起换肤，明暗两套只差混合基数。 */
+[data-fs-mode="light"] {
+  --pin-bg: color-mix(in srgb, var(--app-theme) 5%, #eef3f8);
+  --pin-grid: color-mix(in srgb, var(--app-theme) 8%, #e3ecf3);
+  --pin-body: color-mix(in srgb, var(--app-theme) 3%, #ffffff);
+  --pin-body-edge: color-mix(in srgb, var(--app-theme) 14%, #c9dde4);
+  --pin-text: color-mix(in srgb, var(--app-theme) 7%, #16272c);
+  --pin-dim: color-mix(in srgb, var(--app-theme) 7%, #7a9199);
+  --pin-unused: color-mix(in srgb, var(--app-theme) 7%, #e6eef5);
+  --pin-power: color-mix(in srgb, var(--app-theme) 6%, #bcc6d3);
+  --pin-reset: color-mix(in srgb, var(--app-theme) 4%, #dcc7c7);
+}
+
+[data-fs-mode="dark"] {
+  --pin-bg: color-mix(in srgb, var(--app-theme) 8%, #010b0f);
+  --pin-grid: color-mix(in srgb, var(--app-theme) 10%, #12222a);
+  --pin-body: color-mix(in srgb, var(--app-theme) 10%, #0f1f24);
+  --pin-body-edge: color-mix(in srgb, var(--app-theme) 16%, #31444a);
+  --pin-text: color-mix(in srgb, var(--app-theme) 5%, #feffff);
+  --pin-dim: color-mix(in srgb, var(--app-theme) 8%, #7a9199);
+  --pin-unused: color-mix(in srgb, var(--app-theme) 9%, #16272c);
+  --pin-power: color-mix(in srgb, var(--app-theme) 9%, #2b3d44);
+  --pin-reset: color-mix(in srgb, var(--app-theme) 6%, #3b272b);
+}

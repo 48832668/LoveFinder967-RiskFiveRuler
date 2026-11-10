@@ -1,0 +1,4157 @@
+{
+  "packVersion": "0.2.0",
+  "series": "CH32V467",
+  "vendor": "WCH",
+  "core": "QingKe V3V · RV32IMAFCXV",
+  "source": "CH32V467DS0（= CH32V407 + 内置 8MB PSRAM；外设/引脚/DMA 与 CH32V407 一一对应）+ CH32V407RM V1.3",
+  "sdkHeader": "ch32v4x7",
+  "flashKb": 512,
+  "ramKb": 8392,
+  "voltage": "2.9 – 3.6 V",
+  "maxSysclk": 200,
+  "usb": {
+    "speeds": [
+      "fs",
+      "hs"
+    ],
+    "roles": [
+      "device",
+      "host"
+    ]
+  },
+  "extiLines": 16,
+  "dmaControllers": [
+    {
+      "id": "DMA1",
+      "channels": 13
+    },
+    {
+      "id": "DMA2",
+      "channels": 11
+    }
+  ],
+  "dmaChannels": 24,
+  "dmaMap": {
+    "1": [
+      "TIM2_CH3",
+      "TIM4_CH1"
+    ],
+    "2": [
+      "SPI1_RX",
+      "USART3_TX",
+      "TIM1_CH1",
+      "TIM2_UP",
+      "TIM3_CH3"
+    ],
+    "3": [
+      "SPI1_TX",
+      "USART3_RX",
+      "TIM1_CH2",
+      "I3C_TX",
+      "TIM3_UP",
+      "TIM3_CH4"
+    ],
+    "4": [
+      "SPI2_RX",
+      "USART1_TX",
+      "TIM1_TRIG",
+      "TIM1_CH4",
+      "TIM1_COM",
+      "I3C_RX",
+      "TIM2_CH1",
+      "TIM4_CH2"
+    ],
+    "5": [
+      "SPI2_TX",
+      "USART1_RX",
+      "TIM1_UP",
+      "TIM3_CH1",
+      "TIM4_CH3"
+    ],
+    "6": [
+      "USART2_RX",
+      "I2C1_TX",
+      "TIM1_CH3",
+      "TIM2_CH2",
+      "TIM3_TRIG"
+    ],
+    "7": [
+      "USART2_TX",
+      "I2C1_RX",
+      "TIM2_CH4",
+      "TIM4_UP"
+    ],
+    "8": [
+      "USART9_TX",
+      "I3C_TC"
+    ],
+    "9": [
+      "USART9_RX"
+    ],
+    "10": [
+      "USART10_TX",
+      "ARGB"
+    ],
+    "11": [
+      "USART10_RX"
+    ],
+    "12": [
+      "ADC"
+    ],
+    "13": [
+      "ADC"
+    ],
+    "14": [
+      "TIM5_CH4",
+      "TIM5_TRIG",
+      "SPI3_RX",
+      "TIM8_CH3"
+    ],
+    "15": [
+      "TIM5_CH3",
+      "TIM5_UP",
+      "SPI3_TX",
+      "TIM8_UP",
+      "USART5_RX"
+    ],
+    "16": [
+      "TIM6_UP",
+      "TIM8_TRIG",
+      "TIM8_COM",
+      "TIM8_CH4",
+      "DAC1",
+      "DAC2",
+      "USART4_RX"
+    ],
+    "17": [
+      "TIM5_CH2",
+      "TIM7_UP",
+      "TIM8_CH1",
+      "SDIO",
+      "USART5_TX"
+    ],
+    "18": [
+      "TIM5_CH1",
+      "USART4_TX",
+      "DVP"
+    ],
+    "19": [
+      "TIM8_CH2",
+      "USART6_TX"
+    ],
+    "20": [
+      "USART6_RX"
+    ],
+    "21": [
+      "USART7_TX"
+    ],
+    "22": [
+      "USART7_RX"
+    ],
+    "23": [
+      "USART8_TX"
+    ],
+    "24": [
+      "USART8_RX"
+    ]
+  },
+  "peripheralVersion": "1.0",
+  "api": {
+    "clockProfile": "full",
+    "clockApi": "pb",
+    "nvicApi": "cmsis",
+    "adcClock": "rcc",
+    "flashPrefetch": false,
+    "flashLatency": false,
+    "gpioSpeedStyle": "level",
+    "gpioSpeeds": [
+      "Low",
+      "Medium",
+      "High"
+    ],
+    "gpioOpenDrain": true,
+    "nvicGroups": [],
+    "adcSampleStyle": "cyclesmode",
+    "adcSampleTimes": [
+      "CyclesMode0",
+      "CyclesMode1",
+      "CyclesMode2",
+      "CyclesMode3",
+      "CyclesMode4",
+      "CyclesMode5",
+      "CyclesMode6",
+      "CyclesMode7"
+    ],
+    "pllMuls": [
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      24,
+      26,
+      28,
+      30,
+      32,
+      34,
+      36,
+      38,
+      40
+    ],
+    "apb1Divs": [],
+    "apb2Divs": [
+      2,
+      4,
+      6,
+      8
+    ],
+    "adcDivs": [
+      2,
+      4,
+      6,
+      8
+    ],
+    "note": "V407: RCC 用 PB1/PB2/HB 命名；NVIC 走 core_riscv.h 的 CMSIS 接口；GPIO 速度是 Low/Medium/High；ADC 采样时间是 CyclesMode0..7；Flash 没有 SetLatency/PrefetchBufferCmd"
+  },
+  "debug": {
+    "twoWire": true,
+    "singleWire": true,
+    "swdio": "PA13",
+    "swclk": "PA14",
+    "note": "1/2 线调试接口（SDI）。复位后默认开启，可在主程序里关闭释放 PA13/PA14。"
+  },
+  "clock": {
+    "hsi": 8,
+    "hseOptions": [
+      8,
+      16,
+      25
+    ],
+    "lsi": 40,
+    "pllSource": "HSI",
+    "pllMin": 8,
+    "pllMax": 40,
+    "maxSysclk": 200,
+    "ahbDivs": [
+      1,
+      2,
+      4,
+      8,
+      16
+    ],
+    "apb1Divs": [
+      1
+    ],
+    "apb2Divs": [
+      2,
+      4,
+      6,
+      8
+    ],
+    "adcDivs": [
+      2,
+      4,
+      6,
+      8
+    ],
+    "notes": [
+      "HSI 8 MHz → PLL → 最高 200 MHz（DS 表1-1）",
+      "PLL 分频/倍频组合见 CH32V407RM「RCC」章节"
+    ]
+  },
+  "packages": [
+    {
+      "id": "CH32V467KEU6",
+      "label": "QFN32",
+      "shape": "quad",
+      "pins": [
+        {
+          "num": 0,
+          "name": "VSS",
+          "kind": "power"
+        },
+        {
+          "num": 1,
+          "name": "OSC_IN",
+          "kind": "osc"
+        },
+        {
+          "num": 2,
+          "name": "OSC_OUT",
+          "kind": "osc"
+        },
+        {
+          "num": 3,
+          "name": "PA0",
+          "kind": "io"
+        },
+        {
+          "num": 4,
+          "name": "PA1",
+          "kind": "io"
+        },
+        {
+          "num": 5,
+          "name": "PA2",
+          "kind": "io"
+        },
+        {
+          "num": 6,
+          "name": "PA3",
+          "kind": "io"
+        },
+        {
+          "num": 7,
+          "name": "PA4",
+          "kind": "io"
+        },
+        {
+          "num": 8,
+          "name": "PA5",
+          "kind": "io"
+        },
+        {
+          "num": 9,
+          "name": "PA6",
+          "kind": "io"
+        },
+        {
+          "num": 10,
+          "name": "PA7",
+          "kind": "io"
+        },
+        {
+          "num": 11,
+          "name": "VDDK",
+          "kind": "power"
+        },
+        {
+          "num": 12,
+          "name": "MDIRN",
+          "kind": "power",
+          "note": "以太网 PHY 内部差分对，不引出到外部"
+        },
+        {
+          "num": 13,
+          "name": "MDIRP",
+          "kind": "power",
+          "note": "以太网 PHY 内部差分对，不引出到外部"
+        },
+        {
+          "num": 14,
+          "name": "MDITN",
+          "kind": "power",
+          "note": "以太网 PHY 内部差分对，不引出到外部"
+        },
+        {
+          "num": 15,
+          "name": "MDITP",
+          "kind": "power",
+          "note": "以太网 PHY 内部差分对，不引出到外部"
+        },
+        {
+          "num": 16,
+          "name": "VDD",
+          "kind": "power",
+          "note": "原表未列出该脚，按 QFN/LQFP 电源脚补齐（待核）"
+        },
+        {
+          "num": 17,
+          "name": "PD14",
+          "kind": "io"
+        },
+        {
+          "num": 18,
+          "name": "PD15",
+          "kind": "io"
+        },
+        {
+          "num": 19,
+          "name": "PA8",
+          "kind": "io"
+        },
+        {
+          "num": 20,
+          "name": "PA9",
+          "kind": "io"
+        },
+        {
+          "num": 21,
+          "name": "PA10",
+          "kind": "io"
+        },
+        {
+          "num": 22,
+          "name": "PA11",
+          "kind": "io"
+        },
+        {
+          "num": 23,
+          "name": "PA12",
+          "kind": "io"
+        },
+        {
+          "num": 24,
+          "name": "PA13",
+          "kind": "io"
+        },
+        {
+          "num": 25,
+          "name": "PA14",
+          "kind": "io"
+        },
+        {
+          "num": 26,
+          "name": "PA15",
+          "kind": "io"
+        },
+        {
+          "num": 27,
+          "name": "PB3",
+          "kind": "io"
+        },
+        {
+          "num": 28,
+          "name": "PB4",
+          "kind": "io"
+        },
+        {
+          "num": 29,
+          "name": "PB5",
+          "kind": "io"
+        },
+        {
+          "num": 30,
+          "name": "PB6",
+          "kind": "io"
+        },
+        {
+          "num": 31,
+          "name": "PB7",
+          "kind": "io"
+        },
+        {
+          "num": 32,
+          "name": "VDD",
+          "kind": "power",
+          "note": "原表未列出该脚，按 QFN/LQFP 电源脚补齐（待核）"
+        }
+      ]
+    },
+    {
+      "id": "CH32V467RET6",
+      "label": "LQFP64",
+      "shape": "quad",
+      "drop": ["USBHS2"],
+      "pins": [
+        {
+          "num": 1,
+          "name": "VBAT",
+          "kind": "power"
+        },
+        {
+          "num": 2,
+          "name": "PC13",
+          "kind": "io"
+        },
+        {
+          "num": 3,
+          "name": "PC14",
+          "kind": "io"
+        },
+        {
+          "num": 4,
+          "name": "PC15",
+          "kind": "io"
+        },
+        {
+          "num": 5,
+          "name": "OSC_IN",
+          "kind": "osc"
+        },
+        {
+          "num": 6,
+          "name": "OSC_OUT",
+          "kind": "osc"
+        },
+        {
+          "num": 7,
+          "name": "NRST",
+          "kind": "reset"
+        },
+        {
+          "num": 8,
+          "name": "PC0",
+          "kind": "io"
+        },
+        {
+          "num": 9,
+          "name": "PC1",
+          "kind": "io"
+        },
+        {
+          "num": 10,
+          "name": "PC2",
+          "kind": "io"
+        },
+        {
+          "num": 11,
+          "name": "PC3",
+          "kind": "io",
+          "aliases": [
+            "VSS"
+          ],
+          "note": "与 VSS 合封到同一个物理引脚（禁止同时配成输出）"
+        },
+        {
+          "num": 12,
+          "name": "VSSA",
+          "kind": "power",
+          "aliases": [
+            "VREF"
+          ],
+          "note": "与 VREF 合封到同一个物理引脚（禁止同时配成输出）"
+        },
+        {
+          "num": 13,
+          "name": "VREF+",
+          "kind": "power",
+          "aliases": [
+            "VDD"
+          ],
+          "note": "与 VDD 合封到同一个物理引脚（禁止同时配成输出）"
+        },
+        {
+          "num": 14,
+          "name": "VDDA",
+          "kind": "power",
+          "aliases": [
+            "PA0"
+          ],
+          "note": "与 PA0 合封到同一个物理引脚（禁止同时配成输出）"
+        },
+        {
+          "num": 15,
+          "name": "PA1",
+          "kind": "io"
+        },
+        {
+          "num": 16,
+          "name": "PA2",
+          "kind": "io"
+        },
+        {
+          "num": 17,
+          "name": "PA3",
+          "kind": "io"
+        },
+        {
+          "num": 18,
+          "name": "VSS",
+          "kind": "power",
+          "aliases": [
+            "VDD"
+          ],
+          "note": "与 VDD 合封到同一个物理引脚（禁止同时配成输出）"
+        },
+        {
+          "num": 19,
+          "name": "PA4",
+          "kind": "io"
+        },
+        {
+          "num": 20,
+          "name": "PA5",
+          "kind": "io"
+        },
+        {
+          "num": 21,
+          "name": "PA6",
+          "kind": "io"
+        },
+        {
+          "num": 22,
+          "name": "PA7",
+          "kind": "io"
+        },
+        {
+          "num": 23,
+          "name": "PC4",
+          "kind": "io"
+        },
+        {
+          "num": 24,
+          "name": "PC5",
+          "kind": "io"
+        },
+        {
+          "num": 25,
+          "name": "PB0",
+          "kind": "io"
+        },
+        {
+          "num": 26,
+          "name": "PB1",
+          "kind": "io"
+        },
+        {
+          "num": 27,
+          "name": "VDDK",
+          "kind": "power"
+        },
+        {
+          "num": 28,
+          "name": "VDD",
+          "kind": "power",
+          "aliases": [
+            "MDIRN"
+          ],
+          "note": "与 MDIRN 合封到同一个物理引脚（禁止同时配成输出）"
+        },
+        {
+          "num": 29,
+          "name": "MDIRP",
+          "kind": "power",
+          "note": "以太网 PHY 内部差分对，不引出到外部"
+        },
+        {
+          "num": 30,
+          "name": "MDITN",
+          "kind": "power",
+          "note": "以太网 PHY 内部差分对，不引出到外部"
+        },
+        {
+          "num": 31,
+          "name": "MDITP",
+          "kind": "power",
+          "note": "以太网 PHY 内部差分对，不引出到外部"
+        },
+        {
+          "num": 32,
+          "name": "VDD",
+          "kind": "power",
+          "note": "原表未列出该脚，按 QFN/LQFP 电源脚补齐（待核）"
+        },
+        {
+          "num": 33,
+          "name": "VSS",
+          "kind": "power"
+        },
+        {
+          "num": 34,
+          "name": "PD8",
+          "kind": "io"
+        },
+        {
+          "num": 35,
+          "name": "PB12",
+          "kind": "io"
+        },
+        {
+          "num": 36,
+          "name": "PB13",
+          "kind": "io"
+        },
+        {
+          "num": 37,
+          "name": "PB14",
+          "kind": "io"
+        },
+        {
+          "num": 38,
+          "name": "PB15",
+          "kind": "io"
+        },
+        {
+          "num": 39,
+          "name": "PB11",
+          "kind": "io"
+        },
+        {
+          "num": 40,
+          "name": "PB10",
+          "kind": "io"
+        },
+        {
+          "num": 41,
+          "name": "PD14",
+          "kind": "io"
+        },
+        {
+          "num": 42,
+          "name": "PD15",
+          "kind": "io"
+        },
+        {
+          "num": 43,
+          "name": "PA8",
+          "kind": "io"
+        },
+        {
+          "num": 44,
+          "name": "PA9",
+          "kind": "io"
+        },
+        {
+          "num": 45,
+          "name": "PA10",
+          "kind": "io"
+        },
+        {
+          "num": 46,
+          "name": "PA11",
+          "kind": "io"
+        },
+        {
+          "num": 47,
+          "name": "VSS",
+          "kind": "power",
+          "aliases": [
+            "PA12"
+          ],
+          "note": "与 PA12 合封到同一个物理引脚（禁止同时配成输出）"
+        },
+        {
+          "num": 48,
+          "name": "PA13",
+          "kind": "io"
+        },
+        {
+          "num": 49,
+          "name": "VDD",
+          "kind": "power"
+        },
+        {
+          "num": 50,
+          "name": "PA14",
+          "kind": "io"
+        },
+        {
+          "num": 51,
+          "name": "PA15",
+          "kind": "io"
+        },
+        {
+          "num": 52,
+          "name": "PC10",
+          "kind": "io"
+        },
+        {
+          "num": 53,
+          "name": "PC11",
+          "kind": "io"
+        },
+        {
+          "num": 54,
+          "name": "PC12",
+          "kind": "io"
+        },
+        {
+          "num": 55,
+          "name": "PD2",
+          "kind": "io"
+        },
+        {
+          "num": 56,
+          "name": "PB3",
+          "kind": "io"
+        },
+        {
+          "num": 57,
+          "name": "PB4",
+          "kind": "io"
+        },
+        {
+          "num": 58,
+          "name": "PB5",
+          "kind": "io"
+        },
+        {
+          "num": 59,
+          "name": "PB6",
+          "kind": "io"
+        },
+        {
+          "num": 60,
+          "name": "PB7",
+          "kind": "io"
+        },
+        {
+          "num": 61,
+          "name": "PB8",
+          "kind": "io"
+        },
+        {
+          "num": 62,
+          "name": "VDD",
+          "kind": "power",
+          "note": "原表未列出该脚，按 QFN/LQFP 电源脚补齐（待核）"
+        },
+        {
+          "num": 63,
+          "name": "VDD",
+          "kind": "power",
+          "note": "原表未列出该脚，按 QFN/LQFP 电源脚补齐（待核）"
+        },
+        {
+          "num": 64,
+          "name": "VDD",
+          "kind": "power"
+        }
+      ]
+    },
+    {
+      "id": "CH32V467WEU6",
+      "label": "QFN68",
+      "shape": "quad",
+      "pins": [
+        {
+          "num": 0,
+          "name": "VSS",
+          "kind": "power"
+        },
+        {
+          "num": 1,
+          "name": "VBAT",
+          "kind": "power"
+        },
+        {
+          "num": 2,
+          "name": "PC13",
+          "kind": "io"
+        },
+        {
+          "num": 3,
+          "name": "PC14",
+          "kind": "io"
+        },
+        {
+          "num": 4,
+          "name": "PC15",
+          "kind": "io"
+        },
+        {
+          "num": 5,
+          "name": "OSC_IN",
+          "kind": "osc"
+        },
+        {
+          "num": 6,
+          "name": "OSC_OUT",
+          "kind": "osc"
+        },
+        {
+          "num": 7,
+          "name": "NRST",
+          "kind": "reset"
+        },
+        {
+          "num": 8,
+          "name": "PC0",
+          "kind": "io"
+        },
+        {
+          "num": 9,
+          "name": "PC1",
+          "kind": "io"
+        },
+        {
+          "num": 10,
+          "name": "PC2",
+          "kind": "io"
+        },
+        {
+          "num": 11,
+          "name": "VSS",
+          "kind": "power",
+          "aliases": [
+            "PC3"
+          ],
+          "note": "与 PC3 合封到同一个物理引脚（禁止同时配成输出）"
+        },
+        {
+          "num": 12,
+          "name": "VSSA",
+          "kind": "power",
+          "aliases": [
+            "VREF"
+          ],
+          "note": "与 VREF 合封到同一个物理引脚（禁止同时配成输出）"
+        },
+        {
+          "num": 13,
+          "name": "VREF+",
+          "kind": "power",
+          "aliases": [
+            "VDD"
+          ],
+          "note": "与 VDD 合封到同一个物理引脚（禁止同时配成输出）"
+        },
+        {
+          "num": 14,
+          "name": "VDDA",
+          "kind": "power",
+          "aliases": [
+            "PA0"
+          ],
+          "note": "与 PA0 合封到同一个物理引脚（禁止同时配成输出）"
+        },
+        {
+          "num": 15,
+          "name": "PA1",
+          "kind": "io"
+        },
+        {
+          "num": 16,
+          "name": "PA2",
+          "kind": "io"
+        },
+        {
+          "num": 17,
+          "name": "PA3",
+          "kind": "io"
+        },
+        {
+          "num": 18,
+          "name": "VSS",
+          "kind": "power",
+          "aliases": [
+            "VDD"
+          ],
+          "note": "与 VDD 合封到同一个物理引脚（禁止同时配成输出）"
+        },
+        {
+          "num": 19,
+          "name": "PA4",
+          "kind": "io"
+        },
+        {
+          "num": 20,
+          "name": "PA5",
+          "kind": "io"
+        },
+        {
+          "num": 21,
+          "name": "PA6",
+          "kind": "io"
+        },
+        {
+          "num": 22,
+          "name": "PA7",
+          "kind": "io"
+        },
+        {
+          "num": 23,
+          "name": "PC4",
+          "kind": "io"
+        },
+        {
+          "num": 24,
+          "name": "PC5",
+          "kind": "io"
+        },
+        {
+          "num": 25,
+          "name": "PB0",
+          "kind": "io"
+        },
+        {
+          "num": 26,
+          "name": "PB1",
+          "kind": "io"
+        },
+        {
+          "num": 27,
+          "name": "PB2",
+          "kind": "io"
+        },
+        {
+          "num": 28,
+          "name": "VDD",
+          "kind": "power",
+          "aliases": [
+            "PE8"
+          ],
+          "note": "与 PE8 合封到同一个物理引脚（禁止同时配成输出）"
+        },
+        {
+          "num": 29,
+          "name": "PE9",
+          "kind": "io"
+        },
+        {
+          "num": 30,
+          "name": "VDDK",
+          "kind": "power"
+        },
+        {
+          "num": 31,
+          "name": "MDIRN",
+          "kind": "power",
+          "note": "以太网 PHY 内部差分对，不引出到外部"
+        },
+        {
+          "num": 32,
+          "name": "MDIRP",
+          "kind": "power",
+          "note": "以太网 PHY 内部差分对，不引出到外部"
+        },
+        {
+          "num": 33,
+          "name": "MDITN",
+          "kind": "power",
+          "note": "以太网 PHY 内部差分对，不引出到外部"
+        },
+        {
+          "num": 34,
+          "name": "MDITP",
+          "kind": "power",
+          "note": "以太网 PHY 内部差分对，不引出到外部"
+        },
+        {
+          "num": 35,
+          "name": "VDD",
+          "kind": "power",
+          "note": "原表未列出该脚，按 QFN/LQFP 电源脚补齐（待核）"
+        },
+        {
+          "num": 36,
+          "name": "VSS",
+          "kind": "power",
+          "aliases": [
+            "PD8"
+          ],
+          "note": "与 PD8 合封到同一个物理引脚（禁止同时配成输出）"
+        },
+        {
+          "num": 37,
+          "name": "PB12",
+          "kind": "io"
+        },
+        {
+          "num": 38,
+          "name": "PB13",
+          "kind": "io"
+        },
+        {
+          "num": 39,
+          "name": "PB14",
+          "kind": "io"
+        },
+        {
+          "num": 40,
+          "name": "PB15",
+          "kind": "io"
+        },
+        {
+          "num": 41,
+          "name": "VSS",
+          "kind": "power",
+          "aliases": [
+            "PB11"
+          ],
+          "note": "与 PB11 合封到同一个物理引脚（禁止同时配成输出）"
+        },
+        {
+          "num": 42,
+          "name": "PB10",
+          "kind": "io"
+        },
+        {
+          "num": 43,
+          "name": "PA8",
+          "kind": "io"
+        },
+        {
+          "num": 44,
+          "name": "PA9",
+          "kind": "io"
+        },
+        {
+          "num": 45,
+          "name": "PA10",
+          "kind": "io"
+        },
+        {
+          "num": 46,
+          "name": "PA11",
+          "kind": "io"
+        },
+        {
+          "num": 47,
+          "name": "PA12",
+          "kind": "io"
+        },
+        {
+          "num": 48,
+          "name": "PA13",
+          "kind": "io"
+        },
+        {
+          "num": 49,
+          "name": "PE10",
+          "kind": "io"
+        },
+        {
+          "num": 50,
+          "name": "PE11",
+          "kind": "io"
+        },
+        {
+          "num": 51,
+          "name": "VDD",
+          "kind": "power"
+        },
+        {
+          "num": 52,
+          "name": "PA14",
+          "kind": "io"
+        },
+        {
+          "num": 53,
+          "name": "PA15",
+          "kind": "io"
+        },
+        {
+          "num": 54,
+          "name": "PC10",
+          "kind": "io"
+        },
+        {
+          "num": 55,
+          "name": "PC11",
+          "kind": "io"
+        },
+        {
+          "num": 56,
+          "name": "PC12",
+          "kind": "io"
+        },
+        {
+          "num": 57,
+          "name": "PD2",
+          "kind": "io"
+        },
+        {
+          "num": 58,
+          "name": "PB3",
+          "kind": "io"
+        },
+        {
+          "num": 59,
+          "name": "PB4",
+          "kind": "io"
+        },
+        {
+          "num": 60,
+          "name": "PB5",
+          "kind": "io"
+        },
+        {
+          "num": 61,
+          "name": "PB6",
+          "kind": "io"
+        },
+        {
+          "num": 62,
+          "name": "PB7",
+          "kind": "io"
+        },
+        {
+          "num": 63,
+          "name": "PE12",
+          "kind": "io"
+        },
+        {
+          "num": 64,
+          "name": "PB8",
+          "kind": "io"
+        },
+        {
+          "num": 65,
+          "name": "VDD",
+          "kind": "power"
+        },
+        {
+          "num": 66,
+          "name": "VDD",
+          "kind": "power",
+          "note": "原表未列出该脚，按 QFN/LQFP 电源脚补齐（待核）"
+        },
+        {
+          "num": 67,
+          "name": "VDD",
+          "kind": "power",
+          "note": "原表未列出该脚，按 QFN/LQFP 电源脚补齐（待核）"
+        },
+        {
+          "num": 68,
+          "name": "VDD",
+          "kind": "power",
+          "note": "原表未列出该脚，按 QFN/LQFP 电源脚补齐（待核）"
+        }
+      ]
+    },
+    {
+      "id": "CH32V467VET6",
+      "label": "LQFP100",
+      "shape": "quad",
+      "pins": [
+        {
+          "num": 1,
+          "name": "PE2",
+          "kind": "io"
+        },
+        {
+          "num": 2,
+          "name": "PE3",
+          "kind": "io"
+        },
+        {
+          "num": 3,
+          "name": "PE4",
+          "kind": "io"
+        },
+        {
+          "num": 4,
+          "name": "PE5",
+          "kind": "io"
+        },
+        {
+          "num": 5,
+          "name": "PE6",
+          "kind": "io"
+        },
+        {
+          "num": 6,
+          "name": "VBAT",
+          "kind": "power"
+        },
+        {
+          "num": 7,
+          "name": "PC13",
+          "kind": "io"
+        },
+        {
+          "num": 8,
+          "name": "PC14",
+          "kind": "io"
+        },
+        {
+          "num": 9,
+          "name": "PC15",
+          "kind": "io"
+        },
+        {
+          "num": 10,
+          "name": "VSS",
+          "kind": "power"
+        },
+        {
+          "num": 11,
+          "name": "VDD",
+          "kind": "power"
+        },
+        {
+          "num": 12,
+          "name": "OSC_IN",
+          "kind": "osc"
+        },
+        {
+          "num": 13,
+          "name": "OSC_OUT",
+          "kind": "osc"
+        },
+        {
+          "num": 14,
+          "name": "NRST",
+          "kind": "reset"
+        },
+        {
+          "num": 15,
+          "name": "PC0",
+          "kind": "io"
+        },
+        {
+          "num": 16,
+          "name": "PC1",
+          "kind": "io"
+        },
+        {
+          "num": 17,
+          "name": "PC2",
+          "kind": "io"
+        },
+        {
+          "num": 18,
+          "name": "PC3",
+          "kind": "io"
+        },
+        {
+          "num": 19,
+          "name": "VSSA",
+          "kind": "power"
+        },
+        {
+          "num": 20,
+          "name": "VREF",
+          "kind": "power"
+        },
+        {
+          "num": 21,
+          "name": "VREF+",
+          "kind": "power"
+        },
+        {
+          "num": 22,
+          "name": "VDDA",
+          "kind": "power"
+        },
+        {
+          "num": 23,
+          "name": "PA0",
+          "kind": "io"
+        },
+        {
+          "num": 24,
+          "name": "PA1",
+          "kind": "io"
+        },
+        {
+          "num": 25,
+          "name": "PA2",
+          "kind": "io"
+        },
+        {
+          "num": 26,
+          "name": "PA3",
+          "kind": "io"
+        },
+        {
+          "num": 27,
+          "name": "VSS",
+          "kind": "power"
+        },
+        {
+          "num": 28,
+          "name": "VDD",
+          "kind": "power"
+        },
+        {
+          "num": 29,
+          "name": "PA4",
+          "kind": "io"
+        },
+        {
+          "num": 30,
+          "name": "PA5",
+          "kind": "io"
+        },
+        {
+          "num": 31,
+          "name": "PA6",
+          "kind": "io"
+        },
+        {
+          "num": 32,
+          "name": "PA7",
+          "kind": "io"
+        },
+        {
+          "num": 33,
+          "name": "PC4",
+          "kind": "io"
+        },
+        {
+          "num": 34,
+          "name": "PC5",
+          "kind": "io"
+        },
+        {
+          "num": 35,
+          "name": "PB0",
+          "kind": "io"
+        },
+        {
+          "num": 36,
+          "name": "PB1",
+          "kind": "io"
+        },
+        {
+          "num": 37,
+          "name": "PB2",
+          "kind": "io"
+        },
+        {
+          "num": 38,
+          "name": "PE8",
+          "kind": "io"
+        },
+        {
+          "num": 39,
+          "name": "PE9",
+          "kind": "io"
+        },
+        {
+          "num": 40,
+          "name": "VDDK",
+          "kind": "power"
+        },
+        {
+          "num": 41,
+          "name": "VSS",
+          "kind": "power"
+        },
+        {
+          "num": 42,
+          "name": "MDIRN",
+          "kind": "power",
+          "note": "以太网 PHY 内部差分对，不引出到外部"
+        },
+        {
+          "num": 43,
+          "name": "MDIRP",
+          "kind": "power",
+          "note": "以太网 PHY 内部差分对，不引出到外部"
+        },
+        {
+          "num": 44,
+          "name": "MDITN",
+          "kind": "power",
+          "note": "以太网 PHY 内部差分对，不引出到外部"
+        },
+        {
+          "num": 45,
+          "name": "MDITP",
+          "kind": "power",
+          "note": "以太网 PHY 内部差分对，不引出到外部"
+        },
+        {
+          "num": 46,
+          "name": "VDD",
+          "kind": "power"
+        },
+        {
+          "num": 47,
+          "name": "VSS",
+          "kind": "power"
+        },
+        {
+          "num": 48,
+          "name": "PE7",
+          "kind": "io"
+        },
+        {
+          "num": 49,
+          "name": "PB10",
+          "kind": "io"
+        },
+        {
+          "num": 50,
+          "name": "PB11",
+          "kind": "io"
+        },
+        {
+          "num": 51,
+          "name": "PD8",
+          "kind": "io"
+        },
+        {
+          "num": 52,
+          "name": "PB12",
+          "kind": "io"
+        },
+        {
+          "num": 53,
+          "name": "PB13",
+          "kind": "io"
+        },
+        {
+          "num": 54,
+          "name": "PB14",
+          "kind": "io"
+        },
+        {
+          "num": 55,
+          "name": "PB15",
+          "kind": "io"
+        },
+        {
+          "num": 56,
+          "name": "PD9",
+          "kind": "io"
+        },
+        {
+          "num": 57,
+          "name": "PD10",
+          "kind": "io"
+        },
+        {
+          "num": 58,
+          "name": "PD11",
+          "kind": "io"
+        },
+        {
+          "num": 59,
+          "name": "PD12",
+          "kind": "io"
+        },
+        {
+          "num": 60,
+          "name": "PD13",
+          "kind": "io"
+        },
+        {
+          "num": 61,
+          "name": "PD14",
+          "kind": "io"
+        },
+        {
+          "num": 62,
+          "name": "PD15",
+          "kind": "io"
+        },
+        {
+          "num": 63,
+          "name": "PC6",
+          "kind": "io"
+        },
+        {
+          "num": 64,
+          "name": "PC7",
+          "kind": "io"
+        },
+        {
+          "num": 65,
+          "name": "PC8",
+          "kind": "io"
+        },
+        {
+          "num": 66,
+          "name": "PC9",
+          "kind": "io"
+        },
+        {
+          "num": 67,
+          "name": "PA8",
+          "kind": "io"
+        },
+        {
+          "num": 68,
+          "name": "PA9",
+          "kind": "io"
+        },
+        {
+          "num": 69,
+          "name": "PA10",
+          "kind": "io"
+        },
+        {
+          "num": 70,
+          "name": "PA11",
+          "kind": "io"
+        },
+        {
+          "num": 71,
+          "name": "PA12",
+          "kind": "io"
+        },
+        {
+          "num": 72,
+          "name": "PA13",
+          "kind": "io"
+        },
+        {
+          "num": 73,
+          "name": "PE10",
+          "kind": "io"
+        },
+        {
+          "num": 74,
+          "name": "PE11",
+          "kind": "io"
+        },
+        {
+          "num": 75,
+          "name": "VDD",
+          "kind": "power"
+        },
+        {
+          "num": 76,
+          "name": "PA14",
+          "kind": "io"
+        },
+        {
+          "num": 77,
+          "name": "PA15",
+          "kind": "io"
+        },
+        {
+          "num": 78,
+          "name": "PC10",
+          "kind": "io"
+        },
+        {
+          "num": 79,
+          "name": "PC11",
+          "kind": "io"
+        },
+        {
+          "num": 80,
+          "name": "PC12",
+          "kind": "io"
+        },
+        {
+          "num": 81,
+          "name": "PD0",
+          "kind": "io"
+        },
+        {
+          "num": 82,
+          "name": "PD1",
+          "kind": "io"
+        },
+        {
+          "num": 83,
+          "name": "PD2",
+          "kind": "io"
+        },
+        {
+          "num": 84,
+          "name": "PD3",
+          "kind": "io"
+        },
+        {
+          "num": 85,
+          "name": "PD4",
+          "kind": "io"
+        },
+        {
+          "num": 86,
+          "name": "PD5",
+          "kind": "io"
+        },
+        {
+          "num": 87,
+          "name": "PD6",
+          "kind": "io"
+        },
+        {
+          "num": 88,
+          "name": "PD7",
+          "kind": "io"
+        },
+        {
+          "num": 89,
+          "name": "PB3",
+          "kind": "io"
+        },
+        {
+          "num": 90,
+          "name": "PB4",
+          "kind": "io"
+        },
+        {
+          "num": 91,
+          "name": "PB5",
+          "kind": "io"
+        },
+        {
+          "num": 92,
+          "name": "PB6",
+          "kind": "io"
+        },
+        {
+          "num": 93,
+          "name": "PB7",
+          "kind": "io"
+        },
+        {
+          "num": 94,
+          "name": "PE12",
+          "kind": "io"
+        },
+        {
+          "num": 95,
+          "name": "PB8",
+          "kind": "io"
+        },
+        {
+          "num": 96,
+          "name": "PB9",
+          "kind": "io"
+        },
+        {
+          "num": 97,
+          "name": "PE0",
+          "kind": "io"
+        },
+        {
+          "num": 98,
+          "name": "PE1",
+          "kind": "io"
+        },
+        {
+          "num": 99,
+          "name": "VSS",
+          "kind": "power"
+        },
+        {
+          "num": 100,
+          "name": "VDD",
+          "kind": "power"
+        }
+      ]
+    }
+  ],
+  "ports": {
+    "PA0": [
+      {
+        "fn": "TIM2_CH1"
+      },
+      {
+        "fn": "TIM2_ETR",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM2_ETR"
+      },
+      {
+        "fn": "TIM2_CH1",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM8_ETR"
+      },
+      {
+        "fn": "TIM8_ETR",
+        "remap": "1"
+      },
+      {
+        "fn": "USART2_CTS"
+      }
+    ],
+    "PA1": [
+      {
+        "fn": "TIM2_CH2"
+      },
+      {
+        "fn": "TIM5_CH2"
+      },
+      {
+        "fn": "LTDC_R4",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM2_CH2",
+        "remap": "2"
+      },
+      {
+        "fn": "USART2_RTS"
+      }
+    ],
+    "PA10": [
+      {
+        "fn": "DVP_D1"
+      },
+      {
+        "fn": "TIM1_CH3"
+      },
+      {
+        "fn": "USART1_RX"
+      },
+      {
+        "fn": "USART7_RX",
+        "remap": "3"
+      },
+      {
+        "fn": "TIM1_CH3",
+        "remap": "1"
+      },
+      {
+        "fn": "USART1_CK",
+        "remap": "2"
+      },
+      {
+        "fn": "USART7_RX",
+        "remap": "2"
+      }
+    ],
+    "PA11": [
+      {
+        "fn": "TIM1_CH4"
+      },
+      {
+        "fn": "USART1_CTS"
+      },
+      {
+        "fn": "USBHS1_DM"
+      },
+      {
+        "fn": "TIM1_CH4",
+        "remap": "1"
+      },
+      {
+        "fn": "USART1_CTS",
+        "remap": "1"
+      },
+      {
+        "fn": "CAN1_RX"
+      }
+    ],
+    "PA12": [
+      {
+        "fn": "CAN1_TX"
+      },
+      {
+        "fn": "USBHS1_DP"
+      },
+      {
+        "fn": "USART1_RTS",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM1_ETR"
+      },
+      {
+        "fn": "TIM1_ETR",
+        "remap": "1"
+      },
+      {
+        "fn": "USART1_RTS"
+      }
+    ],
+    "PA13": [
+      {
+        "fn": "LTDC_B5"
+      },
+      {
+        "fn": "DBG_SWDIO"
+      },
+      {
+        "fn": "USART4_CTS"
+      },
+      {
+        "fn": "USART3_TX",
+        "remap": "2"
+      },
+      {
+        "fn": "USART6_CK",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM8_CH1N",
+        "remap": "1"
+      }
+    ],
+    "PA14": [
+      {
+        "fn": "LTDC_B6"
+      },
+      {
+        "fn": "DBG_SWCLK"
+      },
+      {
+        "fn": "USART6_CTS",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM8_CH2N",
+        "remap": "1"
+      },
+      {
+        "fn": "USART3_RX",
+        "remap": "2"
+      },
+      {
+        "fn": "USART8_TX",
+        "remap": "1"
+      }
+    ],
+    "PA15": [
+      {
+        "fn": "ARGB_OUT"
+      },
+      {
+        "fn": "I2S3_WS"
+      },
+      {
+        "fn": "LTDC_B7"
+      },
+      {
+        "fn": "SPI3_NSS"
+      },
+      {
+        "fn": "TIM2_ETR",
+        "remap": "3"
+      },
+      {
+        "fn": "TIM2_ETR",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM2_CH1",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM2_CH1",
+        "remap": "3"
+      },
+      {
+        "fn": "TIM8_CH3N",
+        "remap": "1"
+      },
+      {
+        "fn": "USART6_RTS",
+        "remap": "2"
+      },
+      {
+        "fn": "USART8_RX",
+        "remap": "1"
+      },
+      {
+        "fn": "SPI1_NSS",
+        "remap": "1"
+      }
+    ],
+    "PA2": [
+      {
+        "fn": "TIM5_CH3"
+      },
+      {
+        "fn": "USART2_TX"
+      },
+      {
+        "fn": "TIM2_CH3",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM2_CH3"
+      }
+    ],
+    "PA3": [
+      {
+        "fn": "TIM5_CH4"
+      },
+      {
+        "fn": "USART2_RX"
+      },
+      {
+        "fn": "LTDC_R6",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM2_CH4"
+      },
+      {
+        "fn": "TIM2_CH4",
+        "remap": "1"
+      }
+    ],
+    "PA4": [
+      {
+        "fn": "SPI1_NSS"
+      },
+      {
+        "fn": "USART2_CK"
+      },
+      {
+        "fn": "I2S3_WS",
+        "remap": "1"
+      },
+      {
+        "fn": "USART9_TX",
+        "remap": "1"
+      },
+      {
+        "fn": "SPI3_NSS",
+        "remap": "1"
+      }
+    ],
+    "PA5": [
+      {
+        "fn": "DVP_VSYNC"
+      },
+      {
+        "fn": "SPI1_SCK"
+      },
+      {
+        "fn": "USART6_CK",
+        "remap": "3"
+      },
+      {
+        "fn": "USART1_CK",
+        "remap": "3"
+      },
+      {
+        "fn": "USART1_CTS",
+        "remap": "2"
+      },
+      {
+        "fn": "USART9_RX",
+        "remap": "1"
+      }
+    ],
+    "PA6": [
+      {
+        "fn": "SPI1_MISO"
+      },
+      {
+        "fn": "TIM3_CH1"
+      },
+      {
+        "fn": "USART7_TX",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM1_BKIN",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM8_BKIN"
+      },
+      {
+        "fn": "USART1_TX",
+        "remap": "3"
+      }
+    ],
+    "PA7": [
+      {
+        "fn": "TIM3_CH2"
+      },
+      {
+        "fn": "USART8_CK"
+      },
+      {
+        "fn": "TIM1_CH1N",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM1_CH4",
+        "remap": "3"
+      },
+      {
+        "fn": "TIM8_CH1N"
+      },
+      {
+        "fn": "USART1_RX",
+        "remap": "3"
+      },
+      {
+        "fn": "USART7_RX",
+        "remap": "1"
+      },
+      {
+        "fn": "SPI1_MOSI"
+      }
+    ],
+    "PA8": [
+      {
+        "fn": "I2S3_MCK"
+      },
+      {
+        "fn": "USART1_CK"
+      },
+      {
+        "fn": "USART7_CK",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM1_CH1"
+      },
+      {
+        "fn": "TIM1_CH1",
+        "remap": "1"
+      },
+      {
+        "fn": "USART1_CK",
+        "remap": "1"
+      },
+      {
+        "fn": "USART1_RX",
+        "remap": "2"
+      },
+      {
+        "fn": "USART7_CK",
+        "remap": "3"
+      }
+    ],
+    "PA9": [
+      {
+        "fn": "TIM1_CH2"
+      },
+      {
+        "fn": "USART1_TX"
+      },
+      {
+        "fn": "USART7_TX",
+        "remap": "3"
+      },
+      {
+        "fn": "TIM1_CH2",
+        "remap": "1"
+      },
+      {
+        "fn": "USART1_RTS",
+        "remap": "2"
+      },
+      {
+        "fn": "USART7_TX",
+        "remap": "2"
+      }
+    ],
+    "PB0": [
+      {
+        "fn": "TIM3_CH3"
+      },
+      {
+        "fn": "USART6_CK"
+      },
+      {
+        "fn": "USART5_CTS",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM1_CH2N",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM3_CH3",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM8_CH2N"
+      },
+      {
+        "fn": "USART4_TX",
+        "remap": "1"
+      },
+      {
+        "fn": "USART5_CTS",
+        "remap": "3"
+      },
+      {
+        "fn": "USART7_CK",
+        "remap": "1"
+      },
+      {
+        "fn": "USART8_CTS"
+      }
+    ],
+    "PB1": [
+      {
+        "fn": "OPA1_OUT2"
+      },
+      {
+        "fn": "TIM8_CH3N"
+      },
+      {
+        "fn": "USART8_RTS"
+      },
+      {
+        "fn": "USART4_RX",
+        "remap": "1"
+      },
+      {
+        "fn": "USART5_RTS",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM1_CH3N",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM3_CH4"
+      },
+      {
+        "fn": "TIM3_CH4",
+        "remap": "2"
+      },
+      {
+        "fn": "USART5_RTS",
+        "remap": "3"
+      },
+      {
+        "fn": "USART9_TX"
+      }
+    ],
+    "PB10": [
+      {
+        "fn": "I3C1_SCL"
+      },
+      {
+        "fn": "LTDC_B3"
+      },
+      {
+        "fn": "USART3_TX"
+      },
+      {
+        "fn": "TIM2_CH3",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM2_CH3",
+        "remap": "3"
+      },
+      {
+        "fn": "TIM1_BKIN",
+        "remap": "3"
+      }
+    ],
+    "PB11": [
+      {
+        "fn": "FSMC_D9"
+      },
+      {
+        "fn": "LTDC_B2"
+      },
+      {
+        "fn": "USART8_CK",
+        "remap": "3"
+      },
+      {
+        "fn": "TIM2_CH4",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM2_CH4",
+        "remap": "3"
+      },
+      {
+        "fn": "USART3_RX"
+      },
+      {
+        "fn": "USART8_CK",
+        "remap": "2"
+      }
+    ],
+    "PB12": [
+      {
+        "fn": "FSMC_D10"
+      },
+      {
+        "fn": "I2S2_WS"
+      },
+      {
+        "fn": "SPI2_NSS"
+      },
+      {
+        "fn": "USART3_CK"
+      },
+      {
+        "fn": "LTDC_G6",
+        "remap": "1"
+      },
+      {
+        "fn": "USART8_RTS",
+        "remap": "3"
+      },
+      {
+        "fn": "TIM1_BKIN"
+      },
+      {
+        "fn": "USART8_RTS",
+        "remap": "2"
+      }
+    ],
+    "PB13": [
+      {
+        "fn": "I2S2_CK"
+      },
+      {
+        "fn": "SPI2_SCK"
+      },
+      {
+        "fn": "USART3_CTS"
+      },
+      {
+        "fn": "USART8_CTS",
+        "remap": "3"
+      },
+      {
+        "fn": "TIM1_CH1N"
+      },
+      {
+        "fn": "USART3_CTS",
+        "remap": "1"
+      },
+      {
+        "fn": "USART8_CTS",
+        "remap": "2"
+      }
+    ],
+    "PB14": [
+      {
+        "fn": "FSMC_D12"
+      },
+      {
+        "fn": "SPI2_MISO"
+      },
+      {
+        "fn": "USART3_RTS"
+      },
+      {
+        "fn": "LTDC_B0",
+        "remap": "1"
+      },
+      {
+        "fn": "USART8_RX",
+        "remap": "3"
+      },
+      {
+        "fn": "TIM1_CH2N"
+      },
+      {
+        "fn": "USART3_RTS",
+        "remap": "1"
+      },
+      {
+        "fn": "USART8_RX",
+        "remap": "2"
+      }
+    ],
+    "PB15": [
+      {
+        "fn": "I2S2_SD"
+      },
+      {
+        "fn": "SDIO_D1"
+      },
+      {
+        "fn": "USART8_CK",
+        "remap": "1"
+      },
+      {
+        "fn": "USART8_TX",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM1_CH3N"
+      },
+      {
+        "fn": "USART1_TX",
+        "remap": "2"
+      },
+      {
+        "fn": "USART8_TX",
+        "remap": "3"
+      }
+    ],
+    "PB2": [
+      {
+        "fn": "LTDC_G4"
+      },
+      {
+        "fn": "USART9_RX"
+      },
+      {
+        "fn": "USART5_CK",
+        "remap": "2"
+      },
+      {
+        "fn": "USART4_CK",
+        "remap": "1"
+      },
+      {
+        "fn": "USART5_CK",
+        "remap": "3"
+      }
+    ],
+    "PB3": [
+      {
+        "fn": "I2S3_CK"
+      },
+      {
+        "fn": "SPI3_SCK"
+      },
+      {
+        "fn": "DVP_D5",
+        "remap": "1"
+      },
+      {
+        "fn": "LTDC_G4",
+        "remap": "1"
+      },
+      {
+        "fn": "SPI1_SCK",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM3_CH1",
+        "remap": "2"
+      },
+      {
+        "fn": "USART5_CK",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM2_CH2",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM2_CH2",
+        "remap": "3"
+      },
+      {
+        "fn": "USART5_CTS"
+      }
+    ],
+    "PB4": [
+      {
+        "fn": "SPI3_MISO"
+      },
+      {
+        "fn": "DVP_D3",
+        "remap": "1"
+      },
+      {
+        "fn": "I3C1_SCL",
+        "remap": "1"
+      },
+      {
+        "fn": "SPI1_MISO",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM3_CH2",
+        "remap": "2"
+      },
+      {
+        "fn": "USART5_TX",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM3_CH1",
+        "remap": "2"
+      },
+      {
+        "fn": "USART5_RTS"
+      }
+    ],
+    "PB5": [
+      {
+        "fn": "I2C1_SMBA"
+      },
+      {
+        "fn": "SPI3_MOSI"
+      },
+      {
+        "fn": "DVP_D10",
+        "remap": "1"
+      },
+      {
+        "fn": "I3C1_SDA",
+        "remap": "1"
+      },
+      {
+        "fn": "SPI1_MOSI",
+        "remap": "1"
+      },
+      {
+        "fn": "USART5_RX",
+        "remap": "1"
+      },
+      {
+        "fn": "USART6_CK",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM3_CH2",
+        "remap": "2"
+      },
+      {
+        "fn": "USART5_CK"
+      },
+      {
+        "fn": "I2S3_SD"
+      }
+    ],
+    "PB6": [
+      {
+        "fn": "DVP_D5"
+      },
+      {
+        "fn": "I2C1_SCL"
+      },
+      {
+        "fn": "TIM4_CH1"
+      },
+      {
+        "fn": "USBHS2_DM"
+      },
+      {
+        "fn": "FSMC_NADV",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM8_CH1",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM8_CH2",
+        "remap": "1"
+      },
+      {
+        "fn": "USART1_TX",
+        "remap": "1"
+      },
+      {
+        "fn": "USART7_CTS",
+        "remap": "2"
+      }
+    ],
+    "PB7": [
+      {
+        "fn": "FSMC_NADV"
+      },
+      {
+        "fn": "I2C1_SDA"
+      },
+      {
+        "fn": "TIM4_CH2"
+      },
+      {
+        "fn": "USBHS2_DP"
+      },
+      {
+        "fn": "FSMC_NADV",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM1_CH3N",
+        "remap": "3"
+      },
+      {
+        "fn": "USART1_RX",
+        "remap": "1"
+      },
+      {
+        "fn": "USART7_RTS",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM8_CH2",
+        "remap": "1"
+      }
+    ],
+    "PB8": [
+      {
+        "fn": "DVP_D6"
+      },
+      {
+        "fn": "TIM8_CH3",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM1_CH3",
+        "remap": "3"
+      },
+      {
+        "fn": "TIM4_CH3"
+      },
+      {
+        "fn": "USART4_CTS",
+        "remap": "2"
+      },
+      {
+        "fn": "USART4_CTS",
+        "remap": "3"
+      },
+      {
+        "fn": "USART5_CTS",
+        "remap": "1"
+      },
+      {
+        "fn": "USART6_TX",
+        "remap": "1"
+      },
+      {
+        "fn": "USART10_TX",
+        "remap": "1"
+      },
+      {
+        "fn": "I2C1_SCL",
+        "remap": "1"
+      },
+      {
+        "fn": "CAN1_RX",
+        "remap": "2"
+      }
+    ],
+    "PB9": [
+      {
+        "fn": "FSMC_D11"
+      },
+      {
+        "fn": "LTDC_B4"
+      },
+      {
+        "fn": "SDIO_D1"
+      },
+      {
+        "fn": "SPI2_NSS",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM1_CH1",
+        "remap": "1"
+      },
+      {
+        "fn": "USART10_RX",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM4_CH4"
+      },
+      {
+        "fn": "TIM8_BKIN",
+        "remap": "1"
+      },
+      {
+        "fn": "USART4_RTS",
+        "remap": "2"
+      },
+      {
+        "fn": "USART4_RTS",
+        "remap": "3"
+      },
+      {
+        "fn": "USART5_RTS",
+        "remap": "1"
+      },
+      {
+        "fn": "USART6_RX",
+        "remap": "1"
+      },
+      {
+        "fn": "USART10_RX",
+        "remap": "1"
+      },
+      {
+        "fn": "I2C1_SDA",
+        "remap": "1"
+      },
+      {
+        "fn": "CAN1_TX",
+        "remap": "2"
+      }
+    ],
+    "PC0": [
+      {
+        "fn": "ADC1_IN10"
+      },
+      {
+        "fn": "LTDC_R0"
+      },
+      {
+        "fn": "USART6_TX"
+      },
+      {
+        "fn": "LTDC_R0",
+        "remap": "1"
+      },
+      {
+        "fn": "USART6_TX",
+        "remap": "3"
+      }
+    ],
+    "PC1": [
+      {
+        "fn": "ADC1_IN11"
+      },
+      {
+        "fn": "USART6_RX"
+      },
+      {
+        "fn": "USART6_RX",
+        "remap": "3"
+      },
+      {
+        "fn": "USART7_CK"
+      }
+    ],
+    "PC10": [
+      {
+        "fn": "DVP_D8"
+      },
+      {
+        "fn": "SDIO_D2"
+      },
+      {
+        "fn": "USART4_TX"
+      },
+      {
+        "fn": "I2S3_CK",
+        "remap": "1"
+      },
+      {
+        "fn": "USART3_TX",
+        "remap": "1"
+      },
+      {
+        "fn": "SPI3_SCK",
+        "remap": "1"
+      }
+    ],
+    "PC11": [
+      {
+        "fn": "DVP_D4"
+      },
+      {
+        "fn": "SDIO_D3"
+      },
+      {
+        "fn": "USART4_RX"
+      },
+      {
+        "fn": "SDIO_D3",
+        "remap": "1"
+      },
+      {
+        "fn": "SPI3_MISO",
+        "remap": "1"
+      },
+      {
+        "fn": "USART3_RX",
+        "remap": "1"
+      }
+    ],
+    "PC12": [
+      {
+        "fn": "USART5_TX"
+      },
+      {
+        "fn": "I2S3_SD",
+        "remap": "1"
+      },
+      {
+        "fn": "USART3_CK",
+        "remap": "1"
+      },
+      {
+        "fn": "USART4_CK"
+      },
+      {
+        "fn": "SPI3_MOSI",
+        "remap": "1"
+      }
+    ],
+    "PC13": [
+      {
+        "fn": "TIM8_CH4",
+        "remap": "1"
+      }
+    ],
+    "PC14": [
+      {
+        "fn": "OSC32_IN"
+      },
+      {
+        "fn": "USART10_CTS"
+      },
+      {
+        "fn": "USART10_CTS",
+        "remap": "1"
+      }
+    ],
+    "PC15": [
+      {
+        "fn": "OSC32_OUT"
+      },
+      {
+        "fn": "USART10_RTS"
+      },
+      {
+        "fn": "USART10_RTS",
+        "remap": "1"
+      }
+    ],
+    "PC2": [
+      {
+        "fn": "USART6_CTS"
+      },
+      {
+        "fn": "LTDC_R2",
+        "remap": "1"
+      },
+      {
+        "fn": "USART6_CTS",
+        "remap": "3"
+      },
+      {
+        "fn": "USART7_TX"
+      }
+    ],
+    "PC3": [
+      {
+        "fn": "ADC1_IN13"
+      },
+      {
+        "fn": "USART6_RTS"
+      },
+      {
+        "fn": "USART6_RTS",
+        "remap": "3"
+      },
+      {
+        "fn": "USART7_RX"
+      }
+    ],
+    "PC4": [
+      {
+        "fn": "USART7_CTS"
+      },
+      {
+        "fn": "USART7_CTS",
+        "remap": "1"
+      },
+      {
+        "fn": "USART1_CTS",
+        "remap": "3"
+      },
+      {
+        "fn": "USART4_CTS",
+        "remap": "1"
+      },
+      {
+        "fn": "USART8_TX"
+      }
+    ],
+    "PC5": [
+      {
+        "fn": "ADC1_IN15"
+      },
+      {
+        "fn": "USART7_RTS"
+      },
+      {
+        "fn": "USART4_RTS",
+        "remap": "1"
+      },
+      {
+        "fn": "USART1_RTS",
+        "remap": "3"
+      },
+      {
+        "fn": "USART7_RTS",
+        "remap": "1"
+      },
+      {
+        "fn": "USART8_RX"
+      }
+    ],
+    "PC6": [
+      {
+        "fn": "I2S2_MCK"
+      },
+      {
+        "fn": "SDIO_D6"
+      },
+      {
+        "fn": "TIM8_CH1"
+      },
+      {
+        "fn": "TIM3_CH1",
+        "remap": "3"
+      }
+    ],
+    "PC7": [
+      {
+        "fn": "I2S3_MCK"
+      },
+      {
+        "fn": "TIM8_CH2"
+      },
+      {
+        "fn": "TIM3_CH2",
+        "remap": "3"
+      },
+      {
+        "fn": "I2S3_MCK",
+        "remap": "1"
+      }
+    ],
+    "PC8": [
+      {
+        "fn": "DVP_D2"
+      },
+      {
+        "fn": "SDIO_D0"
+      },
+      {
+        "fn": "USART7_CTS",
+        "remap": "3"
+      },
+      {
+        "fn": "TIM3_CH3",
+        "remap": "3"
+      },
+      {
+        "fn": "TIM8_CH3"
+      }
+    ],
+    "PC9": [
+      {
+        "fn": "TIM8_CH4"
+      },
+      {
+        "fn": "TIM3_CH4",
+        "remap": "3"
+      },
+      {
+        "fn": "USART7_RTS",
+        "remap": "3"
+      }
+    ],
+    "PD0": [
+      {
+        "fn": "FSMC_D2"
+      },
+      {
+        "fn": "CAN1_RX",
+        "remap": "3"
+      },
+      {
+        "fn": "FSMC_D2",
+        "remap": "1"
+      }
+    ],
+    "PD1": [
+      {
+        "fn": "FSMC_D3"
+      },
+      {
+        "fn": "FSMC_D3",
+        "remap": "1"
+      },
+      {
+        "fn": "CAN1_TX",
+        "remap": "3"
+      }
+    ],
+    "PD10": [
+      {
+        "fn": "FSMC_D15"
+      },
+      {
+        "fn": "USART10_CK",
+        "remap": "2"
+      },
+      {
+        "fn": "USART3_CK",
+        "remap": "2"
+      },
+      {
+        "fn": "USART3_CK",
+        "remap": "3"
+      },
+      {
+        "fn": "USART10_CK",
+        "remap": "3"
+      }
+    ],
+    "PD11": [
+      {
+        "fn": "FSMC_A16"
+      },
+      {
+        "fn": "USART10_TX",
+        "remap": "2"
+      },
+      {
+        "fn": "USART3_CTS",
+        "remap": "2"
+      },
+      {
+        "fn": "USART3_CTS",
+        "remap": "3"
+      },
+      {
+        "fn": "USART10_TX",
+        "remap": "3"
+      }
+    ],
+    "PD12": [
+      {
+        "fn": "FSMC_A17"
+      },
+      {
+        "fn": "USART10_RX",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM4_CH1",
+        "remap": "1"
+      },
+      {
+        "fn": "USART3_RTS",
+        "remap": "2"
+      },
+      {
+        "fn": "USART3_RTS",
+        "remap": "3"
+      },
+      {
+        "fn": "USART10_RX",
+        "remap": "3"
+      }
+    ],
+    "PD13": [
+      {
+        "fn": "FSMC_A18"
+      },
+      {
+        "fn": "USART10_CTS",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM4_CH2",
+        "remap": "1"
+      },
+      {
+        "fn": "USART10_CTS",
+        "remap": "3"
+      }
+    ],
+    "PD14": [
+      {
+        "fn": "FSMC_D0"
+      },
+      {
+        "fn": "USART10_RTS",
+        "remap": "3"
+      },
+      {
+        "fn": "TIM4_CH3",
+        "remap": "1"
+      },
+      {
+        "fn": "USART10_RTS",
+        "remap": "2"
+      }
+    ],
+    "PD15": [
+      {
+        "fn": "FSMC_D1"
+      },
+      {
+        "fn": "TIM4_CH4",
+        "remap": "1"
+      }
+    ],
+    "PD2": [
+      {
+        "fn": "SDIO_CMD"
+      },
+      {
+        "fn": "USART5_RX"
+      },
+      {
+        "fn": "SDIO_CMD",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM3_ETR"
+      },
+      {
+        "fn": "TIM3_ETR",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM3_ETR",
+        "remap": "3"
+      },
+      {
+        "fn": "USART4_RTS"
+      }
+    ],
+    "PD3": [
+      {
+        "fn": "FSMC_CLK"
+      },
+      {
+        "fn": "FSMC_CLK",
+        "remap": "1"
+      },
+      {
+        "fn": "USART2_CTS",
+        "remap": "1"
+      }
+    ],
+    "PD4": [
+      {
+        "fn": "FSMC_NOE"
+      },
+      {
+        "fn": "USART2_RTS",
+        "remap": "1"
+      }
+    ],
+    "PD5": [
+      {
+        "fn": "FSMC_NWE"
+      },
+      {
+        "fn": "FSMC_NWE",
+        "remap": "1"
+      },
+      {
+        "fn": "USART2_TX",
+        "remap": "1"
+      }
+    ],
+    "PD6": [
+      {
+        "fn": "DVP_D10"
+      },
+      {
+        "fn": "FSMC_NWAIT"
+      },
+      {
+        "fn": "FSMC_NWAIT",
+        "remap": "1"
+      },
+      {
+        "fn": "USART2_RX",
+        "remap": "1"
+      }
+    ],
+    "PD7": [
+      {
+        "fn": "FSMC_NCE2"
+      },
+      {
+        "fn": "FSMC_NE1"
+      },
+      {
+        "fn": "FSMC_NE1",
+        "remap": "1"
+      },
+      {
+        "fn": "USART2_CK",
+        "remap": "1"
+      }
+    ],
+    "PD8": [
+      {
+        "fn": "FSMC_D13"
+      },
+      {
+        "fn": "LTDC_G5"
+      },
+      {
+        "fn": "USART9_CK"
+      },
+      {
+        "fn": "USART9_CK",
+        "remap": "1"
+      },
+      {
+        "fn": "USART3_TX",
+        "remap": "3"
+      }
+    ],
+    "PD9": [
+      {
+        "fn": "FSMC_D14"
+      },
+      {
+        "fn": "FSMC_D14",
+        "remap": "1"
+      },
+      {
+        "fn": "USART3_RX",
+        "remap": "3"
+      }
+    ],
+    "PE0": [
+      {
+        "fn": "FSMC_NBL0"
+      },
+      {
+        "fn": "USART10_TX"
+      },
+      {
+        "fn": "TIM4_ETR",
+        "remap": "1"
+      },
+      {
+        "fn": "USART4_TX",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM4_ETR"
+      },
+      {
+        "fn": "USART4_TX",
+        "remap": "3"
+      },
+      {
+        "fn": "USART6_CTS",
+        "remap": "1"
+      }
+    ],
+    "PE1": [
+      {
+        "fn": "FSMC_NBL1"
+      },
+      {
+        "fn": "USART10_RX"
+      },
+      {
+        "fn": "USART4_RX",
+        "remap": "2"
+      },
+      {
+        "fn": "USART4_RX",
+        "remap": "3"
+      },
+      {
+        "fn": "USART6_RTS",
+        "remap": "1"
+      }
+    ],
+    "PE10": [
+      {
+        "fn": "FSMC_D7"
+      },
+      {
+        "fn": "USART8_CTS",
+        "remap": "1"
+      },
+      {
+        "fn": "TIM1_CH2N",
+        "remap": "3"
+      },
+      {
+        "fn": "USART6_TX",
+        "remap": "2"
+      }
+    ],
+    "PE11": [
+      {
+        "fn": "FSMC_D8"
+      },
+      {
+        "fn": "USART6_RX",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM1_CH2",
+        "remap": "3"
+      },
+      {
+        "fn": "USART8_RTS",
+        "remap": "1"
+      }
+    ],
+    "PE12": [
+      {
+        "fn": "USART10_CK"
+      },
+      {
+        "fn": "USART4_CK",
+        "remap": "2"
+      },
+      {
+        "fn": "TIM1_CH3N",
+        "remap": "3"
+      },
+      {
+        "fn": "USART4_CK",
+        "remap": "3"
+      },
+      {
+        "fn": "USART10_CK",
+        "remap": "1"
+      }
+    ],
+    "PE2": [
+      {
+        "fn": "FSMC_A23"
+      },
+      {
+        "fn": "USART9_CK",
+        "remap": "3"
+      },
+      {
+        "fn": "USART9_CK",
+        "remap": "2"
+      }
+    ],
+    "PE3": [
+      {
+        "fn": "FSMC_A19"
+      },
+      {
+        "fn": "USART9_TX",
+        "remap": "3"
+      },
+      {
+        "fn": "USART9_TX",
+        "remap": "2"
+      }
+    ],
+    "PE4": [
+      {
+        "fn": "FSMC_A20"
+      },
+      {
+        "fn": "USART9_RX",
+        "remap": "3"
+      },
+      {
+        "fn": "USART9_RX",
+        "remap": "2"
+      }
+    ],
+    "PE5": [
+      {
+        "fn": "FSMC_A21"
+      },
+      {
+        "fn": "USART9_CTS",
+        "remap": "3"
+      },
+      {
+        "fn": "USART9_CTS",
+        "remap": "2"
+      }
+    ],
+    "PE6": [
+      {
+        "fn": "FSMC_A22"
+      },
+      {
+        "fn": "USART9_RTS",
+        "remap": "3"
+      },
+      {
+        "fn": "USART9_RTS",
+        "remap": "2"
+      }
+    ],
+    "PE7": [
+      {
+        "fn": "FSMC_D4"
+      },
+      {
+        "fn": "TIM1_ETR",
+        "remap": "3"
+      }
+    ],
+    "PE8": [
+      {
+        "fn": "FSMC_D5"
+      },
+      {
+        "fn": "USART9_CTS"
+      },
+      {
+        "fn": "USART5_TX",
+        "remap": "3"
+      },
+      {
+        "fn": "TIM1_CH1N",
+        "remap": "3"
+      },
+      {
+        "fn": "USART5_TX",
+        "remap": "2"
+      },
+      {
+        "fn": "USART9_CTS",
+        "remap": "1"
+      }
+    ],
+    "PE9": [
+      {
+        "fn": "FSMC_D6"
+      },
+      {
+        "fn": "USART9_RTS"
+      },
+      {
+        "fn": "TIM1_CH1",
+        "remap": "3"
+      },
+      {
+        "fn": "USART5_RX",
+        "remap": "3"
+      },
+      {
+        "fn": "USART9_RTS",
+        "remap": "1"
+      },
+      {
+        "fn": "USART5_RX",
+        "remap": "2"
+      }
+    ]
+  },
+  "peripherals": [
+    {
+      "id": "ADC1",
+      "signals": [
+        "IN1",
+        "IN10",
+        "IN11",
+        "IN12",
+        "IN13",
+        "IN14",
+        "IN15",
+        "IN2",
+        "IN3",
+        "IN5",
+        "IN6",
+        "IN7",
+        "IN8",
+        "IN9"
+      ]
+    },
+    {
+      "id": "ARGB",
+      "signals": [
+        "OUT"
+      ]
+    },
+    {
+      "id": "CAN1",
+      "signals": [
+        "RX",
+        "TX"
+      ]
+    },
+    {
+      "id": "DAC2",
+      "signals": [
+        "OUT"
+      ]
+    },
+    {
+      "id": "DVP",
+      "signals": [
+        "D0",
+        "D1",
+        "D10",
+        "D11",
+        "D2",
+        "D3",
+        "D4",
+        "D5",
+        "D6",
+        "D7",
+        "D8",
+        "D9",
+        "HSYNC",
+        "VSYNC"
+      ]
+    },
+    {
+      "id": "FSMC",
+      "signals": [
+        "A16",
+        "A17",
+        "A18",
+        "A19",
+        "A20",
+        "A21",
+        "A22",
+        "A23",
+        "CLK",
+        "D0",
+        "D1",
+        "D10",
+        "D11",
+        "D12",
+        "D13",
+        "D14",
+        "D15",
+        "D2",
+        "D3",
+        "D4",
+        "D5",
+        "D6",
+        "D7",
+        "D8",
+        "D9",
+        "NADV",
+        "NBL0",
+        "NBL1",
+        "NCE2",
+        "NE1",
+        "NOE",
+        "NWAIT",
+        "NWE"
+      ]
+    },
+    {
+      "id": "I2C1",
+      "signals": [
+        "SCL",
+        "SDA",
+        "SMBA"
+      ]
+    },
+    {
+      "id": "I2S2",
+      "signals": [
+        "CK",
+        "MCK",
+        "SD",
+        "WS"
+      ]
+    },
+    {
+      "id": "I2S3",
+      "signals": [
+        "CK",
+        "MCK",
+        "SD",
+        "WS"
+      ]
+    },
+    {
+      "id": "I3C1",
+      "signals": [
+        "SCL",
+        "SDA"
+      ]
+    },
+    {
+      "id": "LTDC",
+      "signals": [
+        "B0",
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "B5",
+        "B6",
+        "B7",
+        "CLK",
+        "DE",
+        "G0",
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5",
+        "G6",
+        "G7",
+        "HSYNC",
+        "R0",
+        "R1",
+        "R2",
+        "R3",
+        "R4",
+        "R5",
+        "R6",
+        "R7",
+        "VSYNC"
+      ]
+    },
+    {
+      "id": "OPA1",
+      "signals": [
+        "N1",
+        "N2",
+        "OUT1",
+        "OUT2",
+        "P1",
+        "P2"
+      ]
+    },
+    {
+      "id": "OSC32",
+      "signals": [
+        "IN",
+        "OUT"
+      ]
+    },
+    {
+      "id": "SDIO",
+      "signals": [
+        "CK",
+        "CMD",
+        "D0",
+        "D1",
+        "D2",
+        "D3",
+        "D4",
+        "D5",
+        "D6",
+        "D7"
+      ]
+    },
+    {
+      "id": "SPI1",
+      "signals": [
+        "MISO",
+        "MOSI",
+        "NSS",
+        "SCK"
+      ]
+    },
+    {
+      "id": "SPI2",
+      "signals": [
+        "MISO",
+        "MOSI",
+        "NSS",
+        "SCK"
+      ]
+    },
+    {
+      "id": "SPI3",
+      "signals": [
+        "MISO",
+        "MOSI",
+        "NSS",
+        "SCK"
+      ]
+    },
+    {
+      "id": "TIM1",
+      "signals": [
+        "BKIN",
+        "CH1",
+        "CH1N",
+        "CH2",
+        "CH2N",
+        "CH3",
+        "CH3N",
+        "CH4",
+        "ETR"
+      ]
+    },
+    {
+      "id": "TIM2",
+      "signals": [
+        "CH1",
+        "CH2",
+        "CH3",
+        "CH4",
+        "ETR"
+      ]
+    },
+    {
+      "id": "TIM3",
+      "signals": [
+        "CH1",
+        "CH2",
+        "CH3",
+        "CH4",
+        "ETR"
+      ]
+    },
+    {
+      "id": "TIM4",
+      "signals": [
+        "CH1",
+        "CH2",
+        "CH3",
+        "CH4",
+        "ETR"
+      ]
+    },
+    {
+      "id": "TIM5",
+      "signals": [
+        "CH1",
+        "CH2",
+        "CH3",
+        "CH4"
+      ]
+    },
+    {
+      "id": "TIM8",
+      "signals": [
+        "BKIN",
+        "CH1",
+        "CH1N",
+        "CH2",
+        "CH2N",
+        "CH3",
+        "CH3N",
+        "CH4",
+        "ETR"
+      ]
+    },
+    {
+      "id": "USART1",
+      "signals": [
+        "CK",
+        "CTS",
+        "RTS",
+        "RX",
+        "TX"
+      ]
+    },
+    {
+      "id": "USART10",
+      "signals": [
+        "CK",
+        "CTS",
+        "RTS",
+        "RX",
+        "TX"
+      ]
+    },
+    {
+      "id": "USART2",
+      "signals": [
+        "CK",
+        "CTS",
+        "RTS",
+        "RX",
+        "TX"
+      ]
+    },
+    {
+      "id": "USART3",
+      "signals": [
+        "CK",
+        "CTS",
+        "RTS",
+        "RX",
+        "TX"
+      ]
+    },
+    {
+      "id": "USART4",
+      "signals": [
+        "CK",
+        "CTS",
+        "RTS",
+        "RX",
+        "TX"
+      ]
+    },
+    {
+      "id": "USART5",
+      "signals": [
+        "CK",
+        "CTS",
+        "RTS",
+        "RX",
+        "TX"
+      ]
+    },
+    {
+      "id": "USART6",
+      "signals": [
+        "CK",
+        "CTS",
+        "RTS",
+        "RX",
+        "TX"
+      ]
+    },
+    {
+      "id": "USART7",
+      "signals": [
+        "CK",
+        "CTS",
+        "RTS",
+        "RX",
+        "TX"
+      ]
+    },
+    {
+      "id": "USART8",
+      "signals": [
+        "CK",
+        "CTS",
+        "RTS",
+        "RX",
+        "TX"
+      ]
+    },
+    {
+      "id": "USART9",
+      "signals": [
+        "CK",
+        "CTS",
+        "RTS",
+        "RX",
+        "TX"
+      ]
+    },
+    {
+      "id": "USBHS1",
+      "signals": [
+        "DM",
+        "DP"
+      ]
+    },
+    {
+      "id": "USBHS2",
+      "signals": [
+        "DM",
+        "DP"
+      ]
+    },
+    {
+      "id": "GPIO",
+      "signals": []
+    },
+    {
+      "id": "SYSTEM",
+      "signals": []
+    },
+    {
+      "id": "DBG",
+      "signals": [
+        "SWCLK",
+        "SWDIO"
+      ]
+    },
+    {
+      "id": "PWR",
+      "signals": []
+    },
+    {
+      "id": "EXTI",
+      "signals": []
+    },
+    {
+      "id": "DMA",
+      "signals": []
+    },
+    {
+      "id": "IWDG",
+      "signals": []
+    },
+    {
+      "id": "WWDG",
+      "signals": []
+    },
+    {
+      "id": "CRC",
+      "signals": []
+    },
+    {
+      "id": "RTC",
+      "signals": []
+    },
+    {
+      "id": "FLASH",
+      "signals": []
+    }
+  ],
+  "irqs": [
+    {
+      "n": 16,
+      "name": "WWDG",
+      "owner": "WWDG"
+    },
+    {
+      "n": 17,
+      "name": "PVD",
+      "owner": "PWR"
+    },
+    {
+      "n": 18,
+      "name": "TAMPER",
+      "owner": "PWR"
+    },
+    {
+      "n": 19,
+      "name": "RTC",
+      "owner": "RTC",
+      "gate": "irqAlarm"
+    },
+    {
+      "n": 20,
+      "name": "FLASH",
+      "owner": "FLASH"
+    },
+    {
+      "n": 21,
+      "name": "RCC",
+      "owner": "SYSTEM"
+    },
+    {
+      "n": 22,
+      "name": "EXTI0",
+      "owner": "EXTI"
+    },
+    {
+      "n": 23,
+      "name": "EXTI1",
+      "owner": "EXTI"
+    },
+    {
+      "n": 24,
+      "name": "EXTI2",
+      "owner": "EXTI"
+    },
+    {
+      "n": 25,
+      "name": "EXTI3",
+      "owner": "EXTI"
+    },
+    {
+      "n": 26,
+      "name": "EXTI4",
+      "owner": "EXTI"
+    },
+    {
+      "n": 34,
+      "name": "ADC1_2",
+      "owner": "ADC1",
+      "gate": "irqEoc"
+    },
+    {
+      "n": 35,
+      "name": "CAN1_TX",
+      "owner": "CAN1"
+    },
+    {
+      "n": 36,
+      "name": "CAN1_RX0",
+      "owner": "CAN1"
+    },
+    {
+      "n": 37,
+      "name": "CAN1_RX1",
+      "owner": "CAN1"
+    },
+    {
+      "n": 38,
+      "name": "CAN1_SCE",
+      "owner": "CAN1"
+    },
+    {
+      "n": 39,
+      "name": "EXTI9_5",
+      "owner": "EXTI"
+    },
+    {
+      "n": 40,
+      "name": "TIM1_BRK",
+      "owner": "TIM1",
+      "gate": "irqBreak"
+    },
+    {
+      "n": 41,
+      "name": "TIM1_UP",
+      "owner": "TIM1",
+      "gate": "irqUpdate"
+    },
+    {
+      "n": 42,
+      "name": "TIM1_TRG_COM",
+      "owner": "TIM1",
+      "gate": [
+        "irqUpdate",
+        "irqCC1",
+        "irqCC2",
+        "irqCC3",
+        "irqCC4"
+      ]
+    },
+    {
+      "n": 43,
+      "name": "TIM1_CC",
+      "owner": "TIM1",
+      "gate": [
+        "irqCC1",
+        "irqCC2",
+        "irqCC3",
+        "irqCC4"
+      ]
+    },
+    {
+      "n": 44,
+      "name": "TIM2",
+      "owner": "TIM2",
+      "gate": "irqUpdate"
+    },
+    {
+      "n": 45,
+      "name": "TIM3",
+      "owner": "TIM3",
+      "gate": "irqUpdate"
+    },
+    {
+      "n": 46,
+      "name": "TIM4",
+      "owner": "TIM4",
+      "gate": "irqUpdate"
+    },
+    {
+      "n": 47,
+      "name": "I2C1_EV",
+      "owner": "I2C1",
+      "gate": "irqEvt"
+    },
+    {
+      "n": 48,
+      "name": "I2C1_ER",
+      "owner": "I2C1",
+      "gate": "irqErr"
+    },
+    {
+      "n": 49,
+      "name": "I3C_EV",
+      "owner": "I3C"
+    },
+    {
+      "n": 50,
+      "name": "I3C_ER",
+      "owner": "I3C"
+    },
+    {
+      "n": 51,
+      "name": "SPI1",
+      "owner": "SPI1"
+    },
+    {
+      "n": 52,
+      "name": "SPI2",
+      "owner": "SPI2"
+    },
+    {
+      "n": 53,
+      "name": "USART1",
+      "owner": "USART1"
+    },
+    {
+      "n": 54,
+      "name": "USART2",
+      "owner": "USART2"
+    },
+    {
+      "n": 55,
+      "name": "USART3",
+      "owner": "USART3"
+    },
+    {
+      "n": 56,
+      "name": "EXTI15_10",
+      "owner": "EXTI"
+    },
+    {
+      "n": 57,
+      "name": "RTCAlarm",
+      "owner": "RTC",
+      "gate": "irqAlarm"
+    },
+    {
+      "n": 59,
+      "name": "TIM8_BRK",
+      "owner": "TIM8",
+      "gate": "irqBreak"
+    },
+    {
+      "n": 60,
+      "name": "TIM8_UP",
+      "owner": "TIM8",
+      "gate": "irqUpdate"
+    },
+    {
+      "n": 61,
+      "name": "TIM8_TRG_COM",
+      "owner": "TIM8",
+      "gate": [
+        "irqUpdate",
+        "irqCC1",
+        "irqCC2",
+        "irqCC3",
+        "irqCC4"
+      ]
+    },
+    {
+      "n": 62,
+      "name": "TIM8_CC",
+      "owner": "TIM8",
+      "gate": [
+        "irqCC1",
+        "irqCC2",
+        "irqCC3",
+        "irqCC4"
+      ]
+    },
+    {
+      "n": 63,
+      "name": "RNG",
+      "owner": "RNG"
+    },
+    {
+      "n": 65,
+      "name": "SDIO",
+      "owner": "SDIO"
+    },
+    {
+      "n": 66,
+      "name": "TIM5",
+      "owner": "TIM5",
+      "gate": "irqUpdate"
+    },
+    {
+      "n": 67,
+      "name": "SPI3",
+      "owner": "SPI3"
+    },
+    {
+      "n": 68,
+      "name": "USART4",
+      "owner": "USART4"
+    },
+    {
+      "n": 69,
+      "name": "USART5",
+      "owner": "USART5"
+    },
+    {
+      "n": 70,
+      "name": "TIM6",
+      "owner": "TIM6",
+      "gate": "irqUpdate"
+    },
+    {
+      "n": 71,
+      "name": "TIM7",
+      "owner": "TIM7",
+      "gate": "irqUpdate"
+    },
+    {
+      "n": 77,
+      "name": "ETH",
+      "owner": "ETH"
+    },
+    {
+      "n": 78,
+      "name": "ETH_WKUP",
+      "owner": "ETH"
+    },
+    {
+      "n": 79,
+      "name": "LTDC",
+      "owner": "LTDC"
+    }
+  ],
+  "pending": [
+    "packages/ports 由 scripts/rebuild_v407_from_ds.py 从 DS0 表2-1-1 + RM 10.2.11 自动生成；remap 字段 = AFIO 配置组编号（00/01/10/11 → 0/1/2/3）",
+    "OSC_IN/OSC_OUT 可经 AFIO 改作 PD0/PD1（DS0 注4），这一层复用没有建模 —— GPIO 目前只按引脚名配，没有「PD0 借用 OSC_IN 脚」的入口",
+    "DS0 注6/7：SDIO_D0/D1、DVP_D5、FSMC_NADV 有「ETH/SDIO/USB 同时开启时自动改脚」的条件重映射，尚未建模",
+    "KEU6（QFN32）的 pin 16 在引脚表里没有对应行，已按 VDD 补齐，需对照 DS0 引脚排列图确认",
+    "TIM8_CH1N/CH2N/CH3N 在组1 落到 PA13/PA14/PA15，与 2 线调试口冲突（硬件事实，不是数据错）",
+    "源表缺这几条复用项，对应外设因此进「器件数据待补」（外设树底部琥珀色那行），需从 DS0 补：SPI2_MOSI（疑与 I2S2_SD 同脚 PB15）、DAC2 全部输出（USBHS1_DM 已按 DS0 表 2-3-15 补到 PA11）",
+    "源表内部矛盾（同一信号的同一配置组落到两个引脚），下列条目以「两者都保留」处理，配置组编号需回查 DS0 原表：FSMC_NADV 组1=PB6/PB7；I2S3_MCK 组0=PA8/PC7；SDIO_D1 组0=PB15/PB9；TIM1_CH1 组1=PA8/PB9；TIM1_CH3N 组3=PB7/PE12；TIM3_CH1 组2=PB3/PB4；TIM3_CH2 组2=PB4/PB5；TIM8_CH2 组1=PB6/PB7；USART10_RX 组2=PB9/PD12",
+    "ETH / LTDC / DVP / FSMC / SDIO / ARGB / I3C / USBHS 只生成时钟使能 + TODO，参数建模待补",
+    "DMA 通道 ↔ 硬件请求映射待从 RM「DMA 请求映射」补录；当前只校验通道不重复"
+  ]
+}

@@ -1,0 +1,86 @@
+//// FILE: User/rfr_pinmap.h
+/* RFR_Golden — 引脚映射表
+ * 器件: CH32V407KEU6 (CH32V407, QingKe V3V · RV32IMAFCXV)
+ * 由 RiskFiveRuler 自动生成，请勿手工修改；改动请在工具里做。
+ */
+#ifndef __RFR_PINMAP_H
+#define __RFR_PINMAP_H
+
+#include "ch32v4x7.h"
+
+/* ── GPIOA ── */
+#define DBG_SWDIO_PIN              GPIO_Pin_13   /* PA13 ← DBG_SWDIO */
+#define DBG_SWDIO_PORT             GPIOA
+#define DBG_SWCLK_PIN              GPIO_Pin_14   /* PA14 ← DBG_SWCLK */
+#define DBG_SWCLK_PORT             GPIOA
+
+#endif /* __RFR_PINMAP_H */
+
+//// FILE: User/rfr_init.c
+/* RFR_Golden — 外设初始化
+ * 目标: CH32V407KEU6 / QFN32 / QingKe V3V · RV32IMAFCXV
+ * 时钟: SYSCLK 200 MHz, HCLK 200 MHz, PCLK1 200 MHz, PCLK2 200 MHz
+ */
+#include "rfr_init.h"
+
+/* ───────────────── 系统时钟 ───────────────── */
+void RFR_ClockInit(void)
+{
+    /* HSI 8 MHz → PLL → 最高 200 MHz（DS 表1-1） */
+    RCC_DeInit();
+    RCC_HSICmd(ENABLE);
+    while (RCC_GetFlagStatus(RCC_FLAG_HSIRDY) == RESET) { }
+
+    RCC_PLLConfig(RCC_PLLSource_HSI, RCC_PLLMul_24);
+    RCC_PLLCmd(ENABLE);
+    while (RCC_GetFlagStatus(RCC_FLAG_PLLRDY) == RESET) { }
+
+    RCC_HCLKConfig(RCC_SYSCLK_Div1);
+    RCC_PCLK2Config(RCC_HCLK_Div2);
+    RCC_ADCCLKConfig(RCC_PCLK2_Div8);
+
+    RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK);
+    while (RCC_GetSYSCLKSource() != 0x08) { }
+
+}
+
+/* ───────────────── GPIO ───────────────── */
+void RFR_GPIOInit(void)
+{
+    GPIO_InitTypeDef gpio = {0};
+    /* 没有需要单独配置的普通 GPIO */
+}
+
+/* ───────────────── DBG ───────────────── */
+void RFR_DBG_Init(void)
+{
+    DBGMCU_Config(DBGMCU_IWDG_STOP, ENABLE); /* 调试器停住时冻结，不影响脱机运行 */
+    DBGMCU_Config(DBGMCU_WWDG_STOP, ENABLE); /* 调试器停住时冻结，不影响脱机运行 */
+    /* 保持 SDI 默认开启（复位状态） */
+}
+
+/* ───────────────── USART3 ───────────────── */
+void RFR_USART3_Init(void)
+{
+    GPIO_InitTypeDef gpio = {0};
+    USART_InitTypeDef uart = {0};
+    RCC_PB1PeriphClockCmd(RCC_PB1Periph_USART3, ENABLE);
+    /* BRR = 0x6C8 → 实际 115207.4 bit/s，误差 0.01% */
+    uart.USART_BaudRate = 115200;
+    uart.USART_WordLength = USART_WordLength_8b;
+    uart.USART_StopBits = USART_StopBits_1;
+    uart.USART_Parity = USART_Parity_No;
+    uart.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+    uart.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
+    USART_Init(USART3, &uart);
+    /* 单线半双工：TX 一根线兼顾收发（CTLR3.HDSEL=1） */
+    USART_HalfDuplexCmd(USART3, ENABLE);
+    USART_Cmd(USART3, ENABLE);
+    USART_ITConfig(USART3, USART_IT_RXNE, ENABLE);
+}
+
+/* ───────────────── 中断 ───────────────── */
+void RFR_NVICInit(void)
+{
+    /* 未启用任何外设中断 */
+}

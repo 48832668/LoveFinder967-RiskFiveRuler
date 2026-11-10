@@ -1,0 +1,50 @@
+[package]
+name = "risk-five-ruler"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "RiskFiveRuler — WCH CH32V 图形化配置与代码生成工具"
+
+# Tauri v2 的约定：业务逻辑放 lib，main.rs 只是一层薄壳。
+# lib 名字必须显式给成 risk_five_ruler_lib，否则 main.rs 里的
+# `risk_five_ruler_lib::run()` 找不到 crate。
+[lib]
+name = "risk_five_ruler_lib"
+# 桌面端只需要 rlib（bin 链接它）。
+# 不再输出 cdylib/staticlib：那两个是 Tauri mobile 用的，而在 Windows GNU 下
+# `cargo test` 会因为 cdylib 导出符号过多报 "export ordinal too large"。
+crate-type = ["rlib"]
+
+# ── indexmap 1.x 绕过（不要删）─────────────────────────────────────────
+# tauri-utils → schemars 0.8 只启用了 indexmap 的 `default` feature，而
+# indexmap 1.9 的 feature 表里没有 `default`，等于一个都没开。它的 build.rs
+# 于是走 autocfg 探测 std，在无 MSVC 的 Windows 环境里静默失败，IndexMap
+# 退化成三参数无默认值，schemars 的两参写法就编不过。
+# 显式打开 std 让它走 emit("has_std") 分支即可。
+# 两处都要写：resolver v2 分别解析普通依赖图与构建依赖图。
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+indexmap = { version = "1.9", features = ["std"] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+indexmap = { version = "1.9", features = ["std"] }
+# 纯 Rust 核心（layer1/layer2）：不依赖 Tauri，可以独立 cargo test
+rfr-core = { path = "crates/rfr-core" }
+
+[workspace]
+members = ["crates/rfr-core"]
+
+[features]
+default = []
+# 生产构建必须开：不开的话 tauri 认为处于 dev 模式，双击 exe 会去连
+# http://127.0.0.1:1420，得到一个白屏窗口。
+custom-protocol = ["tauri/custom-protocol"]
+
+[profile.dist]
+inherits = "release"
+lto = false
+codegen-units = 16
