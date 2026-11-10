@@ -478,10 +478,11 @@ export function applyConfigPins(
       const cur = assignedGroupOf(dev, periph, assigned, next);
       if (typeof cur === "number") {
         const gp = groupPinsFor(dev, periph, wantList, cur, next, usage);
+        const locked = lockedPinSet(project);
         for (const s of missing) {
           const pin = gp[s];
-          // 组内没有这根线、或组内唯一的脚被别人占着 → 宁缺，调用方回退
-          if (!pin || usage.some((u) => u.pin === pin && u.owner !== periph.id)) continue;
+          // 组内没有这根线、被别人占着、或是用户锁定的脚 → 宁缺，调用方回退
+          if (!pin || locked.has(pin) || usage.some((u) => u.pin === pin && u.owner !== periph.id)) continue;
           next[s] = pin;
         }
         return next;
@@ -542,6 +543,11 @@ export function collectUsage(project: Project, dev: DeviceDef): PinUsage[] {
   return out;
 }
 
+/** 用户手工锁定的引脚集合（画布右键 → 锁定）。锁定后任何规划 / 分配都会绕开 */
+export function lockedPinSet(project: Project): Set<string> {
+  return new Set(Object.keys(project.lockedPins ?? {}));
+}
+
 export function findConflicts(usage: PinUsage[]): PinConflict[] {
   const map = new Map<string, PinUsage[]>();
   for (const u of usage) {
@@ -575,6 +581,7 @@ export function autoPickPin(
   const candidates = pinsForSignal(dev, fn);
   if (candidates.length === 0) return null;
   const taken = new Set(usage.filter((u) => u.owner !== periphId).map((u) => u.pin));
+  for (const pin of lockedPinSet(project)) taken.add(pin);
   // 优先挑同外设已用引脚的“邻居”（同一端口的连续引脚），方便布线
   const samePeriphPorts = new Set(
     Object.values(project.configs[periphId]?.pins ?? {})
@@ -678,6 +685,7 @@ function assignPins(
 ): Record<string, string | null> | null {
   const cfg = project.configs[periphId];
   const taken = new Set(usage.filter((u) => u.owner !== periphId).map((u) => u.pin));
+  for (const pin of lockedPinSet(project)) taken.add(pin);
 
   // 本外设已经占用、但不在本次规划范围内的引脚（例如 USART 的 CTS）
   const ownBusy = new Set<string>();
@@ -858,7 +866,8 @@ function assignPinsRelocating(
   const cfg = project.configs[periph.id];
   /** 一个脚上可能同时压着好几个外设（手工分配不会互相清理），所以按引脚分组 */
   const occ = occupantsOf(usage, periph.id, project);
-  const free = (pin: string) => !(occ.get(pin)?.length);
+  const locked = lockedPinSet(project);
+  const free = (pin: string) => !(occ.get(pin)?.length) && !locked.has(pin);
 
   const ownBusy = new Set<string>();
   for (const [sig, pin] of Object.entries(cfg?.pins ?? {})) {

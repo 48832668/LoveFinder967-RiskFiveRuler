@@ -87,10 +87,13 @@ export function PinsTab({ dev, project, periph, cfg, usage, beginner, patch, onJ
               );
             })}
           </select>
-          <label className="field-label lock-label">
-            <input type="checkbox" checked={cfg.locked ?? false} onChange={() => patch({ locked: !cfg.locked })} />
-            <span>锁定本组映射</span>
-          </label>
+          <button
+            className={`lock-toggle ${cfg.locked ? "on" : ""}`}
+            onClick={() => patch({ locked: !cfg.locked })}
+            title={cfg.locked ? "已锁定：其他外设启用时不会挤动这组脚，点击解除" : "锁定后其他外设启用时不会挤动这组脚"}
+          >
+            {cfg.locked ? "已锁定" : "锁定本组映射"}
+          </button>
         </div>
       )}
 

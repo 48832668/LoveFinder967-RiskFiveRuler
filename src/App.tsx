@@ -192,6 +192,14 @@ export default function App() {
     })();
   }, [theme]);
 
+  /** 自绘窗口控制（最小化 / 最大化 / 关闭）—— decorations:false 后标题栏由我们画 */
+  const winCtl = async (action: "minimize" | "toggleMaximize") => {
+    const { getCurrentWindow } = await import("@tauri-apps/api/window");
+    const w = getCurrentWindow();
+    if (action === "minimize") await w.minimize();
+    else await w.toggleMaximize();
+  };
+
   /** 主题色 / 图例配色：写 CSS 变量 + 通知 semantic 层；style 属性变化会让引脚图重绘 */
   useEffect(() => {
     // 可读性归一化：纯黑在暗色模式、纯白在浅色模式会被提亮/压暗到可读亮度，
@@ -401,6 +409,11 @@ export default function App() {
 
   /* 从引脚视图分配复用功能 */
   const assignPin = (pin: string, fn: string | null) => {
+    // 用户锁定的引脚：不能分配、不能释放 —— 解锁只能在画布右键菜单里做
+    if (project.lockedPins?.[pin]) {
+      notify(`引脚 ${pin} 已锁定，解除锁定后再配置`);
+      return;
+    }
     mutate((prev) => {
       const next: Project = JSON.parse(JSON.stringify(prev));
       // 先释放该引脚上原有的分配
@@ -535,6 +548,10 @@ export default function App() {
   };
 
   const setGpioMode = (pin: string, mode: string) => {
+    if (project.lockedPins?.[pin]) {
+      notify(`引脚 ${pin} 已锁定，解除锁定后再配置`);
+      return;
+    }
     mutate((prev) => {
       const next: Project = JSON.parse(JSON.stringify(prev));
       for (const cfg of Object.values(next.configs)) {
@@ -544,6 +561,19 @@ export default function App() {
       next.gpio[pin] = { ...g, mode: mode as GpioCfg["mode"] };
       return next;
     });
+  };
+
+  /** 画布右键：锁定 / 解锁一个引脚。锁定的引脚不能被任何外设或 GPIO 占用 */
+  const togglePinLock = (pin: string) => {
+    const locked = Boolean(project.lockedPins?.[pin]);
+    mutate((prev) => {
+      const next: Project = JSON.parse(JSON.stringify(prev));
+      next.lockedPins = { ...(next.lockedPins ?? {}) };
+      if (locked) delete next.lockedPins![pin];
+      else next.lockedPins![pin] = true;
+      return next;
+    });
+    notify(locked ? `引脚 ${pin} 已解锁` : `引脚 ${pin} 已锁定`);
   };
 
   /** 返回 true = 确实写盘成功（用户取消对话框时是 false） */
@@ -871,9 +901,8 @@ export default function App() {
         onClearRecent={() => setRecent(clearRecent())}
         onAction={onMenuAction}
       />
-      <header className="topbar">
+      <header className="topbar" data-tauri-drag-region>
         <div className="device-picker">
-          <label>器件</label>
           <div className="device-readout">
             <div className="dv-main">
               <span className="dv-id">{dev.id}</span>
@@ -930,6 +959,13 @@ export default function App() {
           >
             {theme === "dark" ? "☀" : "☾"}
           </button>
+          {inTauri() && (
+            <div className="win-controls">
+              <button className="win-btn" onClick={() => void winCtl("minimize")} title="最小化">─</button>
+              <button className="win-btn" onClick={() => void winCtl("toggleMaximize")} title="最大化 / 还原">□</button>
+              <button className="win-btn close" onClick={() => requestAction({ kind: "quit" })} title="关闭">✕</button>
+            </div>
+          )}
         </div>
       </header>
 
@@ -1018,6 +1054,7 @@ export default function App() {
               onAssign={assignPin}
               onGpioMode={setGpioMode}
               onSelectPeripheral={selectPeriph}
+              onTogglePinLock={togglePinLock}
               autoPin={new URLSearchParams(typeof location !== "undefined" ? location.search : "").get("pin")}
             />
           </aside>

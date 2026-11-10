@@ -251,15 +251,26 @@ page.on("console", (m) => {
   check((await sel.count()) === 1, "WCH 外设用单个 select 选重映射组");
   const opts = await sel.locator("option").allInnerTexts();
   check(opts.some((t) => t.includes("默认功能")), "重映射组下拉含默认功能", opts.join("|"));
-  const lock = page.locator(".remap-bar input[type=checkbox]");
-  await lock.check();
+  const lock = page.locator(".remap-bar .lock-toggle");
+  await lock.click();
   await page.waitForTimeout(200);
-  check(await lock.isChecked(), "锁定本组映射勾选生效");
+  check((await lock.innerText()) === "已锁定", "锁定本组映射生效（下划线文字按钮）");
   // 锁定后引脚分配不丢（后续外设启用不会挤动它）；复用值列显示当前组 00
   const vals = await page.$$eval(".pin-table .pin-cell", (els) => els.map((e) => e.textContent?.trim() ?? ""));
   check(vals.filter((t) => t && !t.startsWith("—")).length === 2, "锁定后 I2C1 的 SCL/SDA 保持已分配", vals.join(","));
   const remaps = await page.$$eval(".pin-table .remap-cell", (els) => els.map((e) => e.textContent?.trim() ?? ""));
   check(remaps.includes("00"), "引脚表显示当前复用值（00）", remaps.join(","));
+}
+
+/* ── 4c-2. 画布右键锁定引脚 ── */
+{
+  await page.goto(`${BASE}/?dev=CH32L103K8U6&pin=PA4`, { waitUntil: "networkidle" });
+  await page.waitForTimeout(1000);
+  // 引脚菜单里锁定 PA4（App.togglePinLock 会弹 toast 确认）
+  await page.locator(".pin-menu-item", { hasText: "锁定该引脚" }).click();
+  await page.waitForTimeout(300);
+  const toast = await page.locator(".toast-text").innerText().catch(() => "");
+  check(toast.includes("PA4") && toast.includes("已锁定"), "画布菜单锁定引脚生效", toast);
 }
 
 /* ── 4d. SPI 半双工主机：MISO 不再误报；硬件 NSS 自动落脚 / 组内冲突回退 ── */

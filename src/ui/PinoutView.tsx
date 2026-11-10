@@ -25,11 +25,13 @@ interface Props {
   onAssign: (pin: string, fn: string | null) => void;
   onGpioMode: (pin: string, mode: string) => void;
   onSelectPeripheral: (id: string) => void;
+  /** 画布右键菜单里的锁定 / 解锁（宿主改 project.lockedPins） */
+  onTogglePinLock: (pin: string) => void;
   /** 深链 ?pin=PB6 用：直接把这颗引脚的菜单弹出来（截图回归 / 演示） */
   autoPin?: string | null;
 }
 
-export function PinoutView({ dev, project, search, onAssign, onGpioMode, onSelectPeripheral, autoPin }: Props) {
+export function PinoutView({ dev, project, search, onAssign, onGpioMode, onSelectPeripheral, onTogglePinLock, autoPin }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hitsRef = useRef<Hit[]>([]);
@@ -99,7 +101,7 @@ export function PinoutView({ dev, project, search, onAssign, onGpioMode, onSelec
   const conflicts = useMemo(() => findConflicts(usage), [usage]);
 
   /** 锁定映射的外设占用的引脚 —— 画布上给这些矩形加「图钉」样式 */
-  const lockedPins = useMemo(() => {
+  const periphLockedPins = useMemo(() => {
     const s = new Set<string>();
     for (const cfg of Object.values(project.configs)) {
       if (!cfg?.locked || !cfg.enabled) continue;
@@ -111,6 +113,11 @@ export function PinoutView({ dev, project, search, onAssign, onGpioMode, onSelec
     }
     return s;
   }, [project.configs]);
+  /** 用户右键锁定的引脚 —— 同样画图钉，且不能被配置 */
+  const pinLockedPins = useMemo(
+    () => new Set(Object.keys(project.lockedPins ?? {})),
+    [project.lockedPins],
+  );
   const conflictPins = useMemo(() => new Set(conflicts.map((c) => c.pin)), [conflicts]);
   const usageByPin = useMemo(() => {
     const m = new Map<string, (typeof usage)[number]>();
@@ -377,7 +384,7 @@ export function PinoutView({ dev, project, search, onAssign, onGpioMode, onSelec
         gpioColor: gpioByPin.get(pin.name),
         conflict: conflictPins.has(pin.name),
         match: matchPins.has(pin.name),
-        locked: lockedPins.has(pin.name),
+        locked: periphLockedPins.has(pin.name) || pinLockedPins.has(pin.name),
         cText,
         cDim,
         cAccent,
@@ -421,7 +428,7 @@ export function PinoutView({ dev, project, search, onAssign, onGpioMode, onSelec
 
     ctx.restore();
     hitsRef.current = hits;
-  }, [dev, usageByPin, gpioByPin, conflictPins, matchPins, lockedPins, listPins, listSeg, density]);
+  }, [dev, usageByPin, gpioByPin, conflictPins, matchPins, periphLockedPins, pinLockedPins, listPins, listSeg, density]);
 
   useEffect(() => {
     draw();
@@ -627,6 +634,18 @@ export function PinoutView({ dev, project, search, onAssign, onGpioMode, onSelec
           }
           setMenu({ pin, x: e.clientX, y: e.clientY });
         }}
+        onContextMenu={(e) => {
+          // 右键 = 打开引脚菜单（锁定 / 解锁就在菜单里），固定功能脚也允许看
+          e.preventDefault();
+          const p = toCanvasPoint(e);
+          const pin = hitTest(p.x, p.y);
+          if (!pin) {
+            setMenu(null);
+            return;
+          }
+          suppressClickRef.current = true; // 右键松手后的 click 不再弹一次
+          setMenu({ pin, x: e.clientX, y: e.clientY });
+        }}
       >
         <canvas ref={canvasRef} />
 
@@ -657,6 +676,8 @@ export function PinoutView({ dev, project, search, onAssign, onGpioMode, onSelec
           project={project}
           x={menu.x}
           y={menu.y}
+          pinLocked={pinLockedPins.has(menu.pin.name)}
+          onToggleLock={() => onTogglePinLock(menu.pin.name)}
           onClose={() => setMenu(null)}
           onAssign={onAssign}
           onGpioMode={onGpioMode}

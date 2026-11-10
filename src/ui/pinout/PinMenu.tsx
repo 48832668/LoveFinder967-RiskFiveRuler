@@ -19,6 +19,8 @@ export function PinMenu({
   project,
   x,
   y,
+  pinLocked = false,
+  onToggleLock,
   onClose,
   onAssign,
   onGpioMode,
@@ -29,6 +31,9 @@ export function PinMenu({
   project: Project;
   x: number;
   y: number;
+  /** 该引脚是否被用户锁定（右键菜单切换） */
+  pinLocked?: boolean;
+  onToggleLock: () => void;
   onClose: () => void;
   onAssign: (pin: string, fn: string | null) => void;
   onGpioMode: (pin: string, mode: string) => void;
@@ -139,6 +144,18 @@ export function PinMenu({
 
       {pin.kind === "io" ? (
         <>
+          {/* 锁定 / 解锁：锁定的引脚不能分配外设、不能改 GPIO 模式（自动规划也会绕开） */}
+          <button
+            className={`pin-menu-item dropdown-item ${pinLocked ? "is-danger" : ""}`}
+            onClick={() => {
+              onToggleLock();
+              onClose();
+            }}
+          >
+            {pinLocked ? "🔓 解除锁定" : "🔒 锁定该引脚"}
+          </button>
+          {pinLocked && <div className="pin-menu-empty">已锁定：不能分配给外设，也不能改 GPIO 模式</div>}
+
           <div className="pin-menu-group">
             复用功能 <em>{funcs.length}</em>
           </div>
@@ -149,6 +166,7 @@ export function PinMenu({
               <button
                 key={e.fn}
                 className={`pin-menu-item dropdown-item ${active ? "active" : ""}`}
+                disabled={pinLocked && !active}
                 onClick={() => {
                   onAssign(pin.name, e.fn);
                   onClose();
@@ -177,6 +195,7 @@ export function PinMenu({
               <button
                 key={e.fn}
                 className={`pin-menu-item dropdown-item ${active ? "active" : ""}`}
+                disabled={pinLocked && !active}
                 onClick={() => {
                   onAssign(pin.name, e.fn);
                   onClose();
@@ -197,13 +216,13 @@ export function PinMenu({
             {GPIO_MODES.map((o) => {
               // X035 的 GPIO_Mode 里只有 Out_PP / AF_PP，没有开漏 —— 灰掉而不是藏起来
               const od = o.m === "output_od";
-              const blocked = od && !openDrainOk;
+              const blocked = (od && !openDrainOk) || pinLocked;
               return (
                 <button
                   key={o.m}
                   className={`btn btn-outline btn-sm${gpio?.mode === o.m ? " btn-soft is-active" : ""}`}
                   disabled={blocked}
-                  title={blocked ? `${dev.family} 的 GPIO 不支持开漏输出` : undefined}
+                  title={blocked ? (pinLocked ? "引脚已锁定" : `${dev.family} 的 GPIO 不支持开漏输出`) : undefined}
                   onClick={() => {
                     if (blocked) return;
                     onGpioMode(pin.name, o.m);
@@ -219,6 +238,7 @@ export function PinMenu({
           <div className="pin-menu-sep dropdown-divider" />
           <button
             className="pin-menu-item dropdown-item danger is-danger"
+            disabled={pinLocked}
             onClick={() => {
               onAssign(pin.name, null);
               onClose();

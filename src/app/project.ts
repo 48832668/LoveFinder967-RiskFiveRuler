@@ -24,6 +24,7 @@ export function createProject(dev: DeviceDef, name = "RFR_Project"): Project {
     pinLabels: {},
     settings: defaultSettings(name),
     resetPin: firstResetPin(dev),
+    lockedPins: {},
   };
   enableDebugInterface(project, dev);
   return project;
@@ -160,6 +161,12 @@ export function retarget(project: Project, next: DeviceDef): Project {
     clock: { ...project.clock, hseFreq: next.clock.hseOptions[0] ?? 0 },
     // 复位脚跟封装走：新封装的第一个 RESET 候选
     resetPin: firstResetPin(next),
+    // 锁定引脚只保留新封装上还存在的
+    lockedPins: Object.fromEntries(
+      Object.entries(project.lockedPins ?? {}).filter(([pin]) =>
+        next.package.pins.some((p) => p.name === pin),
+      ),
+    ),
   };
   // 换器件后调试脚的端口可能完全不同（L103 是 PA13/PA14，X035 是 PC18/PC19），
   // 空的就重新落到新器件手册指定的脚上

@@ -631,6 +631,11 @@ export interface Project {
    * （多个候选时取第一个 = 上电默认那颗）；NRST 专用脚的器件它就是硬件固定值。
    */
   resetPin?: string;
+  /**
+   * 用户在画布上手工锁定的引脚（右键 → 锁定）。
+   * 锁定的引脚不能分配给任何外设、不能改 GPIO 模式，自动规划也会绕开。
+   */
+  lockedPins?: Record<string, true>;
   /** 保存时间戳，仅用于最近列表 */
   savedAt?: number;
 }
