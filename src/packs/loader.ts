@@ -125,13 +125,20 @@ function buildPeripherals(pack: PackFile, legacyMeta?: LegacyMetaResolver): Peri
         signals.push({ name: r, required: true, dir: directionOf(meta.kind, r) });
       }
     }
+    // 通用 / 高级定时器：让数据说话 —— 带互补通道（CHxN）的是高级定时器，否则是通用。
+    // 只对 TIM 实例生效，LPTIM 这类特殊定时器保留 meta 里自己的简介。
+    let brief = meta.brief;
+    if (meta.kind === "TIM" && /^TIM\d+$/.test(p.id)) {
+      const advanced = p.signals.some((s) => /CH\d+N$/.test(s));
+      brief = advanced ? "高级定时器（互补输出 / 刹车）" : "通用定时器";
+    }
     list.push({
       id: p.id,
       kind: meta.kind,
       label: meta.label ?? p.id,
       group: meta.group,
       index: idx,
-      brief: meta.brief,
+      brief,
       signals,
       schema: meta.schema,
       irq: pack.irqs.filter((i) => i.owner === p.id).map((i) => ({ n: i.n, name: i.name, desc: i.desc, gate: i.gate })),

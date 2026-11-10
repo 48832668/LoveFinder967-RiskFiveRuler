@@ -974,7 +974,7 @@ export default function App() {
             ))}
 
           {tab === "clock" && (
-            <ClockPanel topo={dev.clock} clock={project.clock} derived={clock} onChange={setClock} family={dev.family} />
+            <ClockPanel topo={dev.clock} clock={project.clock} derived={clock} onChange={setClock} family={dev.family} beginner={prefs.beginner} />
           )}
 
           {tab === "code" && <CodePanel dev={dev} project={project} onExport={doExport} />}

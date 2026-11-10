@@ -8,9 +8,11 @@ interface Props {
   derived: ClockDerived;
   onChange: (next: ClockConfig) => void;
   family: string;
+  /** 新手模式：教学说明只在开启时显示 */
+  beginner: boolean;
 }
 
-export function ClockPanel({ topo, clock, derived, onChange, family }: Props) {
+export function ClockPanel({ topo, clock, derived, onChange, family, beginner }: Props) {
   const set = (p: Partial<ClockConfig>) => onChange({ ...clock, ...p });
   const hasHse = topo.hseOptions.length > 0;
   const hasPll = topo.pllMax > 1;
@@ -71,9 +73,11 @@ export function ClockPanel({ topo, clock, derived, onChange, family }: Props) {
         />
         <span className="ct-unit">MHz</span>
         <button className="btn btn-primary btn-sm ct-apply" onClick={applyTarget}>一键设定</button>
-        <p className="ct-note">
-          输入最终工作频率，其余交给软件：时钟源 / 倍频自动挑最接近的组合，HCLK 与 APB 全速，ADC 分频保证 ≤ 14 MHz。
-        </p>
+        {beginner && (
+          <p className="ct-note">
+            输入最终工作频率，其余交给软件：时钟源 / 倍频自动挑最接近的组合，HCLK 与 APB 全速，ADC 分频保证 ≤ 14 MHz。
+          </p>
+        )}
         {applyMsg && <p className={`ct-msg ${applyMsg.ok ? "ok" : "bad"}`}>{applyMsg.text}</p>}
       </div>
 

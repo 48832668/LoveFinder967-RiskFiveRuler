@@ -557,7 +557,9 @@ button { cursor: pointer; }
 }
 
 /* 一键设定目标工作频率（对齐 CubeMX：只给期望值，其余自动算） */
+/* 覆盖 FinderSkin .card 的 flex-direction: column —— 标题/输入框/单位/按钮一行排布 */
 .clock-target {
+  flex-direction: row;
   margin-top: calc(var(--fs-sp) * 4.8);
   padding: calc(var(--fs-sp) * 2.93);
   display: flex; align-items: center; gap: calc(var(--fs-sp) * 1.87); flex-wrap: wrap;

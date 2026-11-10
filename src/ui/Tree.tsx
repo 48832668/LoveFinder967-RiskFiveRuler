@@ -99,6 +99,13 @@ export function Tree({ dev, project, selected, onSelect }: Props) {
             const on = cfg?.enabled && !dead;
             const active = selected === p.id;
             const isDma = p.kind === "DMA";
+            // 定时器分类徽标：带互补通道（CHxN）= 高级，否则通用（简介由 loader 按数据生成）
+            const timerBadge =
+              p.kind === "TIM" && /^TIM\d+$/.test(p.id)
+                ? p.signals.some((s) => /CH\d+N$/.test(s.name))
+                  ? "高级"
+                  : "通用"
+                : null;
             return (
               <button
                 key={p.id}
@@ -114,6 +121,7 @@ export function Tree({ dev, project, selected, onSelect }: Props) {
               >
                 <i className="kind-bar" style={{ background: on ? colorOf(p.kind) : "transparent" }} />
                 <span className="tree-label">{p.label}</span>
+                {timerBadge && <span className={`tree-badge ${timerBadge === "高级" ? "is-adv" : ""}`}>{timerBadge}</span>}
                 {dead && <span className="tree-unavail">不可用</span>}
                 {isDma && !dead && (
                   <span className={`tree-dma ${dmaConflictsN ? "bad" : ""}`}>

@@ -215,6 +215,28 @@ page.on("console", (m) => {
   await page.waitForTimeout(300);
   const sysclk = await page.locator(".clock-node.sys .cn-head span").first().innerText();
   check(sysclk.startsWith("96"), "一键设定后 SYSCLK = 96 MHz", sysclk);
+
+  // 目标频率板块：标题 / 输入框 / 按钮 垂直中心对齐（同一行）
+  const tops = await page.evaluate(() =>
+    [
+      document.querySelector(".clock-target > b"),
+      document.querySelector(".clock-target .ct-input"),
+      document.querySelector(".clock-target .ct-apply"),
+    ].map((el) => {
+      const r = el.getBoundingClientRect();
+      return Math.round(r.top + r.height / 2);
+    }),
+  );
+  check(tops.every((t) => Math.abs(t - tops[0]) <= 2), "一键设定板块控件同一行", tops.join(","));
+
+  // 教学说明只在注释模式（新手模式）下显示
+  check((await page.locator(".ct-note").innerText().catch(() => "")).includes("时钟源"), "注释模式下显示频率说明");
+  await page.locator(".menubar-item", { hasText: "设置" }).click();
+  await page.waitForTimeout(400);
+  await page.locator(".pref-row", { hasText: "新手模式" }).locator("input").uncheck();
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(400);
+  check((await page.locator(".ct-note").count()) === 0, "注释模式关闭后频率说明隐藏");
 }
 
 /* ── 4b. 重映射组 select + 锁定本组映射 ───────────────────────── */
@@ -368,6 +390,21 @@ page.on("console", (m) => {
   const vals = await page.$$eval(".pin-table .pin-cell", (els) => els.map((e) => e.textContent?.trim() ?? ""));
   check(names.includes("IO0") && names.includes("IO1"), "PIOC 同时有 IO0 和 IO1", names.join(","));
   check(vals.every((v) => v.startsWith("—")), "启用 PIOC 不会自动占用 IO1", vals.join(","));
+}
+
+/* ── 7b. 定时器分类：X035 = TIM1/TIM2 高级、TIM3 通用 ── */
+{
+  await page.goto(`${BASE}/?dev=CH32X035C8T6`, { waitUntil: "networkidle" });
+  await page.waitForTimeout(900);
+  const tim1 = await page.locator(".tree-item", { hasText: "TIM1" }).innerText();
+  const tim2 = await page.locator(".tree-item", { hasText: "TIM2" }).innerText();
+  const tim3 = await page.locator(".tree-item", { hasText: "TIM3" }).innerText();
+  check(tim1.includes("高级") && tim2.includes("高级"), "TIM1 / TIM2 标记为高级定时器", `${tim1} | ${tim2}`);
+  check(tim3.includes("通用"), "TIM3 标记为通用定时器", tim3);
+  await page.goto(`${BASE}/?dev=CH32X035C8T6&sel=TIM1`, { waitUntil: "networkidle" });
+  await page.waitForTimeout(800);
+  const brief = await page.locator(".cfg-title p").innerText();
+  check(brief.includes("高级定时器"), "定时器页头简介区分高级/通用", brief);
 }
 
 /* ── 8. V407WEU6 双 USBHS（DS0 表 2-3-15：USBHS1_DM=PA11） ── */
