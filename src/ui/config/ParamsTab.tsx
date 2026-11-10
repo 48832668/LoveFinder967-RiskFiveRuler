@@ -36,17 +36,21 @@ export function ParamsTab({
     if (!modeKey) return { map: undefined as Map<string, string> | undefined, note: undefined };
     const all = schema.params.find((p) => p.key === modeKey)?.options ?? [];
     const map = new Map<string, string>();
-    const blocked: string[] = [];
+    const noPins: string[] = [];
     for (const o of all) {
       const v = String(o.value);
       if (v === "disable" || v === "off") continue;
-      // 硬件能力门槛：FS-only 芯片不显示「高速 480 Mbps」这类本器件没有的档位
-      if (!modeOptionSupported(dev, o)) { map.set(v, "本器件无此硬件"); blocked.push(o.label.split("  ")[0]); continue; }
+      // 硬件没有的档位直接从下拉里消失，不打提示 —— 少什么不该由界面念出来
+      if (!modeOptionSupported(dev, o)) { map.set(v, ""); continue; }
       const missing = modeMissingSignals(dev, periph, v);
-      if (missing.length) { map.set(v, `缺 ${missing.join(" / ")}`); blocked.push(o.label.split("  ")[0]); }
+      if (missing.length) { map.set(v, `缺 ${missing.join(" / ")}`); noPins.push(o.label.split("  ")[0]); }
     }
-    return { map: map.size ? map : undefined, note: blocked.length ? `本器件不支持，已隐藏：${blocked.join("、")}` : undefined };
-  }, [schema, dev, periph]);
+    // 引脚没引出的说明只在注释模式下给：平时切封装看到模式少了，翻新手提示即可
+    return {
+      map: map.size ? map : undefined,
+      note: beginner && noPins.length ? `本封装未引出对应引脚，已隐藏：${noPins.join("、")}` : undefined,
+    };
+  }, [schema, dev, periph, beginner]);
 
   const visible = paramsForDevice.filter((p) => evalCond(p.visibleIf, values, mode));
   const ungrouped = visible.filter((p) => !p.group);
