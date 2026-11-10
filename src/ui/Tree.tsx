@@ -120,7 +120,12 @@ export function Tree({ dev, project, selected, onSelect }: Props) {
                 }
               >
                 <i className="kind-bar" style={{ background: on ? colorOf(p.kind) : "transparent" }} />
-                <span className="tree-label">{p.label}</span>
+                <span
+                  className="tree-label"
+                  style={cfg?.locked ? { textDecoration: "underline", textUnderlineOffset: "3px" } : undefined}
+                >
+                  {p.label}
+                </span>
                 {timerBadge && <span className={`tree-badge ${timerBadge === "高级" ? "is-adv" : ""}`}>{timerBadge}</span>}
                 {dead && <span className="tree-unavail">不可用</span>}
                 {isDma && !dead && (

@@ -576,6 +576,20 @@ export default function App() {
     notify(locked ? `引脚 ${pin} 已解锁` : `引脚 ${pin} 已锁定`);
   };
 
+  /** 右键菜单「设置自定义名称」：切到 GPIO 表格面板并聚焦对应的输入框 */
+  const [gpioFocusPin, setGpioFocusPin] = useState<string | null>(null);
+  const editPinName = (pin: string) => {
+    selectPeriph("GPIO");
+    setGpioFocusPin(pin);
+  };
+  const editPinLabel = (pin: string, label: string) => {
+    mutate((prev) => {
+      const next: Project = JSON.parse(JSON.stringify(prev));
+      next.pinLabels = { ...next.pinLabels, [pin]: label };
+      return next;
+    });
+  };
+
   /** 返回 true = 确实写盘成功（用户取消对话框时是 false） */
   const doSave = async (): Promise<boolean> => {
     const json = JSON.stringify({ ...project, savedAt: Date.now() }, null, 2);
@@ -1013,6 +1027,9 @@ export default function App() {
                 onFree={freeBlockerAndEnable}
                 onJumpPeripheral={selectPeriph}
                 onNote={notify}
+                gpioFocusPin={gpioFocusPin}
+                onGpioFocusDone={() => setGpioFocusPin(null)}
+                onEditPinLabel={editPinLabel}
                 beginner={prefs.beginner}
               />
             ) : (
@@ -1055,6 +1072,7 @@ export default function App() {
               onGpioMode={setGpioMode}
               onSelectPeripheral={selectPeriph}
               onTogglePinLock={togglePinLock}
+              onEditPinName={editPinName}
               autoPin={new URLSearchParams(typeof location !== "undefined" ? location.search : "").get("pin")}
             />
           </aside>

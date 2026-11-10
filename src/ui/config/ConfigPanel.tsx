@@ -12,6 +12,7 @@ import { ParamsTab } from "./ParamsTab";
 import { PinsTab } from "./PinsTab";
 import { ChannelTab } from "./ChannelTab";
 import { NvicTab } from "./NvicTab";
+import { GpioTablePanel } from "./GpioTablePanel";
 
 type Tab = "params" | "pins" | "channel" | "nvic" | "dma";
 
@@ -25,12 +26,16 @@ interface Props {
   onChangeMany: (next: Record<string, PeripheralConfig>) => void;
   onFree: (id: string) => void;
   onJumpPeripheral: (id: string) => void;
+  /** 右键菜单「设置自定义名称」跳转过来时要聚焦的引脚 */
+  gpioFocusPin?: string | null;
+  onGpioFocusDone?: () => void;
+  onEditPinLabel?: (pin: string, label: string) => void;
   /** 参数改动引发的临时提示（如「NSS 和 XXX 冲突，已改回原配置」），宿主用 toast 展示 */
   onNote?: (msg: string) => void;
   beginner: boolean;
 }
 
-export function ConfigPanel({ dev, project, periph, clock, pane, onChange, onChangeMany, onFree, onJumpPeripheral, onNote, beginner }: Props) {
+export function ConfigPanel({ dev, project, periph, clock, pane, onChange, onChangeMany, onFree, onJumpPeripheral, gpioFocusPin, onGpioFocusDone, onEditPinLabel, onNote, beginner }: Props) {
   const schema = schemaFor(periph.schema);
   const cfg = project.configs[periph.id];
   const [tab, setTab] = useState<Tab>(() => {
@@ -130,6 +135,20 @@ export function ConfigPanel({ dev, project, periph, clock, pane, onChange, onCha
     }
     onChange(periph.id, next);
   };
+
+  if (periph.kind === "GPIO") {
+    return (
+      <div className="cfg">
+        <GpioTablePanel
+          dev={dev}
+          project={project}
+          focusPin={gpioFocusPin ?? null}
+          onFocusDone={() => onGpioFocusDone?.()}
+          onEditPinLabel={(pin, label) => onEditPinLabel?.(pin, label)}
+        />
+      </div>
+    );
+  }
 
   if (periph.kind === "DMA") {
     return (

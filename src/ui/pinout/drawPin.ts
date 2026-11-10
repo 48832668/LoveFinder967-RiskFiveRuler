@@ -74,8 +74,10 @@ export interface DrawPinOpt {
   gpioColor?: string;
   conflict: boolean;
   match: boolean;
-  /** 锁定映射（图钉样式）：外设勾了「锁定本组映射」 */
+  /** 锁定映射（图钉样式）：引脚被用户右键锁定 */
   locked?: boolean;
+  /** 该脚所属外设锁定了重映射组：信号名画下划线（不画图钉） */
+  underline?: boolean;
   cText: string;
   cDim: string;
   cAccent: string;
@@ -129,7 +131,7 @@ export function drawPin(
   ctx.stroke();
   ctx.restore();
 
-  // 图钉：锁定映射的引脚在外端画一个小钉（针头 + 针尖朝本体），提示「这组脚不会被动」
+  // 图钉：用户右键锁定的引脚在外端画一个小钉（针头 + 针尖朝本体）
   if (opt.locked) {
     const outerX = side === "left" ? x : side === "right" ? x + w : x + w / 2;
     const outerY = side === "top" ? y : side === "bottom" ? y + h : y + h / 2;
@@ -220,18 +222,31 @@ export function drawPin(
    * 以前只在引脚外侧画一条 2px 色条，得靠颜色去猜是哪个外设 —— 同色的 USART1_TX
    * 和 USART2_TX 根本分不出来。色块长度已按文字宽度撑开（见 place()），所以能写全。
    * 文字颜色按底色亮度取黑/白，否则黄底白字（USB 是 #f2c94c）等于看不见。
+   * 下划线 = 所属外设锁定了重映射组（文字最直观，图钉留给引脚级锁定）。
    */
   if (opt.used) {
     const label = opt.used.fn;
     ctx.save();
     ctx.font = PIN_TEXT_FONT;
     ctx.fillStyle = contrastOn(colorOf(opt.used.colorKey));
+    const drawUnderline = () => {
+      if (!opt.underline) return;
+      const tw = ctx.measureText(label).width;
+      const x0 = ctx.textAlign === "right" ? -tw : ctx.textAlign === "center" ? -tw / 2 : 0;
+      ctx.strokeStyle = ctx.fillStyle as string;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x0, 4.5); // textBaseline=middle → +4.5 在 8px 字底下沿
+      ctx.lineTo(x0 + tw, 4.5);
+      ctx.stroke();
+    };
     if (side === "left" || side === "right") {
       const tx = side === "left" ? x + PIN_TEXT_PAD : x + w - PIN_TEXT_PAD;
       uprightText(ctx, rot, 0, tx, y + h / 2, () => {
         ctx.textAlign = side === "left" ? "left" : "right";
         ctx.textBaseline = "middle";
         ctx.fillText(label, 0, 0);
+        drawUnderline();
       });
     } else {
       // 竖排：从靠本体的一端向外写（芯片坐标里转 -90°）
@@ -240,6 +255,7 @@ export function drawPin(
         ctx.textAlign = top ? "left" : "right";
         ctx.textBaseline = "middle";
         ctx.fillText(label, 0, 0);
+        drawUnderline();
       });
     }
     ctx.restore();

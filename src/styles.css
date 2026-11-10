@@ -111,6 +111,15 @@ button { cursor: pointer; }
 .lock-toggle:hover { color: var(--fg-0); }
 .lock-toggle.on { color: var(--accent); font-weight: 600; }
 
+/* GPIO 已配置引脚总表 */
+.gpio-table { margin-top: calc(var(--fs-sp) * 3.73); }
+.gpio-table .gpio-label-input {
+  width: 100%; min-width: calc(var(--fs-fs) * 7);
+  font-size: calc(var(--fs-fs) * 0.81); padding: calc(var(--fs-sp) * 0.53) calc(var(--fs-sp) * 1.07);
+}
+.gpio-table .focus-row { background: var(--accent-soft) !important; }
+.gpio-table .kind-bar { width: 3px; height: 14px; border-radius: 2px; display: inline-block; }
+
 .top-actions { display: flex; gap: calc(var(--fs-sp) * 1.6); align-items: center; }
 
 .link {

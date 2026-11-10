@@ -27,11 +27,13 @@ interface Props {
   onSelectPeripheral: (id: string) => void;
   /** 画布右键菜单里的锁定 / 解锁（宿主改 project.lockedPins） */
   onTogglePinLock: (pin: string) => void;
+  /** 画布右键菜单「设置自定义名称」→ 跳转 GPIO 表格面板 */
+  onEditPinName: (pin: string) => void;
   /** 深链 ?pin=PB6 用：直接把这颗引脚的菜单弹出来（截图回归 / 演示） */
   autoPin?: string | null;
 }
 
-export function PinoutView({ dev, project, search, onAssign, onGpioMode, onSelectPeripheral, onTogglePinLock, autoPin }: Props) {
+export function PinoutView({ dev, project, search, onAssign, onGpioMode, onSelectPeripheral, onTogglePinLock, onEditPinName, autoPin }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hitsRef = useRef<Hit[]>([]);
@@ -384,7 +386,8 @@ export function PinoutView({ dev, project, search, onAssign, onGpioMode, onSelec
         gpioColor: gpioByPin.get(pin.name),
         conflict: conflictPins.has(pin.name),
         match: matchPins.has(pin.name),
-        locked: periphLockedPins.has(pin.name) || pinLockedPins.has(pin.name),
+        locked: pinLockedPins.has(pin.name),
+        underline: periphLockedPins.has(pin.name),
         cText,
         cDim,
         cAccent,
@@ -678,6 +681,7 @@ export function PinoutView({ dev, project, search, onAssign, onGpioMode, onSelec
           y={menu.y}
           pinLocked={pinLockedPins.has(menu.pin.name)}
           onToggleLock={() => onTogglePinLock(menu.pin.name)}
+          onEditName={() => onEditPinName(menu.pin.name)}
           onClose={() => setMenu(null)}
           onAssign={onAssign}
           onGpioMode={onGpioMode}

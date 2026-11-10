@@ -21,6 +21,7 @@ export function PinMenu({
   y,
   pinLocked = false,
   onToggleLock,
+  onEditName,
   onClose,
   onAssign,
   onGpioMode,
@@ -34,6 +35,8 @@ export function PinMenu({
   /** 该引脚是否被用户锁定（右键菜单切换） */
   pinLocked?: boolean;
   onToggleLock: () => void;
+  /** 跳转 GPIO 表格面板编辑自定义名称 */
+  onEditName: () => void;
   onClose: () => void;
   onAssign: (pin: string, fn: string | null) => void;
   onGpioMode: (pin: string, mode: string) => void;
@@ -155,6 +158,17 @@ export function PinMenu({
             {pinLocked ? "🔓 解除锁定" : "🔒 锁定该引脚"}
           </button>
           {pinLocked && <div className="pin-menu-empty">已锁定：不能分配给外设，也不能改 GPIO 模式</div>}
+
+          <button
+            className="pin-menu-item dropdown-item"
+            onClick={() => {
+              onEditName();
+              onClose();
+            }}
+            title="跳转到 GPIO 表格面板，给这颗引脚设置自定义名称"
+          >
+            ✏ 设置自定义名称
+          </button>
 
           <div className="pin-menu-group">
             复用功能 <em>{funcs.length}</em>
