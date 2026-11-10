@@ -4,10 +4,11 @@
  * 桌面端：exe 同目录的 config.json —— 用户可以直接复制 / 覆盖这个文件换配置，
  * 客户端启动时自己载入。浏览器端：localStorage 兜底。
  *
- * 形状：
+ * 形状（扁平，saveUiPrefs 写出的就是这个）：
  * {
  *   "version": 1,
- *   "theme":  { "color": "#008dd7", "mode": "dark" },
+ *   "themeColor": "#008dd7",
+ *   "mode": "dark",
  *   "beginner": true,
  *   "pinColors": { "USART": "#4fb3ff", ... }
  * }
@@ -35,14 +36,21 @@ export const DEFAULT_UI_PREFS: UiPrefs = {
 const LS_KEY = "rfr.uiprefs";
 const HEX = /^#[0-9a-fA-F]{6}$/;
 
-/** 容错解析：任何字段不合法就落回默认 —— config.json 用户手改得动，坏了别崩 */
+/**
+ * 容错解析：任何字段不合法就落回默认 —— config.json 用户手改得动，坏了别崩。
+ *
+ * 字段以 saveUiPrefs 写出的**扁平**结构为准（themeColor / mode / beginner / pinColors）；
+ * 同时兼容早期文档里的嵌套 theme:{color,mode} 写法（手改文件的用户可能照旧注释写）。
+ */
 export function sanitizeUiPrefs(raw: unknown): UiPrefs {
   const out: UiPrefs = { ...DEFAULT_UI_PREFS, pinColors: {} };
   if (!raw || typeof raw !== "object") return out;
   const obj = raw as Record<string, unknown>;
   const theme = obj.theme as Record<string, unknown> | undefined;
-  if (theme && typeof theme.color === "string" && HEX.test(theme.color)) out.themeColor = theme.color;
-  if (theme && (theme.mode === "dark" || theme.mode === "light")) out.mode = theme.mode;
+  if (typeof obj.themeColor === "string" && HEX.test(obj.themeColor)) out.themeColor = obj.themeColor;
+  else if (theme && typeof theme.color === "string" && HEX.test(theme.color)) out.themeColor = theme.color;
+  if (obj.mode === "dark" || obj.mode === "light") out.mode = obj.mode;
+  else if (theme && (theme.mode === "dark" || theme.mode === "light")) out.mode = theme.mode;
   if (typeof obj.beginner === "boolean") out.beginner = obj.beginner;
   if (obj.pinColors && typeof obj.pinColors === "object") {
     for (const [kind, color] of Object.entries(obj.pinColors as Record<string, unknown>)) {
