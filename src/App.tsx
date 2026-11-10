@@ -179,6 +179,19 @@ export default function App() {
     document.documentElement.dataset.fsMode = theme;
   }, [theme]);
 
+  // 原生窗口标题栏跟随应用日夜模式：dark 下标题栏底色/文字一起变暗（Win10 1809+）
+  useEffect(() => {
+    if (!inTauri()) return;
+    void (async () => {
+      try {
+        const { getCurrentWindow } = await import("@tauri-apps/api/window");
+        await getCurrentWindow().setTheme(theme);
+      } catch {
+        // 权限缺失或平台不支持时忽略 —— 标题栏维持系统主题
+      }
+    })();
+  }, [theme]);
+
   /** 主题色 / 图例配色：写 CSS 变量 + 通知 semantic 层；style 属性变化会让引脚图重绘 */
   useEffect(() => {
     document.documentElement.style.setProperty("--app-theme", prefs.themeColor);
