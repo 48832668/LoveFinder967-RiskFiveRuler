@@ -6,6 +6,8 @@
 
 ![主界面](mainUI.png)
 
+> 仓库地址：Gitee <https://gitee.com/LoveFinderSeriesOfficial/LoveFinder967-RiskFiveRuler> · GitHub <https://github.com/48832668/LoveFinder967-RiskFiveRuler>
+
 ## 功能
 
 - **图形化引脚配置**：点击封装图上的引脚，弹出该脚全部可用功能（复用 / EXTI / GPIO 模式），选中即落到配置。
