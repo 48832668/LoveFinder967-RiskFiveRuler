@@ -1481,29 +1481,17 @@ button { cursor: pointer; }
 /* 欢迎页不占状态栏，所以 app 的 grid 少一行 */
 .welcome-app { grid-template-rows: 1fr; }
 
-/* 欢迎页顶部拖拽区 + 自绘窗口控制 */
-.welcome-titlebar {
-  display: flex; align-items: center;
-  padding-left: calc(var(--fs-sp) * 2.67);
-  height: calc(var(--fs-ctl-h) * 0.92);
-  -webkit-user-select: none; user-select: none;
-}
-.welcome-titlebar-text { font-size: calc(var(--fs-fs) * 0.74); color: var(--fg-2); }
-.welcome-titlebar .win-controls { margin-left: auto; }
-.welcome-titlebar .win-btn { height: calc(var(--fs-ctl-h) * 0.92); border-radius: 0; }
-
 .welcome {
   display: grid;
-  grid-template-rows: auto 1fr;
-  overflow: auto;
-  padding: 0 calc(var(--fs-sp) * 6.4) calc(var(--fs-sp) * 7.46);
+  place-items: center;
+  overflow: hidden;
+  padding: calc(var(--fs-sp) * 4.8) calc(var(--fs-sp) * 6.4);
   background:
     radial-gradient(1100px 520px at 50% -12%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 62%),
     var(--bg-0);
 }
 .welcome-inner {
-  width: 100%; max-width: 720px; margin: 0 auto;
-  align-self: center;
+  width: 100%; max-width: 720px;
 }
 
 .welcome-head {
@@ -1511,6 +1499,7 @@ button { cursor: pointer; }
   align-items: center;
   gap: calc(var(--fs-sp) * 3.73);
   margin-bottom: calc(var(--fs-sp) * 6.93);
+  -webkit-user-select: none; user-select: none;
 }
 .welcome-mark {
   width: 46px; height: 46px;

@@ -49,18 +49,8 @@ export function WelcomeScreen({
 }: Props) {
   return (
     <div className="welcome">
-      {/* 无边框窗口：顶部拖拽区 + 自绘关闭键 */}
-      <div className="welcome-titlebar" data-tauri-drag-region>
-        <span className="welcome-titlebar-text">RiskFiveRuler</span>
-        <span className="spacer" />
-        {inTauri() && (
-          <div className="win-controls">
-            <button className="win-btn close" onClick={onClose} title="关闭">✕</button>
-          </div>
-        )}
-      </div>
       <div className="welcome-inner">
-        <header className="welcome-head">
+        <header className="welcome-head" data-tauri-drag-region>
           <div className="welcome-mark">
             <svg viewBox="0 0 24 24" width="30" height="30" aria-hidden>
               <path d="M4 7h7v10H4z" fill="currentColor" opacity=".35" />
@@ -72,6 +62,12 @@ export function WelcomeScreen({
             <h1>RiskFiveRuler</h1>
             <p>{APP_SERIES.replace(" - RiskFiveRuler", "")} · 图形化引脚配置与代码生成</p>
           </div>
+          <span className="spacer" />
+          {inTauri() && (
+            <div className="win-controls">
+              <button className="win-btn close" onClick={onClose} title="关闭">✕</button>
+            </div>
+          )}
         </header>
 
         <div className="welcome-grid">
