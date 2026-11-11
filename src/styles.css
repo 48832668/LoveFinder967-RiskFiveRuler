@@ -1484,7 +1484,6 @@ button { cursor: pointer; }
 .welcome {
   display: grid;
   place-items: center;
-  overflow: hidden;
   padding: calc(var(--fs-sp) * 4.8) calc(var(--fs-sp) * 6.4);
   background:
     radial-gradient(1100px 520px at 50% -12%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 62%),
