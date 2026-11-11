@@ -444,7 +444,7 @@ export interface DeviceDef {
   id: string;
   /** 系列名，如 CH32L103 / HC32F401B */
   family: string;
-  /** 厂商，如 WCH / HDSC（小华）/ ST */
+  /** 厂商，如 WCH / Holychip（芯圣）/ ST */
   vendor: string;
   /**
    * 代码生成后端 id（`wch-spl` / `generic` / 未来的 `hc32-ddl`）。

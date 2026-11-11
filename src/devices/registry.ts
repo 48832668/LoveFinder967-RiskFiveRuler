@@ -25,7 +25,7 @@ import v407Pack from "./data/ch32v407.json";
 // V467 与 V407 同 die（共用 ch32v4x7.h），仅多内置 8MB PSRAM，外设/引脚/DMA 完全对应
 import v467Pack from "./data/ch32v467.json";
 
-// 第二家厂商：小华半导体 HC32F401B（数据由 scripts/rebuild_hc32f401_from_md.py 生成）
+// 第二家厂商：Holychip 芯圣 HC32F401B（数据由 scripts/rebuild_hc32f401_from_md.py 生成）
 import hc32f401bPack from "./data/hc32f401b.json";
 
 /**

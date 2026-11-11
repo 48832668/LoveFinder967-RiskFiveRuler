@@ -1,7 +1,7 @@
 {
   "packVersion": "0.2.0",
   "series": "HC32F401B",
-  "vendor": "HDSC",
+  "vendor": "Holychip",
   "core": "Cortex-M4F",
   "source": "HC32F401B 数据手册 Ver1.1.1 第 4.2 节「引脚说明」（端口‑AF‑模拟映射）＋用户手册 Ver1.0.14；封装引脚序号由端口范围推导，非物理引脚号",
   "flashKb": 256,
