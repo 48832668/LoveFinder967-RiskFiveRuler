@@ -49,13 +49,14 @@ export function WelcomeScreen({
   note,
 }: Props) {
   const innerRef = useRef<HTMLDivElement>(null);
+  const welcomeRef = useRef<HTMLDivElement>(null);
 
-  // 窗口高度自适应内容：ResizeObserver 监听内容变化，调 resize_window 精确包裹
+  // 窗口高度自适应内容：ResizeObserver 监听 .welcome 总高度（含 padding），调 resize_window 精确包裹
   useEffect(() => {
-    if (!inTauri() || !innerRef.current) return;
-    const el = innerRef.current;
+    if (!inTauri() || !welcomeRef.current) return;
+    const el = welcomeRef.current;
     const ro = new ResizeObserver(() => {
-      const h = Math.ceil(el.getBoundingClientRect().height) + 38; // 38 = 上下 padding
+      const h = Math.ceil(el.getBoundingClientRect().height);
       void tauriInvoke("resize_window", { width: 720, height: Math.max(h, 400) }).catch(() => {});
     });
     ro.observe(el);
@@ -63,7 +64,7 @@ export function WelcomeScreen({
   }, []);
 
   return (
-    <div className="welcome">
+    <div className="welcome" ref={welcomeRef}>
       <div className="welcome-inner" ref={innerRef}>
         <header className="welcome-head" data-tauri-drag-region>
           <div className="welcome-mark">

@@ -1478,8 +1478,8 @@ button { cursor: pointer; }
 
 /* ───────────────────────────── 欢迎页 ───────────────────────────── */
 
-/* 欢迎页不占状态栏，所以 app 的 grid 少一行 */
-.welcome-app { grid-template-rows: 1fr; }
+/* 欢迎页不锁高：.app 高度由内容决定，窗口高度由 ResizeObserver 精确包裹 */
+.welcome-app { grid-template-rows: 1fr; height: auto; min-height: 100vh; }
 
 .welcome {
   display: grid;
