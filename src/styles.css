@@ -1528,7 +1528,7 @@ button { cursor: pointer; }
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
   gap: calc(var(--fs-sp) * 4.8);
-  align-items: start;
+  align-items: stretch;
 }
 @media (max-width: 760px) {
   .welcome-grid { grid-template-columns: 1fr; }

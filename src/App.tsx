@@ -201,16 +201,16 @@ export default function App() {
   };
 
   // 欢迎页窗口偏小（只容纳最近打开 + 开始），进编辑器恢复大窗口。
-  // 延迟 200ms —— Tauri IPC 在窗口刚创建时可能还没就绪，直接调会静默失败。
+  // setSize 直接传 Tauri 的 {type:'Logical',...} 裸对象，不依赖 LogicalSize 类导出
   useEffect(() => {
     if (!inTauri()) return;
     const t = setTimeout(() => {
       void (async () => {
         try {
-          const { getCurrentWindow, LogicalSize } = await import("@tauri-apps/api/window");
+          const { getCurrentWindow } = await import("@tauri-apps/api/window");
           const w = getCurrentWindow();
-          if (!booted) await w.setSize(new LogicalSize(720, 520));
-          else await w.setSize(new LogicalSize(1500, 940));
+          if (!booted) await w.setSize({ type: "Logical", width: 720, height: 520 } as Parameters<typeof w.setSize>[0]);
+          else await w.setSize({ type: "Logical", width: 1500, height: 940 } as Parameters<typeof w.setSize>[0]);
         } catch {
           // 忽略
         }
@@ -913,8 +913,6 @@ export default function App() {
           onClearRecent={() => setRecent(clearRecent())}
           onOpenAuthor={() => void openExternal(AUTHOR_GITEE)}
           onSettings={() => setSettingsOpen(true)}
-          onMinimize={() => void winCtl("minimize")}
-          onToggleMaximize={() => void winCtl("toggleMaximize")}
           onClose={() => void destroyWindow()}
         />
         {dialogs}

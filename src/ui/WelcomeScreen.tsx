@@ -21,9 +21,6 @@ interface Props {
   onClearRecent: () => void;
   onOpenAuthor: () => void;
   onSettings: () => void;
-  /** 自绘窗口控制（仅 Tauri 桌面端显示） */
-  onMinimize: () => void;
-  onToggleMaximize: () => void;
   onClose: () => void;
   /** 最近列表里的路径打不开时的原始错误，显示在底部而不是藏起来 */
   note?: string | null;
@@ -47,8 +44,6 @@ export function WelcomeScreen({
   onClearRecent,
   onOpenAuthor,
   onSettings,
-  onMinimize,
-  onToggleMaximize,
   onClose,
   note,
 }: Props) {
@@ -60,8 +55,6 @@ export function WelcomeScreen({
         <span className="spacer" />
         {inTauri() && (
           <div className="win-controls">
-            <button className="win-btn" onClick={onMinimize} title="最小化">─</button>
-            <button className="win-btn" onClick={onToggleMaximize} title="最大化 / 还原">□</button>
             <button className="win-btn close" onClick={onClose} title="关闭">✕</button>
           </div>
         )}
@@ -119,7 +112,7 @@ export function WelcomeScreen({
           </section>
 
           {/* 右：动作 */}
-          <section className="welcome-pane welcome-actions">
+          <section className="welcome-pane welcome-actions card">
             <h2>开始</h2>
             <button className="welcome-action primary" onClick={onNew}>
               <span className="wa-icon">＋</span>
