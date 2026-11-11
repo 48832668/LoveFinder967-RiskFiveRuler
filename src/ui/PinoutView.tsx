@@ -349,9 +349,10 @@ export function PinoutView({ dev, project, search, onAssign, onGpioMode, onSelec
       const quad = shape !== "dual";
       const used = usageByPin.get(pin.name);
       let chip = PIN_LEN;
-      if (used) {
+      const chipText = project.pinLabels[pin.name]?.trim() || used?.fn;
+      if (chipText) {
         ctx.font = PIN_TEXT_FONT;
-        chip = Math.max(PIN_LEN, ctx.measureText(used.fn).width + PIN_TEXT_PAD * 2);
+        chip = Math.max(PIN_LEN, ctx.measureText(chipText).width + PIN_TEXT_PAD * 2);
       }
       const stepQ = (bodyW - 2 * corner) / Math.max(total - 1, 1);
       const stepD = (side === "left" || side === "right" ? bodyH : bodyW) / (total + 1);

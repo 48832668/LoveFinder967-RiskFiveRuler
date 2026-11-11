@@ -261,12 +261,8 @@ export function PinMenu({
             释放该引脚
           </button>
         </>
-      ) : (
-        <div className="pin-menu-empty">
-          {pin.kind === "reset"
-            ? "复位引脚（NRST），硬件固定、上电默认生效，不可改作他用"
-            : "固定功能引脚，不可配置"}
-        </div>
+      ) : pin.kind === "reset" ? null : (
+        <div className="pin-menu-empty">固定功能引脚，不可配置</div>
       )}
 
       <div className="pin-menu-foot">

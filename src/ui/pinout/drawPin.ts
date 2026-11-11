@@ -145,17 +145,19 @@ export function drawPin(
   if (pin.kind === "reset") nameLabel = `${nameLabel}（复位）`;
   else if (pin.kind === "boot" && !/BOOT0/i.test(nameLabel)) nameLabel = `${nameLabel}(BOOT0)`;
 
-  /** 锁定引脚时给当前文字画下划线（沿用 ctx 的 font / fillStyle / textAlign） */
-  const underlineName = (offset: number) => {
-    if (!opt.locked) return;
+  /** 锁定（引脚级或外设映射组）时，给引脚名套一个恰好包裹的圆角矩形（与引脚色块同风格） */
+  const nameBox = (fontPx: number) => {
+    if (!(opt.locked || opt.underline)) return;
     const tw = ctx.measureText(nameLabel).width;
+    const padX = 2.5;
+    const padY = 1.2;
     const x0 = ctx.textAlign === "right" ? -tw : ctx.textAlign === "center" ? -tw / 2 : 0;
+    const top = -fontPx / 2 - padY;
+    const hh = fontPx + padY * 2;
     ctx.save();
     ctx.strokeStyle = ctx.fillStyle as string;
     ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(x0, offset);
-    ctx.lineTo(x0 + tw, offset);
+    roundRect(ctx, x0 - padX, top, tw + padX * 2, hh, Math.min(4, hh / 2));
     ctx.stroke();
     ctx.restore();
   };
@@ -174,7 +176,7 @@ export function drawPin(
       ctx.textAlign = "left";
       ctx.textBaseline = "middle";
       ctx.fillText(nameLabel, 0, 0);
-      underlineName(5.5);
+      nameBox(9.5);
     });
   } else if (side === "right") {
     uprightText(ctx, rot, 0, x + w + LABEL_PAD, y + h / 2, () => {
@@ -188,7 +190,7 @@ export function drawPin(
       ctx.textAlign = "right";
       ctx.textBaseline = "middle";
       ctx.fillText(nameLabel, 0, 0);
-      underlineName(5.5);
+      nameBox(9.5);
     });
   } else {
     /*
@@ -212,7 +214,7 @@ export function drawPin(
       ctx.textAlign = top ? "left" : "right";
       ctx.textBaseline = "middle";
       ctx.fillText(nameLabel, 0, 0);
-      underlineName(size * 0.6 + 1);
+      nameBox(size);
     });
   }
 
@@ -231,7 +233,7 @@ export function drawPin(
     ctx.font = PIN_TEXT_FONT;
     ctx.fillStyle = contrastOn(bg);
     const drawUnderline = () => {
-      if (!opt.underline) return;
+      if (!(opt.underline || opt.locked)) return;
       const tw = ctx.measureText(pinText).width;
       const x0 = ctx.textAlign === "right" ? -tw : ctx.textAlign === "center" ? -tw / 2 : 0;
       ctx.strokeStyle = ctx.fillStyle as string;
