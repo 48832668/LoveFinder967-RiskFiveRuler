@@ -91,12 +91,13 @@ button { cursor: pointer; }
 /* 无边框窗口：顶栏即拖拽区（Tauri data-tauri-drag-region），自绘窗口控制按钮 */
 .topbar { -webkit-user-select: none; user-select: none; }
 .topbar button, .topbar input, .topbar .topnav { -webkit-user-select: text; user-select: text; }
-.win-controls { display: flex; gap: 2px; margin-left: calc(var(--fs-sp) * 1.6); }
+.win-controls { display: flex; gap: 2px; margin-left: calc(var(--fs-sp) * 1.6); align-items: center; }
 .win-btn {
   width: calc(var(--fs-ctl-h) * 1.15); height: calc(var(--fs-ctl-h) * 0.86);
-  display: grid; place-items: center;
+  display: flex; align-items: center; justify-content: center;
   background: none; border: none; border-radius: var(--radius-sm);
   color: var(--fg-1); font-size: 11px; line-height: 1;
+  padding: 0;
 }
 .win-btn:hover { background: var(--bg-3); color: var(--fg-0); }
 .win-btn.close:hover { background: var(--red); color: #fff; }
@@ -1489,6 +1490,7 @@ button { cursor: pointer; }
 }
 .welcome-titlebar-text { font-size: calc(var(--fs-fs) * 0.74); color: var(--fg-2); }
 .welcome-titlebar .win-controls { margin-left: auto; }
+.welcome-titlebar .win-btn { height: calc(var(--fs-ctl-h) * 0.78); }
 
 .welcome {
   display: grid;
@@ -1499,7 +1501,10 @@ button { cursor: pointer; }
     radial-gradient(1100px 520px at 50% -12%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 62%),
     var(--bg-0);
 }
-.welcome-inner { width: 100%; max-width: 720px; margin: 0 auto; }
+.welcome-inner {
+  width: 100%; max-width: 720px; margin: 0 auto;
+  align-self: center;
+}
 
 .welcome-head {
   display: flex;

@@ -200,19 +200,23 @@ export default function App() {
     else await w.toggleMaximize();
   };
 
-  // 欢迎页窗口偏小（只容纳最近打开 + 开始），进编辑器恢复大窗口
+  // 欢迎页窗口偏小（只容纳最近打开 + 开始），进编辑器恢复大窗口。
+  // 延迟 200ms —— Tauri IPC 在窗口刚创建时可能还没就绪，直接调会静默失败。
   useEffect(() => {
     if (!inTauri()) return;
-    void (async () => {
-      try {
-        const { getCurrentWindow, LogicalSize } = await import("@tauri-apps/api/window");
-        const w = getCurrentWindow();
-        if (!booted) await w.setSize(new LogicalSize(720, 560));
-        else await w.setSize(new LogicalSize(1500, 940));
-      } catch {
-        // 忽略
-      }
-    })();
+    const t = setTimeout(() => {
+      void (async () => {
+        try {
+          const { getCurrentWindow, LogicalSize } = await import("@tauri-apps/api/window");
+          const w = getCurrentWindow();
+          if (!booted) await w.setSize(new LogicalSize(720, 520));
+          else await w.setSize(new LogicalSize(1500, 940));
+        } catch {
+          // 忽略
+        }
+      })();
+    }, 200);
+    return () => clearTimeout(t);
   }, [booted]);
 
   /** 主题色 / 图例配色：写 CSS 变量 + 通知 semantic 层；style 属性变化会让引脚图重绘 */
