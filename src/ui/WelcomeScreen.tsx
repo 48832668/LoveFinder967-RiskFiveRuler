@@ -65,7 +65,7 @@ export function WelcomeScreen({
           <span className="spacer" />
           {inTauri() && (
             <div className="win-controls">
-              <button className="win-btn close" onClick={onClose} title="关闭">✕</button>
+              <button className="win-btn win-btn-close" onClick={onClose} title="关闭">✕</button>
             </div>
           )}
         </header>

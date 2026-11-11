@@ -28,7 +28,7 @@ button { cursor: pointer; }
   display: grid;
   /* 菜单栏 / 工具条 / 工作区 / 状态栏 —— 全部由 FinderSkin 的控件高度推导 */
   grid-template-rows:
-    calc(var(--fs-ctl-h) * 0.92)
+    calc(var(--fs-ctl-h) * 1.02)
     calc(var(--fs-navbar-h) * 0.7)
     1fr
     calc(var(--fs-ctl-h) * 0.85);
@@ -91,16 +91,44 @@ button { cursor: pointer; }
 /* 无边框窗口：顶栏即拖拽区（Tauri data-tauri-drag-region），自绘窗口控制按钮 */
 .topbar { -webkit-user-select: none; user-select: none; }
 .topbar button, .topbar input, .topbar .topnav { -webkit-user-select: text; user-select: text; }
-.win-controls { display: flex; gap: 2px; margin-left: calc(var(--fs-sp) * 1.6); align-items: center; }
+/* 窗口头：无边框窗口的自绘标题栏（同步自 FinderSkin 组件层） */
+.window-header {
+  position: relative;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--fs-sp) * 1.6);
+  height: calc(var(--fs-ctl-h) * 1.02);
+  padding: 0 0 0 calc(var(--fs-sp) * 1.6);
+  background: var(--bg-1);
+  border-bottom: var(--fs-bw) solid var(--border);
+  user-select: none;
+  -webkit-user-select: none;
+}
+.window-header-title {
+  min-width: 0;
+  max-width: calc(var(--fs-fs) * 26);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--fg-2);
+  font-size: calc(var(--fs-fs) * 0.82);
+  letter-spacing: 0.01em;
+}
+.window-header-drag { flex: 1 1 auto; align-self: stretch; }
+
+.win-controls { display: flex; align-items: stretch; align-self: stretch; height: auto; gap: 0; }
 .win-btn {
-  width: calc(var(--fs-ctl-h) * 1.15); height: calc(var(--fs-ctl-h) * 0.86);
-  display: flex; align-items: center; justify-content: center;
-  background: none; border: none; border-radius: var(--radius-sm);
-  color: var(--fg-1); font-size: 11px; line-height: 1;
-  padding: 0;
+  width: calc(var(--fs-ctl-h) * 1.6); height: 100%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: none; border: none; border-radius: 0;
+  color: var(--fg-1); font-size: calc(var(--fs-fs) * 0.8); line-height: 1;
+  padding: 0; cursor: pointer;
+  transition: background var(--fs-dur-fast) var(--fs-ease), color var(--fs-dur-fast) var(--fs-ease);
 }
 .win-btn:hover { background: var(--bg-3); color: var(--fg-0); }
-.win-btn.close:hover { background: var(--red); color: #fff; }
+.win-btn:active { background: var(--bg-2); }
+.win-btn.close:hover, .win-btn.win-btn-close:hover { background: var(--red); color: #fff; }
 
 /* 锁定本组映射：下划线文字按钮（不用 checkbox） */
 .lock-toggle {
@@ -129,7 +157,6 @@ button { cursor: pointer; }
 .lock-label .switch { flex-shrink: 0; }
 
 .top-actions { display: flex; gap: calc(var(--fs-sp) * 1.6); align-items: center; }
-.top-actions .win-controls { margin-left: calc(var(--fs-sp) * 4.8); }
 
 .link {
   background: none; border: none; color: var(--accent);
@@ -606,7 +633,14 @@ button { cursor: pointer; }
   display: flex; align-items: center; gap: calc(var(--fs-sp) * 1.87); flex-wrap: wrap;
 }
 .clock-target > b { font-size: calc(var(--fs-fs) * 0.92); }
-.clock-target .ct-input { width: calc(var(--fs-fs) * 6.5); }
+.clock-target .ct-input {
+  width: calc(var(--fs-fs) * 7.2);
+  flex: none;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
 .clock-target .ct-unit { color: var(--fg-2); font-size: calc(var(--fs-fs) * 0.81); }
 .clock-target .ct-note {
   width: 100%;

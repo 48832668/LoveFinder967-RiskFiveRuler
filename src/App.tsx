@@ -917,6 +917,8 @@ export default function App() {
         onOpenRecent={(e) => void doOpenRecent(e)}
         onClearRecent={() => setRecent(clearRecent())}
         onAction={onMenuAction}
+        title={project.settings.name.trim() || "未命名工程"}
+        onWindowCtl={inTauri() ? (a) => (a === "close" ? requestAction({ kind: "quit" }) : void winCtl(a)) : undefined}
       />
       <header className="topbar" data-tauri-drag-region>
         <div className="device-picker">
@@ -976,13 +978,6 @@ export default function App() {
           >
             {theme === "dark" ? "☀" : "☾"}
           </button>
-          {inTauri() && (
-            <div className="win-controls">
-              <button className="win-btn" onClick={() => void winCtl("minimize")} title="最小化">─</button>
-              <button className="win-btn" onClick={() => void winCtl("toggleMaximize")} title="最大化 / 还原">□</button>
-              <button className="win-btn close" onClick={() => requestAction({ kind: "quit" })} title="关闭">✕</button>
-            </div>
-          )}
         </div>
       </header>
 

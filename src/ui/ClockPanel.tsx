@@ -61,13 +61,12 @@ export function ClockPanel({ topo, clock, derived, onChange, family, beginner }:
       <div className="clock-target card">
         <b>目标工作频率</b>
         <input
-          className="ct-input"
-          type="number"
-          min={1}
-          step={1}
+          className="ct-input form-control"
+          type="text"
+          inputMode="numeric"
           placeholder={`如 ${topo.maxSysclk}`}
           value={targetText}
-          onChange={(e) => setTargetText(e.target.value)}
+          onChange={(e) => setTargetText(e.target.value.replace(/[^\d.]/g, ""))}
           onKeyDown={(e) => e.key === "Enter" && applyTarget()}
           title="想要的 SYSCLK（MHz），时钟源与倍频自动求解"
         />

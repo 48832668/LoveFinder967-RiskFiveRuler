@@ -21,6 +21,10 @@ interface Props {
   onOpenRecent: (entry: RecentEntry) => void;
   onClearRecent: () => void;
   onAction: (a: MenuAction) => void;
+  /** 自绘窗口控制（无边框窗口时显示在菜单栏右端，整行即窗口头） */
+  onWindowCtl?: (a: "minimize" | "toggleMaximize" | "close") => void;
+  /** 当前工程名，显示在窗口头中间（可空） */
+  title?: string;
 }
 
 interface Item {
@@ -45,7 +49,6 @@ const FILE_MENU: Item[] = [
 ];
 
 const ABOUT_MENU: Item[] = [
-  { id: "settings", label: "设置" },
   { id: "about", label: "关于本软件" },
   { id: "author", label: "作者 Gitee 主页" },
 ];
@@ -56,7 +59,7 @@ const ABOUT_MENU: Item[] = [
  * 做成点击展开 + 悬停切换（开着的时候鼠标划过去就切过去），键盘 Esc 关闭、
  * 点空白处关闭 —— 这是桌面软件的通行手感，比只支持点击的更顺手。
  */
-export function MenuBar({ recent, filePath, onOpenRecent, onClearRecent, onAction }: Props) {
+export function MenuBar({ recent, filePath, onOpenRecent, onClearRecent, onAction, onWindowCtl, title }: Props) {
   const [open, setOpen] = useState<"file" | "about" | null>(null);
   const [recentOpen, setRecentOpen] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
@@ -163,7 +166,7 @@ export function MenuBar({ recent, filePath, onOpenRecent, onClearRecent, onActio
     });
 
   return (
-    <div className="menubar" ref={boxRef}>
+    <div className="window-header" ref={boxRef} data-tauri-drag-region>
       <button
         className={`menubar-item ${open === "file" ? "is-active" : ""}`}
         onClick={() => setOpen(open === "file" ? null : "file")}
@@ -178,6 +181,18 @@ export function MenuBar({ recent, filePath, onOpenRecent, onClearRecent, onActio
       >
         关于
       </button>
+      <button className="menubar-item" onClick={() => onAction("settings")}>
+        设置
+      </button>
+      <div className="window-header-drag" data-tauri-drag-region></div>
+      {title ? <span className="window-header-title">{title}</span> : null}
+      {onWindowCtl && (
+        <div className="win-controls">
+          <button className="win-btn" onClick={() => onWindowCtl("minimize")} title="最小化">─</button>
+          <button className="win-btn" onClick={() => onWindowCtl("toggleMaximize")} title="最大化 / 还原">□</button>
+          <button className="win-btn win-btn-close" onClick={() => onWindowCtl("close")} title="关闭">✕</button>
+        </div>
+      )}
 
       {open === "file" && <div className="menu-pop menubar-menu dropdown">{renderItems(fileMenu)}</div>}
       {open === "about" && <div className="menu-pop about-pop menubar-menu dropdown">{renderItems(ABOUT_MENU)}</div>}
