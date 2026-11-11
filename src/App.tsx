@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ClockConfig, DeviceDef, GpioCfg, PeripheralConfig, PeripheralDef, Project, ProjectSettings } from "./model/types";
-import { DEVICE_MAP, deviceById, defaultDeviceId, seriesOf } from "./devices/index";
+import { DEVICE_MAP, deviceById, defaultDeviceId } from "./devices/index";
 import { createProject, createDemoProject, freePeripheral, retarget } from "./app/project";
 import { solveClock } from "./engine/clock";
 import { applyModePins, applyRelocations, collectUsage, findConflicts, groupPinsFor, modeForSignal, normalizeModes, paramSignals, pinTableSignals, planEnableSmart, planPins, remapOf, remapsAt, requiredInMode } from "./semantic/pinmux";
@@ -920,70 +920,7 @@ export default function App() {
         title={project.settings.name.trim() || "未命名工程"}
         onWindowCtl={inTauri() ? (a) => (a === "close" ? requestAction({ kind: "quit" }) : void winCtl(a)) : undefined}
       />
-      <header className="topbar" data-tauri-drag-region>
-        <div className="device-picker">
-          <div className="device-readout">
-            <div className="dv-main">
-              <span className="dv-id">{dev.id}</span>
-              <span className="dv-meta">
-                {seriesOf(dev.id)?.label ?? dev.family} · {dev.package.label} · {dev.package.pins.length} 脚
-              </span>
-            </div>
-            <button className="dv-change btn btn-ghost btn-sm" onClick={() => setPickerMode("switch")} title="更换器件">
-              更换
-            </button>
-          </div>
-        </div>
-
-        <nav className="topnav nav-tabs">
-          {(
-            [
-              ["pinout", "引脚与外设"],
-              ["clock", "时钟树"],
-              ["code", "生成代码"],
-              ["project", "工程设置"],
-            ] as [Tab, string][]
-          ).map(([id, label]) => (
-            <button key={id} className={`nav-link ${tab === id ? "active" : ""}`} onClick={() => setTab(id)}>
-              {label}
-            </button>
-          ))}
-        </nav>
-
-        <div className="spacer" />
-
-        <div className="top-actions">
-          <button className="btn btn-ghost btn-sm" onClick={doOpen}>打开</button>
-          <button className="btn btn-ghost btn-sm" onClick={doSave}>
-            保存{dirty ? " •" : ""}
-          </button>
-          {dev.codegenEnabled && filePath && (
-            <button className="btn btn-primary btn-sm" onClick={doExport} title={`生成到 ${filePath.replace(/[\\/][^\\/]+$/, "")}`}>
-              生成代码
-            </button>
-          )}
-          {!dev.codegenEnabled && (
-            <button
-              className="btn btn-primary btn-sm"
-              onClick={doExportPinmap}
-              title={dev.codegenNote ?? "该器件未提供代码生成，只能导出引脚映射表"}
-            >
-              导出引脚表
-            </button>
-          )}
-          <button
-            className="btn btn-icon btn-sm"
-            title={theme === "dark" ? "切换浅色" : "切换深色"}
-            onClick={() => applyUiPrefs({ ...prefs, mode: theme === "dark" ? "light" : "dark" })}
-          >
-            {theme === "dark" ? "☀" : "☾"}
-          </button>
-        </div>
-      </header>
-
-      {dialogs}
-
-      <div className={`workspace ${tab === "pinout" ? "" : "full"}`}>
+      <div className="body">
         <aside className="sidebar">
           <div className="chip-card card">
             <div className="chip-card-top">
@@ -995,6 +932,7 @@ export default function App() {
               <div><span>Flash</span><b>{dev.flashKb} KB</b></div>
               <div><span>RAM</span><b>{dev.ramKb} KB</b></div>
               <div><span>SYSCLK</span><b>{clock.sysclk} MHz</b></div>
+              <button className="chip-change" onClick={() => setPickerMode("switch")} title="更换器件">更换</button>
             </div>
           </div>
 
@@ -1011,7 +949,56 @@ export default function App() {
           <Tree dev={dev} project={project} selected={selected} onSelect={selectPeriph} />
         </aside>
 
-        <main className="center">
+        <div className="main-col">
+          <header className="topbar" data-tauri-drag-region>
+            <nav className="topnav nav-tabs">
+              {(
+                [
+                  ["pinout", "引脚与外设"],
+                  ["clock", "时钟树"],
+                  ["code", "生成代码"],
+                  ["project", "工程设置"],
+                ] as [Tab, string][]
+              ).map(([id, label]) => (
+                <button key={id} className={`nav-link ${tab === id ? "active" : ""}`} onClick={() => setTab(id)}>
+                  {label}
+                </button>
+              ))}
+            </nav>
+
+            <div className="spacer" />
+
+            <div className="top-actions">
+              <button className="btn btn-ghost btn-sm" onClick={doOpen}>打开</button>
+              <button className="btn btn-ghost btn-sm" onClick={doSave}>
+                保存{dirty ? " •" : ""}
+              </button>
+              {dev.codegenEnabled && filePath && (
+                <button className="btn btn-primary btn-sm" onClick={doExport} title={`生成到 ${filePath.replace(/[\\/][^\\/]+$/, "")}`}>
+                  生成代码
+                </button>
+              )}
+              {!dev.codegenEnabled && (
+                <button
+                  className="btn btn-primary btn-sm"
+                  onClick={doExportPinmap}
+                  title={dev.codegenNote ?? "该器件未提供代码生成，只能导出引脚映射表"}
+                >
+                  导出引脚表
+                </button>
+              )}
+              <button
+                className="btn btn-icon btn-sm"
+                title={theme === "dark" ? "切换浅色" : "切换深色"}
+                onClick={() => applyUiPrefs({ ...prefs, mode: theme === "dark" ? "light" : "dark" })}
+              >
+                {theme === "dark" ? "☀" : "☾"}
+              </button>
+            </div>
+          </header>
+
+          <div className={`workspace ${tab === "pinout" ? "" : "full"}`}>
+            <main className="center">
           {tab === "pinout" &&
             (periph ? (
               <ConfigPanel
@@ -1075,7 +1062,11 @@ export default function App() {
             />
           </aside>
         )}
+          </div>
+        </div>
       </div>
+
+      {dialogs}
 
       <footer className="statusbar">
         <span className="status-item"><i className="status-dot is-success" />SYSCLK {clock.sysclk} MHz</span>
