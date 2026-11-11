@@ -121,7 +121,15 @@ button { cursor: pointer; }
 .gpio-table .focus-row { background: var(--accent-soft) !important; }
 .gpio-table .kind-bar { width: 3px; height: 14px; border-radius: 2px; display: inline-block; }
 
+/* 锁定本组映射：独立行 + 开关（与外设使能同一套 .switch） */
+.lock-row { padding: calc(var(--fs-sp) * 1.87) 0; }
+.lock-label { display: flex; align-items: center; gap: calc(var(--fs-sp) * 2.13); cursor: pointer; }
+.lock-label-text { font-size: calc(var(--fs-fs) * 0.85); color: var(--fg-0); }
+.lock-label-text::after { content: ""; }
+.lock-label .switch { flex-shrink: 0; }
+
 .top-actions { display: flex; gap: calc(var(--fs-sp) * 1.6); align-items: center; }
+.top-actions .win-controls { margin-left: calc(var(--fs-sp) * 4.8); }
 
 .link {
   background: none; border: none; color: var(--accent);
