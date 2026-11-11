@@ -45,6 +45,7 @@ const FILE_MENU: Item[] = [
 ];
 
 const ABOUT_MENU: Item[] = [
+  { id: "settings", label: "设置" },
   { id: "about", label: "关于本软件" },
   { id: "author", label: "作者 Gitee 主页" },
 ];
@@ -176,17 +177,6 @@ export function MenuBar({ recent, filePath, onOpenRecent, onClearRecent, onActio
         onMouseEnter={() => open && setOpen("about")}
       >
         关于
-      </button>
-      <button
-        className="menubar-item"
-        title="主题与引脚图配色"
-        onClick={() => {
-          setOpen(null);
-          setRecentOpen(false);
-          onAction("settings");
-        }}
-      >
-        设置
       </button>
 
       {open === "file" && <div className="menu-pop menubar-menu dropdown">{renderItems(fileMenu)}</div>}

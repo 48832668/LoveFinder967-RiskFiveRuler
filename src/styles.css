@@ -1478,18 +1478,28 @@ button { cursor: pointer; }
 /* ───────────────────────────── 欢迎页 ───────────────────────────── */
 
 /* 欢迎页不占状态栏，所以 app 的 grid 少一行 */
-.welcome-app { grid-template-rows: 26px 1fr; }
+.welcome-app { grid-template-rows: 1fr; }
+
+/* 欢迎页顶部拖拽区 + 自绘窗口控制 */
+.welcome-titlebar {
+  display: flex; align-items: center;
+  padding: 0 calc(var(--fs-sp) * 2.67);
+  height: calc(var(--fs-ctl-h) * 0.92);
+  -webkit-user-select: none; user-select: none;
+}
+.welcome-titlebar-text { font-size: calc(var(--fs-fs) * 0.74); color: var(--fg-2); }
+.welcome-titlebar .win-controls { margin-left: auto; }
 
 .welcome {
   display: grid;
-  place-items: center;
+  grid-template-rows: auto 1fr;
   overflow: auto;
-  padding: calc(var(--fs-sp) * 7.46) calc(var(--fs-sp) * 6.4);
+  padding: 0 calc(var(--fs-sp) * 6.4) calc(var(--fs-sp) * 7.46);
   background:
     radial-gradient(1100px 520px at 50% -12%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 62%),
     var(--bg-0);
 }
-.welcome-inner { width: 100%; max-width: 880px; }
+.welcome-inner { width: 100%; max-width: 720px; margin: 0 auto; }
 
 .welcome-head {
   display: flex;
@@ -1519,7 +1529,7 @@ button { cursor: pointer; }
   .welcome-grid { grid-template-columns: 1fr; }
 }
 
-.welcome-pane { padding: calc(var(--fs-sp) * 3.73); min-height: 240px; }
+.welcome-pane { padding: calc(var(--fs-sp) * 3.73); min-height: 200px; overflow: hidden; }
 .welcome-pane-head {
   display: flex;
   align-items: center;
@@ -1546,7 +1556,7 @@ button { cursor: pointer; }
   background: var(--bg-3);
 }
 
-.welcome-recent { display: flex; flex-direction: column; gap: calc(var(--fs-sp) * 0.8); }
+.welcome-recent { display: flex; flex-direction: column; gap: calc(var(--fs-sp) * 0.8); list-style: none; padding: 0; }
 .welcome-recent button {
   width: 100%;
   display: grid;

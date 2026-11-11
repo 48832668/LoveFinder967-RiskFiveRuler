@@ -231,7 +231,9 @@ page.on("console", (m) => {
 
   // 教学说明只在注释模式（新手模式）下显示
   check((await page.locator(".ct-note").innerText().catch(() => "")).includes("时钟源"), "注释模式下显示频率说明");
-  await page.locator(".menubar-item", { hasText: "设置" }).click();
+  await page.locator(".menubar-item", { hasText: "关于" }).click();
+  await page.waitForTimeout(200);
+  await page.locator(".menubar-menu .dropdown-item", { hasText: "设置" }).click();
   await page.waitForTimeout(400);
   await page.locator(".pref-row", { hasText: "新手模式" }).locator("input").uncheck();
   await page.keyboard.press("Escape");
@@ -466,7 +468,9 @@ page.on("console", (m) => {
 {
   await page.goto(`${BASE}/?demo=1`, { waitUntil: "networkidle" });
   await page.waitForTimeout(1000);
-  await page.locator(".menubar-item", { hasText: "设置" }).click();
+  await page.locator(".menubar-item", { hasText: "关于" }).click();
+  await page.waitForTimeout(200);
+  await page.locator(".menubar-menu .dropdown-item", { hasText: "设置" }).click();
   await page.waitForTimeout(500);
   check((await page.locator(".settings-modal").count()) === 1, "「设置」打开设置弹窗");
 

@@ -11,6 +11,7 @@
 import type { RecentEntry } from "../platform/recent";
 import { shortPath } from "../platform/recent";
 import { APP_SERIES, AUTHOR_GITEE } from "../platform/appInfo";
+import { inTauri } from "../platform/io";
 
 interface Props {
   recent: RecentEntry[];
@@ -19,6 +20,11 @@ interface Props {
   onOpenRecent: (e: RecentEntry) => void;
   onClearRecent: () => void;
   onOpenAuthor: () => void;
+  onSettings: () => void;
+  /** 自绘窗口控制（仅 Tauri 桌面端显示） */
+  onMinimize: () => void;
+  onToggleMaximize: () => void;
+  onClose: () => void;
   /** 最近列表里的路径打不开时的原始错误，显示在底部而不是藏起来 */
   note?: string | null;
 }
@@ -40,10 +46,26 @@ export function WelcomeScreen({
   onOpenRecent,
   onClearRecent,
   onOpenAuthor,
+  onSettings,
+  onMinimize,
+  onToggleMaximize,
+  onClose,
   note,
 }: Props) {
   return (
     <div className="welcome">
+      {/* 无边框窗口：顶部拖拽区 + 自绘关闭键 */}
+      <div className="welcome-titlebar" data-tauri-drag-region>
+        <span className="welcome-titlebar-text">RiskFiveRuler</span>
+        <span className="spacer" />
+        {inTauri() && (
+          <div className="win-controls">
+            <button className="win-btn" onClick={onMinimize} title="最小化">─</button>
+            <button className="win-btn" onClick={onToggleMaximize} title="最大化 / 还原">□</button>
+            <button className="win-btn close" onClick={onClose} title="关闭">✕</button>
+          </div>
+        )}
+      </div>
       <div className="welcome-inner">
         <header className="welcome-head">
           <div className="welcome-mark">
@@ -118,6 +140,13 @@ export function WelcomeScreen({
               <span>
                 <b>作者 Gitee 主页</b>
                 <em>{AUTHOR_GITEE.replace("https://", "")}</em>
+              </span>
+            </button>
+            <button className="welcome-action" onClick={onSettings}>
+              <span className="wa-icon">⚙</span>
+              <span>
+                <b>设置</b>
+                <em>主题色 / 日夜模式 / 引脚图配色</em>
               </span>
             </button>
           </section>

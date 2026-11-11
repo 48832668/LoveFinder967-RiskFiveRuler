@@ -200,6 +200,21 @@ export default function App() {
     else await w.toggleMaximize();
   };
 
+  // 欢迎页窗口偏小（只容纳最近打开 + 开始），进编辑器恢复大窗口
+  useEffect(() => {
+    if (!inTauri()) return;
+    void (async () => {
+      try {
+        const { getCurrentWindow, LogicalSize } = await import("@tauri-apps/api/window");
+        const w = getCurrentWindow();
+        if (!booted) await w.setSize(new LogicalSize(720, 560));
+        else await w.setSize(new LogicalSize(1500, 940));
+      } catch {
+        // 忽略
+      }
+    })();
+  }, [booted]);
+
   /** 主题色 / 图例配色：写 CSS 变量 + 通知 semantic 层；style 属性变化会让引脚图重绘 */
   useEffect(() => {
     // 可读性归一化：纯黑在暗色模式、纯白在浅色模式会被提亮/压暗到可读亮度，
@@ -885,13 +900,6 @@ export default function App() {
   if (!booted) {
     return (
       <div className="app welcome-app">
-        <MenuBar
-          recent={recent}
-          filePath={filePath}
-          onOpenRecent={(e) => void doOpenRecent(e)}
-          onClearRecent={() => setRecent(clearRecent())}
-          onAction={onMenuAction}
-        />
         <WelcomeScreen
           recent={recent}
           note={welcomeNote}
@@ -900,6 +908,10 @@ export default function App() {
           onOpenRecent={(e) => void doOpenRecent(e)}
           onClearRecent={() => setRecent(clearRecent())}
           onOpenAuthor={() => void openExternal(AUTHOR_GITEE)}
+          onSettings={() => setSettingsOpen(true)}
+          onMinimize={() => void winCtl("minimize")}
+          onToggleMaximize={() => void winCtl("toggleMaximize")}
+          onClose={() => void destroyWindow()}
         />
         {dialogs}
       </div>
