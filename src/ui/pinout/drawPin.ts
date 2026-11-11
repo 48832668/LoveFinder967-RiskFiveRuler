@@ -131,27 +131,7 @@ export function drawPin(
   ctx.stroke();
   ctx.restore();
 
-  // 图钉：用户右键锁定的引脚在外端画一个小钉（针头 + 针尖朝本体）
-  if (opt.locked) {
-    const outerX = side === "left" ? x : side === "right" ? x + w : x + w / 2;
-    const outerY = side === "top" ? y : side === "bottom" ? y + h : y + h / 2;
-    const dirX = side === "left" ? 1 : side === "right" ? -1 : 0;
-    const dirY = side === "top" ? 1 : side === "bottom" ? -1 : 0;
-    const tipX = outerX + dirX * 5.5;
-    const tipY = outerY + dirY * 5.5;
-    ctx.save();
-    ctx.strokeStyle = opt.cAccent;
-    ctx.fillStyle = opt.cAccent;
-    ctx.lineWidth = 1.1;
-    ctx.beginPath();
-    ctx.moveTo(outerX, outerY);
-    ctx.lineTo(tipX, tipY);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.arc(tipX, tipY, 2.2, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-  }
+  // 引脚级锁定：与左侧面板一致，只给引脚文字加下划线（下面各分支绘制时统一补上）
 
   ctx.font = "8.5px 'Cascadia Mono', Consolas, monospace";
   ctx.fillStyle = opt.cDim;
@@ -162,6 +142,21 @@ export function drawPin(
   let nameLabel = pin.name;
   if (pin.kind === "reset") nameLabel = `${nameLabel}（复位）`;
   else if (pin.kind === "boot" && !/BOOT0/i.test(nameLabel)) nameLabel = `${nameLabel}(BOOT0)`;
+
+  /** 锁定引脚时给当前文字画下划线（沿用 ctx 的 font / fillStyle / textAlign） */
+  const underlineName = (offset: number) => {
+    if (!opt.locked) return;
+    const tw = ctx.measureText(nameLabel).width;
+    const x0 = ctx.textAlign === "right" ? -tw : ctx.textAlign === "center" ? -tw / 2 : 0;
+    ctx.save();
+    ctx.strokeStyle = ctx.fillStyle as string;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x0, offset);
+    ctx.lineTo(x0 + tw, offset);
+    ctx.stroke();
+    ctx.restore();
+  };
 
   if (side === "left") {
     if (!opt.hideNum) {
@@ -177,6 +172,7 @@ export function drawPin(
       ctx.textAlign = "left";
       ctx.textBaseline = "middle";
       ctx.fillText(nameLabel, 0, 0);
+      underlineName(5.5);
     });
   } else if (side === "right") {
     uprightText(ctx, rot, 0, x + w + LABEL_PAD, y + h / 2, () => {
@@ -190,6 +186,7 @@ export function drawPin(
       ctx.textAlign = "right";
       ctx.textBaseline = "middle";
       ctx.fillText(nameLabel, 0, 0);
+      underlineName(5.5);
     });
   } else {
     /*
@@ -213,6 +210,7 @@ export function drawPin(
       ctx.textAlign = top ? "left" : "right";
       ctx.textBaseline = "middle";
       ctx.fillText(nameLabel, 0, 0);
+      underlineName(size * 0.6 + 1);
     });
   }
 

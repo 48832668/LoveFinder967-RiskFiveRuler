@@ -1037,7 +1037,16 @@ export default function App() {
             ))}
 
           {tab === "clock" && (
-            <ClockPanel topo={dev.clock} clock={project.clock} derived={clock} onChange={setClock} family={dev.family} beginner={prefs.beginner} />
+            <ClockPanel
+              topo={dev.clock}
+              clock={project.clock}
+              derived={clock}
+              onChange={setClock}
+              family={dev.family}
+              beginner={prefs.beginner}
+              usbInUse={enabledList.some((p) => p.kind === "USB" && p.id !== "USBPD")}
+              notify={notify}
+            />
           )}
 
           {tab === "code" && <CodePanel dev={dev} project={project} onExport={doExport} canExport={Boolean(filePath)} />}

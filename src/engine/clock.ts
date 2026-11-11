@@ -182,6 +182,26 @@ export function solveClockForTarget(topo: ClockTopology, targetMhz: number): Clo
   return cands[0]!.cfg;
 }
 
+/**
+ * USB 全速 PHY 对 SYSCLK 的要求：48 MHz 由 PLL/分频派生，
+ * 常见可用主频为 48 / 72 / 96 / 144 MHz（分别对应 /1、/1.5、/2、/3）。
+ * 只要主频落在这几个值上就能给出 48 MHz 的 USB 时钟。
+ */
+export const USB_SYSCLK_VALUES = [48, 72, 96, 144];
+
+export function usbClockValid(sysclkMhz: number): boolean {
+  return USB_SYSCLK_VALUES.includes(Math.round(sysclkMhz));
+}
+
+/** 某份 ClockConfig 实际跑出来的 SYSCLK（MHz） */
+export function actualSysclk(cfg: ClockConfig, topo: ClockTopology): number {
+  if (cfg.sysclkSource === "HSI") return topo.hsi;
+  if (cfg.sysclkSource === "HSE") return cfg.hseFreq;
+  const pllIn =
+    topo.pllSource === "HSI_DIV2" ? topo.hsi / 2 : topo.pllSource === "HSI" ? topo.hsi : cfg.hseFreq;
+  return pllIn * cfg.pllMul;
+}
+
 export function fmt(v: number, digits = 3): string {
   if (!Number.isFinite(v)) return "—";
   const s = v.toFixed(digits);

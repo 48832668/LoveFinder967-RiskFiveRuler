@@ -190,6 +190,7 @@ export function modeOptionSupported(dev: DeviceDef, opt: { cap?: string }): bool
   if (!opt.cap) return true;
   if (opt.cap === "usb.hs") return dev.usb?.speeds?.includes("hs") ?? false;
   if (opt.cap === "usb.fs") return dev.usb?.speeds?.includes("fs") ?? false;
+  if (opt.cap === "debug.singleWire") return dev.debug?.singleWire ?? false;
   return true;
 }
 

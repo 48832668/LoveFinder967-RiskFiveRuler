@@ -61,8 +61,8 @@
   },
   "debug": {
     "twoWire": true,
-    "singleWire": false,
-    "note": "串行 2 线调试接口（SDI）：SWDIO + SWCLK。系统上电或复位后默认开启，主程序里可以关掉把这两个脚释放成普通 GPIO。",
+    "singleWire": true,
+    "note": "串行调试接口（SDI）：支持 2 线（SWDIO + SWCLK）与 1 线（仅 SWDIO）两种。系统上电或复位后默认开启，主程序里可以关掉把这两个脚释放成普通 GPIO。",
     "swdio": "PC18",
     "swclk": "PC19"
   },
@@ -512,7 +512,8 @@
         {
           "num": 7,
           "name": "PA21",
-          "kind": "io"
+          "kind": "reset",
+          "note": "本封装此脚为 RST 复位输入（PA21/RST）"
         },
         {
           "num": 8,

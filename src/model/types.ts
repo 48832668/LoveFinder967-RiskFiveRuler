@@ -411,6 +411,8 @@ export interface ClockConfig {
   adcDiv: number;
   lsiEnabled: boolean;
   hseBypass: boolean;
+  /** 「目标工作频率」输入框里用户填的期望 SYSCLK（MHz），随工程保存 */
+  targetMhz?: number;
 }
 
 /* ────────────────────────────── 中断 ────────────────────────────── */

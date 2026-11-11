@@ -1326,15 +1326,14 @@ const dbg: PeripheralSchema = {
       "sdio2",
       [
         { l: "2 线 SDI（SWDIO + SWCLK）", v: "sdio2", signals: ["SWDIO", "SWCLK"], hint: "复位默认状态，可被调试器连接" },
-        // disabledIf 读的是 @dev.* —— ConfigPanel 会把器件能力并进求值上下文
+        // 能力门槛由 pinmux.modeOptionSupported 消费：只有支持单线的系列才出现这一档
         {
-          l: "1 线 SWIO（单线调试）",
+          l: "1 线 SWIO（仅 SWDIO）",
           v: "swio1",
           signals: ["SWDIO"],
-          disabledIf: { k: "@dev.singleWireDebug", op: "=", v: false },
-          hint: "只有单线调试的系列才可选；L103/X035/X033 不支持",
+          cap: "debug.singleWire",
+          hint: "只需 SWDIO 一根线即可调试；不支持单线的系列会自动隐藏",
         },
-        { l: "关闭（引脚释放为 GPIO）", v: "off", hint: "生成 GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE)" },
       ],
       { group: "iface", hint: "RCC_APB2Periph_AFIO + GPIO_PinRemapConfig(SWJ)" },
     ),

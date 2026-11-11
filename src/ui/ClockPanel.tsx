@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ClockConfig, ClockDerived, ClockTopology } from "../model/types";
-import { solveClockForTarget } from "../engine/clock";
+import { solveClockForTarget, actualSysclk, usbClockValid, USB_SYSCLK_VALUES } from "../engine/clock";
 
 interface Props {
   topo: ClockTopology;
@@ -10,35 +10,70 @@ interface Props {
   family: string;
   /** 新手模式：教学说明只在开启时显示 */
   beginner: boolean;
+  /** 工程里已启用 USB 全速外设：主频必须能派生出 48 MHz */
+  usbInUse?: boolean;
+  /** 顶部 toast 通知 */
+  notify?: (msg: string) => void;
 }
 
-export function ClockPanel({ topo, clock, derived, onChange, family, beginner }: Props) {
+export function ClockPanel({ topo, clock, derived, onChange, family, beginner, usbInUse, notify }: Props) {
   const set = (p: Partial<ClockConfig>) => onChange({ ...clock, ...p });
   const hasHse = topo.hseOptions.length > 0;
   const hasPll = topo.pllMax > 1;
 
   /* ── 一键设定目标频率：源 / 倍频 / 分频全部自动求解 ── */
-  const [targetText, setTargetText] = useState("");
+  // 期望值随工程持久化：用 clock.targetMhz 作为初值，切页面回来不丢
+  const [targetText, setTargetText] = useState(() =>
+    clock.targetMhz ? String(clock.targetMhz) : "",
+  );
   const [applyMsg, setApplyMsg] = useState<{ text: string; ok: boolean } | null>(null);
+
+  const onTargetText = (raw: string) => {
+    const clean = raw.replace(/[^\d.]/g, "");
+    setTargetText(clean);
+    const n = Number(clean);
+    // 边输边存：即使没点「一键设定」，切走再回来也还在
+    onChange({ ...clock, targetMhz: Number.isFinite(n) && n > 0 ? n : undefined });
+  };
+
+  /** 取「符合 USB 48M 且性能最高」的可达主频 */
+  const usbFallback = (): { cfg: ClockConfig; actual: number } | null => {
+    const targets = USB_SYSCLK_VALUES.filter((x) => x <= topo.maxSysclk).sort((a, b) => b - a);
+    for (const t of targets) {
+      const c = solveClockForTarget(topo, t);
+      if (!c) continue;
+      const a = actualSysclk(c, topo);
+      if (usbClockValid(a) && a <= topo.maxSysclk) return { cfg: c, actual: a };
+    }
+    return null;
+  };
+
   const applyTarget = () => {
     const v = Number(targetText);
     if (!Number.isFinite(v) || v <= 0) {
       setApplyMsg({ text: "请输入有效频率（MHz）", ok: false });
       return;
     }
-    const next = solveClockForTarget(topo, v);
+    let next = solveClockForTarget(topo, v);
     if (!next) {
       setApplyMsg({ text: "该频率超出可配置范围", ok: false });
       return;
     }
-    onChange(next);
+    let actual = actualSysclk(next, topo);
+
+    // USB 全速外设启用时，主频必须是能派生 48 MHz 的值；不满足就自动抬到最高的合规值
+    if (usbInUse && !usbClockValid(actual)) {
+      const fb = usbFallback();
+      if (fb) {
+        next = fb.cfg;
+        actual = fb.actual;
+        setTargetText(String(actual));
+        notify?.(`主频被自动调整至 ${actual} MHz`);
+      }
+    }
+
+    onChange({ ...next, targetMhz: actual });
     const pllIn = topo.pllSource === "HSI_DIV2" ? topo.hsi / 2 : topo.pllSource === "HSI" ? topo.hsi : next.hseFreq;
-    const actual =
-      next.sysclkSource === "HSI"
-        ? topo.hsi
-        : next.sysclkSource === "HSE"
-          ? next.hseFreq
-          : pllIn * next.pllMul;
     const src =
       next.sysclkSource === "HSI"
         ? `HSI ${topo.hsi} MHz`
@@ -66,7 +101,7 @@ export function ClockPanel({ topo, clock, derived, onChange, family, beginner }:
           inputMode="numeric"
           placeholder={`如 ${topo.maxSysclk}`}
           value={targetText}
-          onChange={(e) => setTargetText(e.target.value.replace(/[^\d.]/g, ""))}
+          onChange={(e) => onTargetText(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && applyTarget()}
           title="想要的 SYSCLK（MHz），时钟源与倍频自动求解"
         />

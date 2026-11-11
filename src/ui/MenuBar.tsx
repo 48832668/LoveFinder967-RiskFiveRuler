@@ -174,15 +174,15 @@ export function MenuBar({ recent, filePath, onOpenRecent, onClearRecent, onActio
       >
         文件
       </button>
+      <button className="menubar-item" onClick={() => onAction("settings")}>
+        设置
+      </button>
       <button
         className={`menubar-item ${open === "about" ? "is-active" : ""}`}
         onClick={() => setOpen(open === "about" ? null : "about")}
         onMouseEnter={() => open && setOpen("about")}
       >
         关于
-      </button>
-      <button className="menubar-item" onClick={() => onAction("settings")}>
-        设置
       </button>
       <div className="window-header-drag" data-tauri-drag-region></div>
       {title ? <span className="window-header-title">{title}</span> : null}

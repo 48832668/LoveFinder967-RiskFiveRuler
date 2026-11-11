@@ -72,7 +72,6 @@ export function PinsTab({ dev, project, periph, cfg, usage, beginner, patch, onJ
             value={typeof curGroup === "number" ? String(curGroup) : ""}
             onChange={(e) => e.target.value !== "" && pickGroup(Number(e.target.value))}
           >
-            <option value="">— 未分配 —</option>
             {groups.map((g) => {
               const name = g.group === 0 ? "默认功能" : `重映射组 ${g.group}`;
               const suffix = !g.feasible

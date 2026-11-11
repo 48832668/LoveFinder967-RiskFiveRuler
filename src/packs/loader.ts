@@ -49,13 +49,17 @@ function buildPins(pack: PackFile, pkg: PackPackage): PinDef[] {
     const names = [p.name, ...(p.aliases ?? [])];
     const seen = new Set<string>();
     const signals: { fn: string; remap?: string }[] = [];
-    for (const n of names) {
-      for (const s of pack.ports[n] ?? []) {
-        if (isDropped(s.fn)) continue;
-        const key = `${s.fn}|${s.remap ?? ""}`;
-        if (seen.has(key)) continue;
-        seen.add(key);
-        signals.push(s.remap ? { fn: s.fn, remap: s.remap } : { fn: s.fn });
+    // 只有 IO 引脚才承载复用功能；复位 / BOOT / 电源脚即便在 ports 表里
+    // 出现同名字段也不当作可分配信号，否则自动规划可能把信号分到复位脚上。
+    if (p.kind === "io") {
+      for (const n of names) {
+        for (const s of pack.ports[n] ?? []) {
+          if (isDropped(s.fn)) continue;
+          const key = `${s.fn}|${s.remap ?? ""}`;
+          if (seen.has(key)) continue;
+          seen.add(key);
+          signals.push(s.remap ? { fn: s.fn, remap: s.remap } : { fn: s.fn });
+        }
       }
     }
     // 外部中断线不写在数据手册的复用表里：PXn 天然对应 EXTIn，
