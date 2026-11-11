@@ -70,6 +70,8 @@ function uprightText(
 
 export interface DrawPinOpt {
   used?: { fn: string; colorKey: string; owner: string };
+  /** 用户给该引脚设的自定义名称（如 LCD1_CS），优先显示在色块里 */
+  label?: string;
   /** 用户配成普通 GPIO 时的填充色（模拟态为 null，不着色） */
   gpioColor?: string;
   conflict: boolean;
@@ -215,21 +217,22 @@ export function drawPin(
   }
 
   /*
-   * 已分配信号：把信号名直接写在色块里。
+   * 已分配信号 / 自定义名称：把文字直接写在色块里。
    *
-   * 以前只在引脚外侧画一条 2px 色条，得靠颜色去猜是哪个外设 —— 同色的 USART1_TX
-   * 和 USART2_TX 根本分不出来。色块长度已按文字宽度撑开（见 place()），所以能写全。
+   * 用户给引脚设了自定义名称（如 LCD1_CS）时优先显示它，其次才是外设信号名。
+   * 色块长度已按文字宽度撑开（见 place()），所以能写全。
    * 文字颜色按底色亮度取黑/白，否则黄底白字（USB 是 #f2c94c）等于看不见。
-   * 下划线 = 所属外设锁定了重映射组（文字最直观，图钉留给引脚级锁定）。
+   * 下划线 = 所属外设锁定了重映射组（文字最直观）。
    */
-  if (opt.used) {
-    const label = opt.used.fn;
+  const pinText = (opt.label?.trim() || opt.used?.fn || "").trim();
+  if (pinText) {
+    const bg = opt.used ? colorOf(opt.used.colorKey) : (opt.gpioColor ?? opt.cPins.unused);
     ctx.save();
     ctx.font = PIN_TEXT_FONT;
-    ctx.fillStyle = contrastOn(colorOf(opt.used.colorKey));
+    ctx.fillStyle = contrastOn(bg);
     const drawUnderline = () => {
       if (!opt.underline) return;
-      const tw = ctx.measureText(label).width;
+      const tw = ctx.measureText(pinText).width;
       const x0 = ctx.textAlign === "right" ? -tw : ctx.textAlign === "center" ? -tw / 2 : 0;
       ctx.strokeStyle = ctx.fillStyle as string;
       ctx.lineWidth = 1;
@@ -243,7 +246,7 @@ export function drawPin(
       uprightText(ctx, rot, 0, tx, y + h / 2, () => {
         ctx.textAlign = side === "left" ? "left" : "right";
         ctx.textBaseline = "middle";
-        ctx.fillText(label, 0, 0);
+        ctx.fillText(pinText, 0, 0);
         drawUnderline();
       });
     } else {
@@ -252,7 +255,7 @@ export function drawPin(
       uprightText(ctx, rot, -90, x + w / 2, top ? y + h - PIN_TEXT_PAD : y + PIN_TEXT_PAD, () => {
         ctx.textAlign = top ? "left" : "right";
         ctx.textBaseline = "middle";
-        ctx.fillText(label, 0, 0);
+        ctx.fillText(pinText, 0, 0);
         drawUnderline();
       });
     }

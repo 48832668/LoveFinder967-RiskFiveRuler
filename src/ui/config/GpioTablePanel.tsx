@@ -16,19 +16,11 @@ interface Props {
   focusPin: string | null;
   onFocusDone: () => void;
   onEditPinLabel: (pin: string, label: string) => void;
+  /** 新手模式才显示那句说明 */
+  beginner: boolean;
 }
 
-/** WCH GPIO 速度档位 → 人话 */
-function speedLabel(speed: string | undefined): string {
-  switch (speed) {
-    case "1": return "10 MHz";
-    case "2": return "50 MHz";
-    case "3": return "50 MHz";
-    default: return "—";
-  }
-}
-
-export function GpioTablePanel({ dev, project, focusPin, onFocusDone, onEditPinLabel }: Props) {
+export function GpioTablePanel({ dev, project, focusPin, onFocusDone, onEditPinLabel, beginner }: Props) {
   const usage = collectUsage(project, dev);
   const inputRefs = useRef<Map<string, HTMLInputElement>>(new Map());
 
@@ -56,7 +48,6 @@ export function GpioTablePanel({ dev, project, focusPin, onFocusDone, onEditPinL
           : gpio && gpio.mode !== "analog"
             ? (GPIO_MODE_LABELS[gpio.mode]?.replace("GPIO ", "") ?? gpio.mode)
             : "—";
-        const speed = info.fn ? "—" : gpio ? speedLabel(gpio.speed) : "—";
         return {
           idx: i + 1,
           pin,
@@ -64,7 +55,6 @@ export function GpioTablePanel({ dev, project, focusPin, onFocusDone, onEditPinL
           owner: info.owner,
           fn: info.fn,
           mode,
-          speed,
           label: project.pinLabels[pin] ?? "",
         };
       });
@@ -86,14 +76,14 @@ export function GpioTablePanel({ dev, project, focusPin, onFocusDone, onEditPinL
     <div className="gpio-table-panel">
       <header className="panel-head">
         <h2>GPIO</h2>
-        <p>当前工程所有已配置的 IO。自定义名称会显示在生成代码的注释里，方便对照硬件。</p>
+        {beginner && <p>当前工程所有已配置的 IO。自定义名称会显示在生成代码的注释里，方便对照硬件。</p>}
       </header>
       {rows.length === 0 ? (
         <p className="hint-block">还没有已配置的引脚 —— 在引脚图上分配外设或配置 GPIO 后，这里会自动列出。</p>
       ) : (
         <table className="pin-table table-dense gpio-table">
           <thead>
-            <tr><th>#</th><th>引脚</th><th>外设</th><th>IO 类型</th><th>速度</th><th>自定义名称</th></tr>
+            <tr><th>#</th><th>引脚</th><th>外设</th><th>IO 类型</th><th>自定义名称</th></tr>
           </thead>
           <tbody>
             {rows.map((r) => (
@@ -105,7 +95,6 @@ export function GpioTablePanel({ dev, project, focusPin, onFocusDone, onEditPinL
                 </td>
                 <td>{r.owner || <span className="muted">GPIO</span>}{r.fn && <span className="mono muted"> {r.fn}</span>}</td>
                 <td>{r.mode}</td>
-                <td className="mono">{r.speed}</td>
                 <td>
                   <input
                     ref={(el) => { if (el) inputRefs.current.set(r.pin, el); else inputRefs.current.delete(r.pin); }}

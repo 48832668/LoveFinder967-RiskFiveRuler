@@ -66,9 +66,9 @@ export function DmaOverview({ dev, project }: { dev: DeviceDef; project: Project
   );
 }
 
-export function DmaTab({ dev, project, periph, cfg, onChange }: {
+export function DmaTab({ dev, project, periph, cfg, onChange, beginner }: {
   dev: DeviceDef; project: Project; periph: PeripheralDef; cfg: PeripheralConfig;
-  onChange: (id: string, next: PeripheralConfig) => void;
+  onChange: (id: string, next: PeripheralConfig) => void; beginner: boolean;
 }) {
   const allocs = useMemo(() => collectDma(project, dev), [project, dev]);
   const requests = useMemo(() => dmaRequestsOf(dev, periph), [dev, periph]);
@@ -97,7 +97,7 @@ export function DmaTab({ dev, project, periph, cfg, onChange }: {
   return (
     <div className="dma-tab">
       <div className="dma-head-row">
-        <span>本外设可发出 <b>{requests.length}</b> 个 DMA 请求，已占 <b>{mine.length}</b> 条通道</span>
+        {beginner && <span>本外设可发出 <b>{requests.length}</b> 个 DMA 请求，已占 <b>{mine.length}</b> 条通道</span>}
         {rest.length > 0 && (
           <select className="dma-add form-select" value="" onChange={(e) => e.target.value && add(e.target.value)}>
             <option value="">＋ 添加 DMA 请求</option>
@@ -140,7 +140,7 @@ export function DmaTab({ dev, project, periph, cfg, onChange }: {
           </section>
         );
       })}
-      {mine.length === 0 && <p className="hint-block">还没有分配 DMA。收发两条可以同时开（各占一条通道），也可以只开一条。</p>}
+      {mine.length === 0 && beginner && <p className="hint-block">还没有分配 DMA。收发两条可以同时开（各占一条通道），也可以只开一条。</p>}
     </div>
   );
 }

@@ -106,6 +106,14 @@ export function Tree({ dev, project, selected, onSelect }: Props) {
                   ? "高级"
                   : "通用"
                 : null;
+            // USB 徽标：USBHSx = 高速(HS)，USB1 = 全速(FS)。USBPD 走 CC 线，不是 PHY，不标。
+            const usbBadge =
+              p.kind === "USB" && /^USB(?!PD)/.test(p.id)
+                ? /^USBHS/.test(p.id)
+                  ? "HS"
+                  : "FS"
+                : null;
+            const badge = timerBadge ?? usbBadge;
             return (
               <button
                 key={p.id}
@@ -126,7 +134,7 @@ export function Tree({ dev, project, selected, onSelect }: Props) {
                 >
                   {p.label}
                 </span>
-                {timerBadge && <span className={`tree-badge ${timerBadge === "高级" ? "is-adv" : ""}`}>{timerBadge}</span>}
+                {badge && <span className={`tree-badge ${badge === "高级" || badge === "HS" ? "is-adv" : ""}`}>{badge}</span>}
                 {dead && <span className="tree-unavail">不可用</span>}
                 {isDma && !dead && (
                   <span className={`tree-dma ${dmaConflictsN ? "bad" : ""}`}>

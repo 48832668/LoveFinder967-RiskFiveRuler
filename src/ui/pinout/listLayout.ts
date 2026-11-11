@@ -24,6 +24,8 @@ export interface ListBox {
   title: string;
   usageByPin: Map<string, { fn: string; colorKey: string; owner: string }>;
   gpioByPin: Map<string, string>;
+  /** 引脚自定义名称（优先于信号名显示在色块里） */
+  pinLabels?: Record<string, string>;
   conflictPins: Set<string>;
   matchPins: Set<string>;
   cText: string;
@@ -34,14 +36,14 @@ export interface ListBox {
 }
 
 /** 列表布局的几何：行高、缩进、色块宽度都由这里算，绘制与命中测试共用 */
-export function listGeometry(o: Pick<ListBox, "ctx" | "pins" | "usageByPin"> & { density: number }) {
-  const { ctx, pins, usageByPin } = o;
+export function listGeometry(o: Pick<ListBox, "ctx" | "pins" | "usageByPin" | "pinLabels"> & { density: number }) {
+  const { ctx, pins, usageByPin, pinLabels } = o;
   ctx.font = PIN_TEXT_FONT;
   let chipW = PIN_LEN;
   for (const p of pins) {
-    const u = usageByPin.get(p.name);
-    if (!u) continue;
-    chipW = Math.max(chipW, ctx.measureText(u.fn).width + PIN_TEXT_PAD * 2);
+    const text = pinLabels?.[p.name]?.trim() || usageByPin.get(p.name)?.fn;
+    if (!text) continue;
+    chipW = Math.max(chipW, ctx.measureText(text).width + PIN_TEXT_PAD * 2);
   }
   const padX = 16;
   const numW = 38;
@@ -99,6 +101,7 @@ export function drawListBox(o: ListBox): Hit[] {
     const x = g.chipX;
     drawPin(ctx, pin, x, y, g.chipW, PIN_THICK, "left", {
       used: usageByPin.get(pin.name),
+      label: o.pinLabels?.[pin.name],
       gpioColor: gpioByPin.get(pin.name),
       conflict: conflictPins.has(pin.name),
       match: matchPins.has(pin.name),

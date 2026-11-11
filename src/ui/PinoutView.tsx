@@ -207,7 +207,7 @@ export function PinoutView({ dev, project, search, onAssign, onGpioMode, onSelec
 
     /* ── 列表布局：引脚只排左侧，自适应铺满高度，放不下自动滚动 ── */
     if (listPins && listSeg) {
-      const g = listGeometry({ ctx, pins: listPins, usageByPin, density });
+      const g = listGeometry({ ctx, pins: listPins, usageByPin, pinLabels: project.pinLabels, density });
       const fitKey = `list|${dev.id}|${listPins.length}|${W}x${H}|${density}`;
       if (fitRef.current !== fitKey) {
         /*
@@ -240,6 +240,7 @@ export function PinoutView({ dev, project, search, onAssign, onGpioMode, onSelec
         title: `${dev.id} · ${dev.package.label} · ${listSeg.label}（引脚 ${rangeLabel(listPins)}，共 ${listPins.length} 脚）`,
         usageByPin,
         gpioByPin,
+        pinLabels: project.pinLabels,
         conflictPins,
         matchPins,
         cText,
@@ -383,6 +384,7 @@ export function PinoutView({ dev, project, search, onAssign, onGpioMode, onSelec
       hits.push({ pin, x, y, w, h, side });
       drawPin(ctx, pin, x, y, w, h, side, {
         used: usageByPin.get(pin.name),
+        label: project.pinLabels[pin.name],
         gpioColor: gpioByPin.get(pin.name),
         conflict: conflictPins.has(pin.name),
         match: matchPins.has(pin.name),
@@ -431,7 +433,7 @@ export function PinoutView({ dev, project, search, onAssign, onGpioMode, onSelec
 
     ctx.restore();
     hitsRef.current = hits;
-  }, [dev, usageByPin, gpioByPin, conflictPins, matchPins, periphLockedPins, pinLockedPins, listPins, listSeg, density]);
+  }, [dev, usageByPin, gpioByPin, conflictPins, matchPins, periphLockedPins, pinLockedPins, listPins, listSeg, density, project.pinLabels]);
 
   useEffect(() => {
     draw();
@@ -591,7 +593,7 @@ export function PinoutView({ dev, project, search, onAssign, onGpioMode, onSelec
           if (listPins && !e.ctrlKey) {
             const wrap = wrapRef.current;
             if (!wrap) return;
-            const g = listGeometry({ ctx: canvasRef.current!.getContext("2d")!, pins: listPins, usageByPin, density });
+            const g = listGeometry({ ctx: canvasRef.current!.getContext("2d")!, pins: listPins, usageByPin, pinLabels: project.pinLabels, density });
             const maxScroll = Math.max(0, g.contentH - wrap.clientHeight / v.scale);
             scrollRef.current = Math.max(0, Math.min(maxScroll, scrollRef.current + e.deltaY / v.scale));
             setTick((t) => t + 1);

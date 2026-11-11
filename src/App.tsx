@@ -889,6 +889,25 @@ export default function App() {
     </>
   );
 
+  /* 画布 / 参数面板分隔条：宽度只存内存，不落盘 */
+  const [centerW, setCenterW] = useState<number | null>(null);
+  const centerRef = useRef<HTMLElement>(null);
+  const startSplit = (e: { clientX: number; preventDefault: () => void }) => {
+    const startX = e.clientX;
+    const startW = centerRef.current?.getBoundingClientRect().width ?? 420;
+    const onMove = (ev: PointerEvent) => {
+      const next = Math.max(280, Math.min(startW + (ev.clientX - startX), window.innerWidth - 360));
+      setCenterW(next);
+    };
+    const onUp = () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    e.preventDefault();
+  };
+
   /* ── 欢迎页：启动的落点，不直接进编辑器 ── */
   if (!booted) {
     return (
@@ -997,8 +1016,11 @@ export default function App() {
             </div>
           </header>
 
-          <div className={`workspace ${tab === "pinout" ? "" : "full"}`}>
-            <main className="center">
+          <div
+            className={`workspace ${tab === "pinout" ? "" : "full"}`}
+            style={tab === "pinout" && centerW ? { gridTemplateColumns: `${centerW}px 6px 1fr` } : undefined}
+          >
+            <main className="center" ref={centerRef}>
           {tab === "pinout" &&
             (periph ? (
               <ConfigPanel
@@ -1057,19 +1079,22 @@ export default function App() {
         </main>
 
         {tab === "pinout" && (
-          <aside className="pinpane">
-            <PinoutView
-              dev={dev}
-              project={project}
-              search={search}
-              onAssign={assignPin}
-              onGpioMode={setGpioMode}
-              onSelectPeripheral={selectPeriph}
-              onTogglePinLock={togglePinLock}
-              onEditPinName={editPinName}
-              autoPin={new URLSearchParams(typeof location !== "undefined" ? location.search : "").get("pin")}
-            />
-          </aside>
+          <>
+            <div className="splitter" onPointerDown={startSplit} title="拖动调整宽度（不保存）" />
+            <aside className="pinpane">
+              <PinoutView
+                dev={dev}
+                project={project}
+                search={search}
+                onAssign={assignPin}
+                onGpioMode={setGpioMode}
+                onSelectPeripheral={selectPeriph}
+                onTogglePinLock={togglePinLock}
+                onEditPinName={editPinName}
+                autoPin={new URLSearchParams(typeof location !== "undefined" ? location.search : "").get("pin")}
+              />
+            </aside>
+          </>
         )}
           </div>
         </div>

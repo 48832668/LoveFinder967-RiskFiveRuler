@@ -13,6 +13,7 @@ import { PinsTab } from "./PinsTab";
 import { ChannelTab } from "./ChannelTab";
 import { NvicTab } from "./NvicTab";
 import { GpioTablePanel } from "./GpioTablePanel";
+import { ExtiPanel } from "./ExtiPanel";
 
 type Tab = "params" | "pins" | "channel" | "nvic" | "dma";
 
@@ -145,6 +146,7 @@ export function ConfigPanel({ dev, project, periph, clock, pane, onChange, onCha
           focusPin={gpioFocusPin ?? null}
           onFocusDone={() => onGpioFocusDone?.()}
           onEditPinLabel={(pin, label) => onEditPinLabel?.(pin, label)}
+          beginner={beginner}
         />
       </div>
     );
@@ -159,6 +161,23 @@ export function ConfigPanel({ dev, project, periph, clock, pane, onChange, onCha
         </header>
         {beginner && schema?.about && <p className="cfg-about">{schema.about}</p>}
         <div className="cfg-body"><DmaOverview dev={dev} project={project} /></div>
+      </div>
+    );
+  }
+
+  // EXTI 没有总开关：只是在画布上配成 EXTIn 的引脚汇总 + 逐条设边沿
+  if (periph.kind === "EXTI") {
+    return (
+      <div className="cfg">
+        <header className="cfg-head">
+          <span className="cfg-dot" style={{ background: colorOf(periph.kind) }} />
+          <div className="cfg-title"><h2>{periph.label}</h2><p>{periph.brief}</p></div>
+        </header>
+        {beginner && schema?.about && <p className="cfg-about">{schema.about}</p>}
+        <div className="cfg-body">
+          <ExtiPanel dev={dev} periph={periph} cfg={cfg} onChange={onChange} beginner={beginner} />
+          <NvicTab dev={dev} periph={periph} cfg={cfg} onChange={onChange} />
+        </div>
       </div>
     );
   }
@@ -274,7 +293,7 @@ export function ConfigPanel({ dev, project, periph, clock, pane, onChange, onCha
             onChange={onChange} beginner={beginner} />
         )}
         {tab === "nvic" && <NvicTab dev={dev} periph={periph} cfg={cfg} onChange={onChange} />}
-        {tab === "dma" && <DmaTab dev={dev} project={project} periph={periph} cfg={cfg} onChange={onChange} />}
+        {tab === "dma" && <DmaTab dev={dev} project={project} periph={periph} cfg={cfg} onChange={onChange} beginner={beginner} />}
       </div>
     </div>
   );

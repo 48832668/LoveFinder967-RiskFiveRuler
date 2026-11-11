@@ -22,11 +22,11 @@ export function NvicTab({ dev, periph, cfg, onChange }: {
         <>
           <div className="field-row">
             <label className="field-label">抢占优先级</label>
-            <input type="number" min={0} value={nvic.preempt} onChange={(e) => patch({ preempt: Number(e.target.value) })} />
+            <input className="form-control" type="number" min={0} value={nvic.preempt} onChange={(e) => patch({ preempt: Number(e.target.value) })} />
           </div>
           <div className="field-row">
             <label className="field-label">子优先级</label>
-            <input type="number" min={0} value={nvic.sub} onChange={(e) => patch({ sub: Number(e.target.value) })} />
+            <input className="form-control" type="number" min={0} value={nvic.sub} onChange={(e) => patch({ sub: Number(e.target.value) })} />
           </div>
         </>
       )}
