@@ -7,7 +7,7 @@ import { applyModePins, applyRelocations, collectUsage, findConflicts, groupPins
 import { schemaFor } from "./semantic/schemas";
 import { generateWithLib, mrsProjectName } from "./backends/wch/codegen";
 import { pinmapOnly } from "./backends/index";
-import { exportTree, exportTreeTo, inTauri, openExternal, openProjectFile, readProjectAt, saveProjectFile, saveProjectToPath } from "./platform/io";
+import { exportTree, exportTreeTo, inTauri, openExternal, openProjectFile, readProjectAt, saveProjectFile, saveProjectToPath, tauriInvoke } from "./platform/io";
 import { clearRecent, dropRecent, loadRecent, pushRecent } from "./platform/recent";
 import type { RecentEntry } from "./platform/recent";
 import { DEFAULT_UI_PREFS, loadUiPrefs, normalizeThemeColor, saveUiPrefs } from "./platform/settings";
@@ -201,20 +201,12 @@ export default function App() {
   };
 
   // 欢迎页窗口偏小（只容纳最近打开 + 开始），进编辑器恢复大窗口。
-  // setSize 直接传 Tauri 的 {type:'Logical',...} 裸对象，不依赖 LogicalSize 类导出
+  // 走 Rust 命令 set_size —— 前端 IPC 的 LogicalSize 导入在部分版本不可靠
   useEffect(() => {
     if (!inTauri()) return;
     const t = setTimeout(() => {
-      void (async () => {
-        try {
-          const { getCurrentWindow } = await import("@tauri-apps/api/window");
-          const w = getCurrentWindow();
-          if (!booted) await w.setSize({ type: "Logical", width: 720, height: 520 } as Parameters<typeof w.setSize>[0]);
-          else await w.setSize({ type: "Logical", width: 1500, height: 940 } as Parameters<typeof w.setSize>[0]);
-        } catch {
-          // 忽略
-        }
-      })();
+      void tauriInvoke("resize_window", booted ? { width: 1500, height: 940 } : { width: 720, height: 520 })
+        .catch(() => {});
     }, 200);
     return () => clearTimeout(t);
   }, [booted]);

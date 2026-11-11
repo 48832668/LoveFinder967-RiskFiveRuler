@@ -52,6 +52,14 @@ pub fn open_url(url: String) -> Result<(), String> {
     layer2_app::open_url(&url)
 }
 
+/// 窗口尺寸调整（欢迎页 ↔ 编辑器）。走 Rust 侧保证不受前端 IPC 时序影响。
+#[tauri::command]
+pub fn resize_window(window: tauri::WebviewWindow, width: f64, height: f64) -> Result<(), String> {
+    window
+        .set_size(tauri::LogicalSize::new(width, height))
+        .map_err(|e| e.to_string())
+}
+
 #[tauri::command]
 pub fn app_info() -> Result<layer2_app::AppInfo, String> {
     layer2_app::app_info()

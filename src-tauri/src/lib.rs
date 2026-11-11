@@ -40,6 +40,7 @@ pub fn run() {
             commands::recent_push,
             commands::recent_drop,
             commands::recent_clear,
+            commands::resize_window,
         ])
         .run(tauri::generate_context!())
         .expect("启动 RiskFiveRuler 失败");

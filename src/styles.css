@@ -1484,13 +1484,13 @@ button { cursor: pointer; }
 /* 欢迎页顶部拖拽区 + 自绘窗口控制 */
 .welcome-titlebar {
   display: flex; align-items: center;
-  padding: 0 calc(var(--fs-sp) * 2.67);
+  padding-left: calc(var(--fs-sp) * 2.67);
   height: calc(var(--fs-ctl-h) * 0.92);
   -webkit-user-select: none; user-select: none;
 }
 .welcome-titlebar-text { font-size: calc(var(--fs-fs) * 0.74); color: var(--fg-2); }
 .welcome-titlebar .win-controls { margin-left: auto; }
-.welcome-titlebar .win-btn { height: calc(var(--fs-ctl-h) * 0.78); }
+.welcome-titlebar .win-btn { height: calc(var(--fs-ctl-h) * 0.92); border-radius: 0; }
 
 .welcome {
   display: grid;
