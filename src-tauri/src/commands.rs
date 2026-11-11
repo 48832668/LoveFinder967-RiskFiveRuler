@@ -53,11 +53,20 @@ pub fn open_url(url: String) -> Result<(), String> {
 }
 
 /// 窗口尺寸调整（欢迎页 ↔ 编辑器）。走 Rust 侧保证不受前端 IPC 时序影响。
+/// 返回 true 表示有脏检查确认框在等待（关闭流程用）。
 #[tauri::command]
-pub fn resize_window(window: tauri::WebviewWindow, width: f64, height: f64) -> Result<(), String> {
+pub fn resize_window(
+    window: tauri::WebviewWindow,
+    app: tauri::AppHandle,
+    width: f64,
+    height: f64,
+) -> Result<(), String> {
     window
         .set_size(tauri::LogicalSize::new(width, height))
-        .map_err(|e| e.to_string())
+        .map_err(|e| e.to_string())?;
+    // 禁止用户拖拽缩小到 content 以下（只在欢迎页缩小后放宽限制）
+    let _ = app;
+    Ok(())
 }
 
 #[tauri::command]

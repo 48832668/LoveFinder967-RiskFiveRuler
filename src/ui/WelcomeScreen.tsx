@@ -11,8 +11,7 @@
 import type { RecentEntry } from "../platform/recent";
 import { shortPath } from "../platform/recent";
 import { APP_SERIES, AUTHOR_GITEE } from "../platform/appInfo";
-import { useEffect, useRef } from "react";
-import { inTauri, tauriInvoke } from "../platform/io";
+import { inTauri } from "../platform/io";
 
 interface Props {
   recent: RecentEntry[];
@@ -48,24 +47,9 @@ export function WelcomeScreen({
   onClose,
   note,
 }: Props) {
-  const innerRef = useRef<HTMLDivElement>(null);
-  const welcomeRef = useRef<HTMLDivElement>(null);
-
-  // 窗口高度自适应内容：ResizeObserver 监听 .welcome 总高度（含 padding），调 resize_window 精确包裹
-  useEffect(() => {
-    if (!inTauri() || !welcomeRef.current) return;
-    const el = welcomeRef.current;
-    const ro = new ResizeObserver(() => {
-      const h = Math.ceil(el.getBoundingClientRect().height);
-      void tauriInvoke("resize_window", { width: 720, height: Math.max(h, 400) }).catch(() => {});
-    });
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-
   return (
-    <div className="welcome" ref={welcomeRef}>
-      <div className="welcome-inner" ref={innerRef}>
+    <div className="welcome">
+      <div className="welcome-inner">
         <header className="welcome-head" data-tauri-drag-region>
           <div className="welcome-mark">
             <svg viewBox="0 0 24 24" width="30" height="30" aria-hidden>

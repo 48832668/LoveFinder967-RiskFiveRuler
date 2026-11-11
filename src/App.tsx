@@ -200,15 +200,12 @@ export default function App() {
     else await w.toggleMaximize();
   };
 
-  // 欢迎页窗口偏小（只容纳最近打开 + 开始），进编辑器恢复大窗口。
-  // 走 Rust 命令 set_size —— 前端 IPC 的 LogicalSize 导入在部分版本不可靠
+  // 进编辑器时恢复大窗口；回到欢迎页时缩回。tauri.conf.json 初始就是 630，
+  // 所以启动时不需要调 —— 只在 booted 状态变化（用户点了新建/打开/最近）才调
   useEffect(() => {
     if (!inTauri()) return;
-    const t = setTimeout(() => {
-      void tauriInvoke("resize_window", booted ? { width: 1500, height: 940 } : { width: 720, height: 520 })
-        .catch(() => {});
-    }, 200);
-    return () => clearTimeout(t);
+    void tauriInvoke("resize_window", booted ? { width: 1500, height: 940 } : { width: 720, height: 630 })
+      .catch(() => {});
   }, [booted]);
 
   /** 主题色 / 图例配色：写 CSS 变量 + 通知 semantic 层；style 属性变化会让引脚图重绘 */
