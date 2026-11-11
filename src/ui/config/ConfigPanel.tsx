@@ -146,6 +146,7 @@ export function ConfigPanel({ dev, project, periph, clock, pane, onChange, onCha
           focusPin={gpioFocusPin ?? null}
           onFocusDone={() => onGpioFocusDone?.()}
           onEditPinLabel={(pin, label) => onEditPinLabel?.(pin, label)}
+          onNote={onNote}
           beginner={beginner}
         />
       </div>

@@ -1094,9 +1094,8 @@ const usb: PeripheralSchema = {
     sel(
       "speed",
       "速度",
-      "disable",
+      "fs",
       [
-        { l: "Disable", v: "disable" },
         { l: "Full Speed 全速 12 Mbps", v: "fs", signals: ["DP", "DM"] },
         // 高速 PHY 只有 V407 / V467 有；FS-only 芯片（X033 / X035 / L103 / HC32）靠 cap 隐藏
         { l: "High Speed 高速 480 Mbps", v: "hs", signals: ["DP", "DM"], cap: "usb.hs" },

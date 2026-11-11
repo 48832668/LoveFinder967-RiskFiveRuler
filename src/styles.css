@@ -171,6 +171,16 @@ button { cursor: pointer; }
 }
 .gpio-table .focus-row { background: var(--accent-soft) !important; }
 .gpio-table .kind-bar { width: 3px; height: 14px; border-radius: 2px; display: inline-block; }
+/* 引脚列：文本用圆角矩形包住，边框/底色取自该引脚的外设种类色 */
+.pin-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: calc(var(--fs-sp) * 0.27) calc(var(--fs-sp) * 1.33);
+  border: var(--fs-bw) solid color-mix(in srgb, var(--pin-chip, var(--border)) 70%, transparent);
+  border-radius: calc(var(--fs-radius) * 0.59);
+  background: color-mix(in srgb, var(--pin-chip, transparent) 14%, transparent);
+  white-space: nowrap;
+}
 
 /* 锁定本组映射：独立行 + 开关（与外设使能同一套 .switch） */
 .lock-row { padding: calc(var(--fs-sp) * 1.87) 0; }

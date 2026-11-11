@@ -16,11 +16,13 @@ interface Props {
   focusPin: string | null;
   onFocusDone: () => void;
   onEditPinLabel: (pin: string, label: string) => void;
+  /** 顶部 toast 提示（回车保存自定义名后提示） */
+  onNote?: (msg: string) => void;
   /** 新手模式才显示那句说明 */
   beginner: boolean;
 }
 
-export function GpioTablePanel({ dev, project, focusPin, onFocusDone, onEditPinLabel, beginner }: Props) {
+export function GpioTablePanel({ dev, project, focusPin, onFocusDone, onEditPinLabel, onNote, beginner }: Props) {
   const usage = collectUsage(project, dev);
   const inputRefs = useRef<Map<string, HTMLInputElement>>(new Map());
 
@@ -48,6 +50,11 @@ export function GpioTablePanel({ dev, project, focusPin, onFocusDone, onEditPinL
           : gpio && gpio.mode !== "analog"
             ? (GPIO_MODE_LABELS[gpio.mode]?.replace("GPIO ", "") ?? gpio.mode)
             : "—";
+        const kind = info.fn
+          ? info.owner
+            ? dev.peripherals.find((p) => p.id === info.owner)?.kind ?? "GPIO"
+            : "GPIO"
+          : "GPIO";
         return {
           idx: i + 1,
           pin,
@@ -56,6 +63,7 @@ export function GpioTablePanel({ dev, project, focusPin, onFocusDone, onEditPinL
           fn: info.fn,
           mode,
           label: project.pinLabels[pin] ?? "",
+          color: colorOf(kind),
         };
       });
   })();
@@ -90,8 +98,9 @@ export function GpioTablePanel({ dev, project, focusPin, onFocusDone, onEditPinL
               <tr key={r.pin} className={focusPin === r.pin ? "focus-row" : ""}>
                 <td className="mono">{r.idx}</td>
                 <td className="mono">
-                  {r.pin} · pin {r.num}
-                  <i className="kind-bar" style={{ background: colorOf(r.fn ? (r.owner ? dev.peripherals.find((p) => p.id === r.owner)?.kind ?? "GPIO" : "GPIO") : "GPIO"), marginLeft: 6, verticalAlign: "middle" }} />
+                  <span className="pin-chip" style={{ ["--pin-chip" as string]: r.color }}>
+                    {r.pin} · pin {r.num}
+                  </span>
                 </td>
                 <td>{r.owner || <span className="muted">GPIO</span>}{r.fn && <span className="mono muted"> {r.fn}</span>}</td>
                 <td>{r.mode}</td>
@@ -102,6 +111,12 @@ export function GpioTablePanel({ dev, project, focusPin, onFocusDone, onEditPinL
                     value={r.label}
                     placeholder="自定义名称"
                     onChange={(e) => onEditPinLabel(r.pin, e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key !== "Enter") return;
+                      e.preventDefault();
+                      e.currentTarget.blur();
+                      onNote?.(`${r.pin} 自定义名称已保存`);
+                    }}
                   />
                 </td>
               </tr>
