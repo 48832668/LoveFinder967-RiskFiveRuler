@@ -26,6 +26,7 @@ export function PinMenu({
   onAssign,
   onGpioMode,
   onSelectPeripheral,
+  beginner = false,
 }: {
   pin: PinDef;
   dev: DeviceDef;
@@ -41,6 +42,8 @@ export function PinMenu({
   onAssign: (pin: string, fn: string | null) => void;
   onGpioMode: (pin: string, mode: string) => void;
   onSelectPeripheral: (id: string) => void;
+  /** 新手模式：说明性文字只在开启时显示 */
+  beginner?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState<{ left: number; top: number }>({ left: x + 12, top: y - 8 });
@@ -157,7 +160,7 @@ export function PinMenu({
           >
             {pinLocked ? "🔓 解除锁定" : "🔒 锁定该引脚"}
           </button>
-          {pinLocked && <div className="pin-menu-empty">已锁定：不能分配给外设，也不能改 GPIO 模式</div>}
+          {pinLocked && beginner && <div className="pin-menu-empty">已锁定：不能分配给外设，也不能改 GPIO 模式</div>}
 
           <button
             className="pin-menu-item dropdown-item"

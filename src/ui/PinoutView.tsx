@@ -31,9 +31,11 @@ interface Props {
   onEditPinName: (pin: string) => void;
   /** 深链 ?pin=PB6 用：直接把这颗引脚的菜单弹出来（截图回归 / 演示） */
   autoPin?: string | null;
+  /** 新手模式：锁定提示等说明文字只在开启时显示 */
+  beginner: boolean;
 }
 
-export function PinoutView({ dev, project, search, onAssign, onGpioMode, onSelectPeripheral, onTogglePinLock, onEditPinName, autoPin }: Props) {
+export function PinoutView({ dev, project, search, onAssign, onGpioMode, onSelectPeripheral, onTogglePinLock, onEditPinName, autoPin, beginner }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hitsRef = useRef<Hit[]>([]);
@@ -689,6 +691,7 @@ export function PinoutView({ dev, project, search, onAssign, onGpioMode, onSelec
           onAssign={onAssign}
           onGpioMode={onGpioMode}
           onSelectPeripheral={onSelectPeripheral}
+          beginner={beginner}
         />
       )}
     </div>

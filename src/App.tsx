@@ -1092,6 +1092,7 @@ export default function App() {
                 onTogglePinLock={togglePinLock}
                 onEditPinName={editPinName}
                 autoPin={new URLSearchParams(typeof location !== "undefined" ? location.search : "").get("pin")}
+                beginner={prefs.beginner}
               />
             </aside>
           </>
