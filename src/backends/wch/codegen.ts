@@ -891,6 +891,13 @@ function genPeripheralInit(
       L.push(`    i2c.I2C_OwnAddress1 = ${hex(Number(v["ownAddr1"] ?? 0x30))};`);
       L.push(`    i2c.I2C_Ack = I2C_Ack_${v["ackEnable"] ? "Enable" : "Disable"};`);
       L.push(`    i2c.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_${v["addrBits"] === "10" ? "10bit" : "7bit"};`);
+      if (String(v["mode"]) === "master" && v["addrBits"] === "10") {
+        // 主机 10 位地址是通信流程（两字节），不属于 I2C_Init 的寄存器配置；
+        // 上面那行配的是 OAR1.ADDMODE（本机应答格式），不能代替发送序列。
+        L.push(`    /* 主机 10 位寻址：START 后先发头序列 11110xx0（xx = 地址高 2 位），`);
+        L.push(`       等 EVT9 / ADD10 置位，再用 I2C_Send7bitAddress() 发地址低 8 位。`);
+        L.push(`       I2C_AcknowledgedAddress_10bit 只配置本机应答格式，不等于这段发送流程。 */`);
+      }
       L.push(`    I2C_Init(${id}, &i2c);`);
       if (String(v["mode"]) === "smbus") {
         const host = String(v["smbusRole"]) === "host";

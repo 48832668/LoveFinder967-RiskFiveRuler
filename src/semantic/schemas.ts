@@ -474,7 +474,12 @@ const spi: PeripheralSchema = {
 
 /**
  * 「需要本机地址」的条件：I2C 从机，或 SMBus 设备角色。
- * 主机不响应地址，所以这些字段对主机没有意义。
+ * 本机地址 / 双地址 / 广播响应 / 时钟延展都是**被寻址方**才有的东西，
+ * 主机不响应地址，这些字段对主机没有意义。
+ *
+ * 寻址位数（addrBits）不属于这一类：X035 的 I2C 主机同样支持 7 位 / 10 位地址
+ * （RM 第 15 章，主机 10 位地址需发头序列 11110xx0 + 低 8 位，EVT9/ADD10），
+ * 所以它对全部模式可见。
  */
 const I2C_AS_TARGET: ParamDef["visibleIf"] = {
   or: [
@@ -487,16 +492,16 @@ const i2c: PeripheralSchema = {
   modeKey: "mode",
   about:
     "I2C 支持标准 / 快速模式、7 位与 10 位寻址、双地址，以及 SMBus 协议。" +
-    "只有选 SMBus 模式时才会出现 SMBA 告警引脚 —— 普通 I2C 主/从机没有这条线。",
+    "主机与从机都可选 7 位 / 10 位寻址；只有选 SMBus 模式时才会出现 SMBA 告警引脚 —— 普通 I2C 主/从机没有这条线。" +
+    "关闭外设请用左侧的激活开关，模式里不再提供 Disable 档位。",
   groups: [g("mode", "模式", true), g("param", "参数", true), g("adv", "高级参数", false, true), g("irq", "中断与 DMA")],
   panels: ["pins", "nvic", "dma"],
   params: [
     sel(
       "mode",
       "模式",
-      "disable",
+      "master",
       [
-        { l: "Disable", v: "disable" },
         { l: "I2C 主机", v: "master", signals: ["SCL", "SDA"], hint: "CTLR1.SMBUS=0，标准 I2C 主机" },
         { l: "I2C 从机", v: "slave", signals: ["SCL", "SDA"], hint: "CTLR1.SMBUS=0，标准 I2C 从机" },
         {
@@ -543,7 +548,10 @@ const i2c: PeripheralSchema = {
         { l: "7 位", v: "7" },
         { l: "10 位", v: "10" },
       ],
-      { group: "param", visibleIf: I2C_AS_TARGET, hint: "OADDR1.ADDMODE" },
+      {
+        group: "param",
+        hint: "从机：OADDR1.ADDMODE 决定应答 7/10 位地址；主机：决定发送的目标地址格式，10 位需先发头序列 11110xx0 再发低 8 位（RM 15 章 EVT9/ADD10）",
+      },
     ),
     num("ownAddr1", "本机地址 1", 0x30, 0, 0x3ff, {
       group: "param",

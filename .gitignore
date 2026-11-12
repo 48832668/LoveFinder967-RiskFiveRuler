@@ -19,3 +19,6 @@ config.json
 .commandcode/
 .workbuddy-ai/
 
+# 本地发布产物目录；正式发布物只提交到孤立的 release 分支
+release/
+

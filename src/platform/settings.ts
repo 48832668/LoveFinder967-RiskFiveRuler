@@ -93,23 +93,48 @@ export function sanitizeUiPrefs(raw: unknown): UiPrefs {
   return out;
 }
 
+/** 取一份干净的默认值（pinColors 不能共享 DEFAULT_UI_PREFS 里的对象引用） */
+function freshDefaults(): UiPrefs {
+  return { ...DEFAULT_UI_PREFS, pinColors: {} };
+}
+
+/**
+ * 首次启动初始化 config.json。
+ *
+ * 发布包里刻意不带 config.json：用户解压后的目录可能只读（Program Files 等），
+ * 也可能是从别的机器拷来的旧配置。缺文件时直接用默认值写出一份，用户马上能
+ * 看到 / 复制 / 手改这个文件；写不进去不能影响启动，内存里照样用默认值。
+ */
+async function ensureConfigFile(prefs: UiPrefs): Promise<void> {
+  try {
+    await tauriInvoke("config_write", { content: JSON.stringify(prefs, null, 2) });
+  } catch {
+    // 只读目录 / 权限不足 / 磁盘满：本次会话仍生效，静默降级
+  }
+}
+
 /** 启动时载入。Tauri 读 exe 同目录 config.json；浏览器读 localStorage */
 export async function loadUiPrefs(): Promise<UiPrefs> {
   if (inTauri()) {
     try {
       const text = await tauriInvoke<string | null>("config_read");
-      if (!text) return { ...DEFAULT_UI_PREFS, pinColors: {} };
+      if (!text) {
+        const defaults = freshDefaults();
+        // 无文件（或空文件）：补写默认配置，让用户第一次运行就拿到可编辑的 config.json
+        await ensureConfigFile(defaults);
+        return defaults;
+      }
       return sanitizeUiPrefs(JSON.parse(text));
     } catch {
-      return { ...DEFAULT_UI_PREFS, pinColors: {} };
+      return freshDefaults();
     }
   }
   try {
     const raw = localStorage.getItem(LS_KEY);
-    if (!raw) return { ...DEFAULT_UI_PREFS, pinColors: {} };
+    if (!raw) return freshDefaults();
     return sanitizeUiPrefs(JSON.parse(raw));
   } catch {
-    return { ...DEFAULT_UI_PREFS, pinColors: {} };
+    return freshDefaults();
   }
 }
 

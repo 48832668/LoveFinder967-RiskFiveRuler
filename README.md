@@ -65,7 +65,11 @@
 
 ## 运行 / 构建
 
-用户端：Windows 10 1803+ / Windows 11（自带 WebView2）。把 `RiskFiveRuler.exe` 与 `WebView2Loader.dll` 放同一目录，双击即用，无需 Node / .NET。
+用户端：Windows 10 1803+ / Windows 11（自带 WebView2 Runtime）。把 `RiskFiveRuler.exe` 与 `WebView2Loader.dll` 放同一目录，双击即用，无需 Node / .NET。
+
+> `WebView2Loader.dll` 是 exe 的**静态导入依赖**（PE 导入表里的 `CreateCoreWebView2EnvironmentWithOptions`），缺了它 Windows 加载器会直接拒绝启动，不是可选组件。因此发布一律用 zip 包，不能只发单个 exe。请解压到**可写目录**（不要放 `C:\Program Files`）。
+
+界面偏好保存在 exe 同目录的 `config.json`（主题色 / 明暗 / 新手模式 / 引脚配色）。发布包里**不带**这个文件：首次启动时程序会用默认值自动创建并初始化；放到只读目录导致写不进去时会自动降级为内存默认值，不影响运行。设置界面也支持导入 / 导出该文件。
 
 从源码构建：
 

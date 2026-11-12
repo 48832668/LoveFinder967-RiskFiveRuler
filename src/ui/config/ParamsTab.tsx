@@ -6,7 +6,7 @@ import type { ClockDerived, DeviceDef, PeripheralConfig, PeripheralDef, Project 
 import { modeMissingSignals, modeOptionSupported, pinTableSignals } from "../../semantic/pinmux";
 import { evalCond } from "../../engine/expr";
 import { schemaFor } from "../../semantic/schemas";
-import { i2cTiming, spiClock, timBase, usartBrr } from "../../engine/clock";
+import { spiClock, timBase, usartBrr } from "../../engine/clock";
 import { Field } from "./Field";
 import { Collapse } from "./Collapse";
 
@@ -101,11 +101,8 @@ function DerivedBox({ periph, cfg, clock, project, dev }: {
       rows.push({ k: "SCLK", val: `${f.toFixed(3)} MHz` });
       break;
     }
-    case "I2C": {
-      const t = i2cTiming(clock.pclk1, Number(v["speed"] ?? 400), v["fastMode"] === "fast");
-      rows.push({ k: "SCL 频率", val: `${t.actual.toFixed(1)} kHz` });
-      break;
-    }
+    // I2C 不显示实时计算：CCR/TRISE 由 SPL 的 I2C_Init 按 I2C_ClockSpeed 自行换算，
+    // 这里再算一遍只会给出一个与硬件不同步的死数字（曾固定显示 100.0 kHz）。
     case "TIM": {
       const t = timBase(clock.pclk2, Number(v["psc"] ?? 0), Number(v["arr"] ?? 999), String(v["counterMode"] ?? "up"));
       rows.push({ k: "计数频率", val: `${t.freq.toFixed(3)} Hz` });
