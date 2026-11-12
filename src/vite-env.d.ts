@@ -5,5 +5,5 @@ declare module "*?raw" {
   export default content;
 }
 
-/** 构建时注入：`26.11.5.3`（年月日 + 当日编译次数） */
+/** 构建时注入：`26.11.12`（年月日，三段式） */
 declare const __APP_VERSION__: string;

@@ -1,6 +1,6 @@
 [package]
 name = "rfr-core"
-version = "0.1.0"
+version = "26.11.12"
 edition = "2021"
 license = "MIT"
 description = "RiskFiveRuler 的纯 Rust 核心：layer1 IO / layer2 工程处理（不依赖 Tauri）"

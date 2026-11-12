@@ -5,17 +5,17 @@ import { versionStamp } from "./scripts/version.mjs";
 const host = process.env.TAURI_DEV_HOST;
 
 /**
- * 把版本号注入前端：`__APP_VERSION__` = `26.11.5.3`。
+ * 把版本号注入前端：`__APP_VERSION__` = `26.11.12`（年月日三段式）。
  *
- * 只在 `vite build` 时累加当日计数 —— dev 反复热更新不该把计数刷爆。
- * Tauri 的 beforeBuildCommand 就是 `npm run build`，所以打包进 exe 的版本号与 dist 一致。
+ * 同日多次构建共用同一版本号，不再按编译次数递增；
+ * Tauri 的 beforeBuildCommand 就是 `npm run build`，所以 exe 里与 dist 一致。
  */
 function versionPlugin() {
-  let version = "0.0.0.0";
+  let version = "0.0.0";
   return {
     name: "rfr-version",
-    config(config, env) {
-      version = versionStamp(env.command === "build");
+    config() {
+      version = versionStamp();
       return { define: { __APP_VERSION__: JSON.stringify(version) } };
     },
   };

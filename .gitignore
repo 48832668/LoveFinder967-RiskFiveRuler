@@ -8,7 +8,7 @@ docs/
 .DS_Store
 Thumbs.db
 
-# 版本计数器（当日构建次数），每次 build 都会变，不该进版本库
+# 旧的当日构建计数器（版本号已改为三段式，不再使用；保留忽略规则防残留）
 .build-counter.json
 
 # 本机运行数据与构建产物（exe 可用 npm run package:exe 重建）

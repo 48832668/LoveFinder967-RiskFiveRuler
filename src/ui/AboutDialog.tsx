@@ -26,10 +26,12 @@ export function AboutDialog({ onClose }: Props) {
   }, [onClose]);
 
   const version = appVersion();
-  const [y, m, d, n] = version.split(".");
-  const built = y ? `20${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}` : "开发环境";
-  // .0 = 开发服务器（当日还没跑过正式构建），别把它说成「第 0 次构建」
-  const isDev = version === "dev" || n === "0";
+  const [y, m, d] = version.split(".");
+  // 三段式 YY.M.D；非日期形式说明是 dev / 单测兜底的 "dev"
+  const isDateVersion = /^\d{2}\.\d{1,2}\.\d{1,2}$/.test(version);
+  const built = isDateVersion
+    ? `20${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`
+    : "开发环境";
 
   return (
     <div className="modal">
@@ -62,15 +64,11 @@ export function AboutDialog({ onClose }: Props) {
             <dt>构建日期</dt>
             <dd>
               {built}
-              {isDev ? (
-                <span className="muted">（开发模式，当日尚未正式构建）</span>
-              ) : (
-                <span className="muted">（当日第 {n} 次构建）</span>
-              )}
+              {!isDateVersion && <span className="muted">（开发模式，未注入版本号）</span>}
             </dd>
 
             <dt>版本号规则</dt>
-            <dd className="muted">年月日 + 当日编译次数</dd>
+            <dd className="muted">年月日（YY.M.D，三段式）</dd>
           </dl>
         </div>
 

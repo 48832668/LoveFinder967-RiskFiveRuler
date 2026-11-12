@@ -1,7 +1,7 @@
 {
   "name": "risk-five-ruler",
   "private": true,
-  "version": "0.1.0",
+  "version": "26.11.12",
   "type": "module",
   "description": "RiskFiveRuler — WCH CH32V (RISC-V) MCU 图形化配置与代码生成工具",
   "scripts": {

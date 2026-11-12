@@ -1,7 +1,7 @@
 /**
  * 软件身份信息。
  *
- * 版本号不在这里写死 —— 它由构建脚本按「年月日 + 当日编译次数」注入
+ * 版本号不在这里写死 —— 它由构建脚本按「年月日」注入三段式 `YY.M.D`
  * （`__APP_VERSION__`，见 `scripts/version.mjs`），避免出现「文档写 1.2、包里是 1.3」。
  */
 export const APP_NAME = "RiskFiveRuler";
