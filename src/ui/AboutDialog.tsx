@@ -72,24 +72,15 @@ export function AboutDialog({ onClose }: Props) {
             <dt>版本号规则</dt>
             <dd className="muted">年月日 + 当日编译次数</dd>
           </dl>
-
-          <p className="about-note">
-            版本号在每次 <code>npm run build</code> 时自动累加，报问题时把这一串发过来即可对上具体构建。
-          </p>
         </div>
 
         <footer className="modal-footer">
-          <span className="hint">作者 Gitee 主页可在「关于」菜单里打开</span>
-          <span className="spacer" />
           <button
             className="btn btn-ghost btn-sm"
             onClick={() => void openExternal(AUTHOR_GITEE)}
             title={AUTHOR_GITEE}
           >
             作者 Gitee 主页
-          </button>
-          <button className="btn btn-primary btn-sm" onClick={onClose}>
-            确定
           </button>
         </footer>
       </div>

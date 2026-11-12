@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { RecentEntry } from "../platform/recent";
 import { shortPath } from "../platform/recent";
 
@@ -63,6 +63,14 @@ export function MenuBar({ recent, filePath, onOpenRecent, onClearRecent, onActio
   const [open, setOpen] = useState<"file" | "about" | null>(null);
   const [recentOpen, setRecentOpen] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
+  const fileBtnRef = useRef<HTMLButtonElement>(null);
+  const aboutBtnRef = useRef<HTMLButtonElement>(null);
+  /** 下拉与触发它的按钮左对齐（否则「关于」菜单会落到「设置」下面） */
+  const [popLeft, setPopLeft] = useState<number | undefined>(undefined);
+  useLayoutEffect(() => {
+    const el = open === "about" ? aboutBtnRef.current : open === "file" ? fileBtnRef.current : null;
+    if (el) setPopLeft(el.offsetLeft);
+  }, [open]);
 
   // 工程没保存过就不给「导出代码目录」入口 —— 生成代码需要落盘目录
   const fileMenu = FILE_MENU.filter((i) => !("id" in i) || i.id !== "export" || Boolean(filePath));
@@ -168,6 +176,7 @@ export function MenuBar({ recent, filePath, onOpenRecent, onClearRecent, onActio
   return (
     <div className="window-header" ref={boxRef} data-tauri-drag-region>
       <button
+        ref={fileBtnRef}
         className={`menubar-item ${open === "file" ? "is-active" : ""}`}
         onClick={() => setOpen(open === "file" ? null : "file")}
         onMouseEnter={() => open && setOpen("file")}
@@ -178,6 +187,7 @@ export function MenuBar({ recent, filePath, onOpenRecent, onClearRecent, onActio
         设置
       </button>
       <button
+        ref={aboutBtnRef}
         className={`menubar-item ${open === "about" ? "is-active" : ""}`}
         onClick={() => setOpen(open === "about" ? null : "about")}
         onMouseEnter={() => open && setOpen("about")}
@@ -194,8 +204,16 @@ export function MenuBar({ recent, filePath, onOpenRecent, onClearRecent, onActio
         </div>
       )}
 
-      {open === "file" && <div className="menu-pop menubar-menu dropdown">{renderItems(fileMenu)}</div>}
-      {open === "about" && <div className="menu-pop about-pop menubar-menu dropdown">{renderItems(ABOUT_MENU)}</div>}
+      {open === "file" && (
+        <div className="menu-pop menubar-menu dropdown" style={popLeft !== undefined ? { left: popLeft } : undefined}>
+          {renderItems(fileMenu)}
+        </div>
+      )}
+      {open === "about" && (
+        <div className="menu-pop about-pop menubar-menu dropdown" style={popLeft !== undefined ? { left: popLeft } : undefined}>
+          {renderItems(ABOUT_MENU)}
+        </div>
+      )}
     </div>
   );
 }

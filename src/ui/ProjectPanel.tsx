@@ -67,6 +67,11 @@ export function ProjectPanel({ dev, project, clock, conflicts, onChange }: Props
       </section>
 
       <section className="psection card">
+        <h3>原理图绘制</h3>
+        <p className="psection-note">（建设中）后续在这里提供原理图绘制相关功能与设置。</p>
+      </section>
+
+      <section className="psection card">
         <h3>当前器件</h3>
         <div className="kv">
           <span>型号</span><b>{dev.id}</b>
