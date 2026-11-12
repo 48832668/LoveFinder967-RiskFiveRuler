@@ -1,1 +1,1 @@
-95b99b0cd7f6750078ed7f1b8702401f7ad65af15d053e6b2e1c67fb384d5c14  RiskFiveRuler-0.1.0-Windows-x64-Portable.zip
+d66510d00a0e1a9a4b2c56e01d02cd5a49f50d9345533df854e4277c359e41c7  RiskFiveRuler-26.11.12-Windows-x64-Portable.zip

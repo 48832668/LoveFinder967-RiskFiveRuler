@@ -6,11 +6,12 @@
 
 | 文件 | 版本 | 平台 | 日期 |
 | --- | --- | --- | --- |
-| `RiskFiveRuler-0.1.0-Windows-x64-Portable.zip` | 0.1.0 | Windows x64 便携版 | 2026-11-12 |
+| `RiskFiveRuler-26.11.12-Windows-x64-Portable.zip` | 26.11.12 | Windows x64 便携版 | 2026-11-12 |
 
 - 适用：Windows 10 1803+ / Windows 11（64 位），需系统已装 Microsoft Edge WebView2 Runtime。
-- 构建号：`26.11.12.1`（「关于」对话框与包内 `BUILD-INFO.txt` 显示，规则为年月日 + 当日编译次数）。
-- 本次构建含：`config.json` 首次启动自动创建、I2C 面板移除失效的实时计算板块与 Disable 档、主机模式开放 7/10 位寻址设定。
+- 版本号规则：`YY.M.D`（年月日三段式），**不含当日编译次数**；同日多次构建共用同一版本号，具体构建以构建时间与 SHA-256 区分。界面「关于」、exe 文件属性、包内 `BUILD-INFO.txt` 均为 `26.11.12`。
+- 正式下载入口：GitHub / Gitee 的 `26.11.12` 发行版页面。
+- 本次构建含：`config.json` 首次启动自动创建、I2C 面板移除失效的实时计算板块与 Disable 档、主机模式开放 7/10 位寻址设定，版本号体系统一为三段式。
 - 包内：`RiskFiveRuler.exe`、`WebView2Loader.dll`、`README-Windows.txt`、`BUILD-INFO.txt`。
 - `WebView2Loader.dll` 是 exe 的静态导入依赖，**必须与 exe 同目录**，所以不能只发单个 exe。
 - `config.json` **不随包分发**：首次启动由程序用默认值自动创建并初始化（放到只读目录时自动降级为内存默认值）。
